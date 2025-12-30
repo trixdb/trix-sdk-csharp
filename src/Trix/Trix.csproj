@@ -14,8 +14,8 @@
     <Product>Trix SDK for .NET</Product>
     <Description>Official .NET SDK for Trix - A memory and knowledge management API</Description>
     <PackageTags>trix;memory;knowledge;graph;api;sdk</PackageTags>
-    <PackageProjectUrl>https://github.com/trix/trix-sdk-csharp</PackageProjectUrl>
-    <RepositoryUrl>https://github.com/trix/trix-sdk-csharp</RepositoryUrl>
+    <PackageProjectUrl>https://github.com/trixdb/trix-sdk-csharp</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/trixdb/trix-sdk-csharp</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageReadmeFile>README.md</PackageReadmeFile>
