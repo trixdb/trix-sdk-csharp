@@ -17,7 +17,7 @@
     <PackageProjectUrl>https://github.com/trixdb/trix-sdk-csharp</PackageProjectUrl>
     <RepositoryUrl>https://github.com/trixdb/trix-sdk-csharp</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
-    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageLicenseFile>LICENSE</PackageLicenseFile>
     <PackageReadmeFile>README.md</PackageReadmeFile>
     <Copyright>Copyright (c) Trix 2025</Copyright>
 
@@ -58,6 +58,7 @@
 
   <ItemGroup>
     <None Include="..\..\README.md" Pack="true" PackagePath="\"/>
+    <None Include="..\..\LICENSE" Pack="true" PackagePath="\"/>
   </ItemGroup>
 
 </Project>
