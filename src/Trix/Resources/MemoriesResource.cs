@@ -174,12 +174,28 @@ public class MemoriesResource : BaseResource
     }
 
     /// <summary>
-    /// Transcribes an audio memory.
+    /// Transcribes an audio or video memory with advanced options.
     /// </summary>
     /// <param name="id">The memory ID.</param>
-    /// <param name="request">Transcription options.</param>
+    /// <param name="request">Transcription options (language, provider, diarization, entity detection, etc.).</param>
     /// <param name="cancellationToken">Cancellation token.</param>
     /// <returns>Transcript result.</returns>
+    /// <example>
+    /// <code>
+    /// // Basic transcription
+    /// var result = await client.Memories.TranscribeAsync("mem_123");
+    ///
+    /// // Advanced transcription with speaker diarization
+    /// var result = await client.Memories.TranscribeAsync("mem_123", new TranscribeRequest
+    /// {
+    ///     Provider = "assemblyai",
+    ///     EnableSpeakerDiarization = true,
+    ///     SpeakersExpected = 2,
+    ///     EnableAutoChapters = true,
+    ///     EnableEntityDetection = true
+    /// });
+    /// </code>
+    /// </example>
     public virtual async Task<TranscriptResult> TranscribeAsync(
         string id,
         TranscribeRequest? request = null,
@@ -190,14 +206,39 @@ public class MemoriesResource : BaseResource
     }
 
     /// <summary>
-    /// Creates a memory from audio data.
+    /// Creates a memory from audio or video data.
+    ///
+    /// Supported audio formats: mp3, mp4, m4a, wav, webm, ogg, flac, aac
+    /// Supported video formats: mp4, webm, mov, avi, mkv, flv, mpeg
+    ///
+    /// For advanced transcription options (speaker diarization, entity detection,
+    /// chapters, etc.), use TranscribeAsync() after upload.
     /// </summary>
-    /// <param name="audioData">The audio data stream.</param>
+    /// <param name="audioData">The audio or video data stream.</param>
     /// <param name="fileName">The file name.</param>
-    /// <param name="contentType">The content type (e.g., audio/mpeg).</param>
+    /// <param name="contentType">The content type (e.g., 'audio/mpeg', 'video/mp4').</param>
     /// <param name="metadata">Optional metadata.</param>
     /// <param name="cancellationToken">Cancellation token.</param>
     /// <returns>The created memory.</returns>
+    /// <example>
+    /// <code>
+    /// // Upload audio file
+    /// using var audioStream = File.OpenRead("recording.mp3");
+    /// var memory = await client.Memories.CreateFromAudioAsync(
+    ///     audioStream,
+    ///     "recording.mp3",
+    ///     "audio/mpeg"
+    /// );
+    ///
+    /// // Upload video file
+    /// using var videoStream = File.OpenRead("meeting.mp4");
+    /// var memory = await client.Memories.CreateFromAudioAsync(
+    ///     videoStream,
+    ///     "meeting.mp4",
+    ///     "video/mp4"
+    /// );
+    /// </code>
+    /// </example>
     public virtual async Task<Memory> CreateFromAudioAsync(
         Stream audioData,
         string fileName,
@@ -345,16 +386,34 @@ public class WordTimestamp
 }
 
 /// <summary>
-/// Request for transcription.
+/// Request for transcription with advanced options.
 /// </summary>
 public class TranscribeRequest
 {
-    /// <summary>Gets or sets the language hint.</summary>
+    /// <summary>Gets or sets the language code for transcription (e.g., 'en', 'es').</summary>
     public string? Language { get; set; }
 
-    /// <summary>Gets or sets whether to include word timestamps.</summary>
-    public bool IncludeWordTimestamps { get; set; }
+    /// <summary>Gets or sets the context to improve transcription accuracy.</summary>
+    public string? Prompt { get; set; }
 
-    /// <summary>Gets or sets whether to update the memory content with transcript.</summary>
-    public bool UpdateContent { get; set; }
+    /// <summary>Gets or sets the transcription provider ('assemblyai' or 'openai').</summary>
+    public string? Provider { get; set; }
+
+    /// <summary>Gets or sets whether to enable speaker identification and labeling (diarization).</summary>
+    public bool? EnableSpeakerDiarization { get; set; }
+
+    /// <summary>Gets or sets whether to enable entity detection in transcript.</summary>
+    public bool? EnableEntityDetection { get; set; }
+
+    /// <summary>Gets or sets whether to enable content safety labeling.</summary>
+    public bool? EnableContentSafety { get; set; }
+
+    /// <summary>Gets or sets whether to enable automatic chapter generation.</summary>
+    public bool? EnableAutoChapters { get; set; }
+
+    /// <summary>Gets or sets whether to enable automatic summarization.</summary>
+    public bool? EnableAutoSummarization { get; set; }
+
+    /// <summary>Gets or sets the expected number of speakers (hint for diarization).</summary>
+    public int? SpeakersExpected { get; set; }
 }
