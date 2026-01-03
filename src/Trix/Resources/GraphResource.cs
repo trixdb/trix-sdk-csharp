@@ -109,4 +109,48 @@ public class GraphResource : BaseResource
         return await GetAsync<GraphStats>("/v1/graph/stats", cancellationToken: cancellationToken)
             .ConfigureAwait(false);
     }
+
+    /// <summary>
+    /// Expands graph from seed memories using traversal and optional hybrid scoring.
+    /// </summary>
+    /// <param name="request">Expansion parameters.</param>
+    /// <param name="cancellationToken">Cancellation token.</param>
+    /// <returns>Graph expansion result with expanded memories, relationships, and stats.</returns>
+    /// <exception cref="ArgumentNullException">Thrown when request is null.</exception>
+    /// <exception cref="ArgumentException">Thrown when seed memory IDs list is empty.</exception>
+    /// <example>
+    /// <code>
+    /// // Basic expansion
+    /// var result = await client.Graph.ExpandAsync(new ExpandGraphRequest
+    /// {
+    ///     SeedMemoryIds = new List&lt;string&gt; { "mem_123", "mem_456" }
+    /// });
+    /// Console.WriteLine($"Expanded to {result.Stats.ExpandedCount} memories");
+    ///
+    /// // Advanced expansion with hybrid scoring
+    /// var result = await client.Graph.ExpandAsync(new ExpandGraphRequest
+    /// {
+    ///     SeedMemoryIds = new List&lt;string&gt; { "mem_123" },
+    ///     MaxHops = 3,
+    ///     MinWeight = 0.5,
+    ///     RelationshipTypes = new List&lt;string&gt; { "related_to", "supports" },
+    ///     ApplyHybridScoring = true
+    /// });
+    /// Console.WriteLine($"Scoring applied: {result.Scoring?.Applied}");
+    /// </code>
+    /// </example>
+    public virtual async Task<GraphExpansionResult> ExpandAsync(
+        ExpandGraphRequest request,
+        CancellationToken cancellationToken = default)
+    {
+        ArgumentNullException.ThrowIfNull(request);
+
+        if (request.SeedMemoryIds == null || request.SeedMemoryIds.Count == 0)
+        {
+            throw new ArgumentException("Seed memory IDs cannot be empty.", nameof(request));
+        }
+
+        return await PostAsync<GraphExpansionResult>("/v1/graph/expand", request, cancellationToken)
+            .ConfigureAwait(false);
+    }
 }

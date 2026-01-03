@@ -303,3 +303,177 @@ public class GraphStats
     [JsonPropertyName("components")]
     public int Components { get; set; }
 }
+
+/// <summary>
+/// Weights used in hybrid scoring.
+/// </summary>
+public class HybridScoringWeights
+{
+    /// <summary>
+    /// Semantic similarity weight.
+    /// </summary>
+    [JsonPropertyName("semantic")]
+    public double Semantic { get; set; }
+
+    /// <summary>
+    /// Graph proximity weight.
+    /// </summary>
+    [JsonPropertyName("graph")]
+    public double Graph { get; set; }
+
+    /// <summary>
+    /// Co-activation strength weight.
+    /// </summary>
+    [JsonPropertyName("coActivation")]
+    public double CoActivation { get; set; }
+
+    /// <summary>
+    /// Recency weight.
+    /// </summary>
+    [JsonPropertyName("recency")]
+    public double Recency { get; set; }
+
+    /// <summary>
+    /// Salience weight.
+    /// </summary>
+    [JsonPropertyName("salience")]
+    public double Salience { get; set; }
+}
+
+/// <summary>
+/// Scoring metadata for graph expansion.
+/// </summary>
+public class GraphExpansionScoring
+{
+    /// <summary>
+    /// Whether hybrid scoring was applied.
+    /// </summary>
+    [JsonPropertyName("applied")]
+    public bool Applied { get; set; }
+
+    /// <summary>
+    /// Scoring weights if applied.
+    /// </summary>
+    [JsonPropertyName("weights")]
+    public HybridScoringWeights? Weights { get; set; }
+}
+
+/// <summary>
+/// Statistics from graph expansion.
+/// </summary>
+public class GraphExpansionStats
+{
+    /// <summary>
+    /// Number of seed memories.
+    /// </summary>
+    [JsonPropertyName("seedCount")]
+    public int SeedCount { get; set; }
+
+    /// <summary>
+    /// Number of memories discovered.
+    /// </summary>
+    [JsonPropertyName("expandedCount")]
+    public int ExpandedCount { get; set; }
+
+    /// <summary>
+    /// Total number of memories after filtering.
+    /// </summary>
+    [JsonPropertyName("finalCount")]
+    public int FinalCount { get; set; }
+
+    /// <summary>
+    /// Number of relationships found.
+    /// </summary>
+    [JsonPropertyName("relationshipsFound")]
+    public int? RelationshipsFound { get; set; }
+
+    /// <summary>
+    /// Number of hops used.
+    /// </summary>
+    [JsonPropertyName("hopsUsed")]
+    public int? HopsUsed { get; set; }
+}
+
+/// <summary>
+/// Result of graph expansion from seed memories.
+/// </summary>
+public class GraphExpansionResult
+{
+    /// <summary>
+    /// Seed memory IDs.
+    /// </summary>
+    [JsonPropertyName("seedMemories")]
+    public List<string> SeedMemories { get; set; } = new();
+
+    /// <summary>
+    /// Expanded memories discovered.
+    /// </summary>
+    [JsonPropertyName("expandedMemories")]
+    public List<Memory> ExpandedMemories { get; set; } = new();
+
+    /// <summary>
+    /// Relationships in the expansion.
+    /// </summary>
+    [JsonPropertyName("relationships")]
+    public List<Relationship> Relationships { get; set; } = new();
+
+    /// <summary>
+    /// Expansion statistics.
+    /// </summary>
+    [JsonPropertyName("stats")]
+    public required GraphExpansionStats Stats { get; set; }
+
+    /// <summary>
+    /// Scoring metadata if hybrid scoring was applied.
+    /// </summary>
+    [JsonPropertyName("scoring")]
+    public GraphExpansionScoring? Scoring { get; set; }
+}
+
+/// <summary>
+/// Request parameters for graph expansion.
+/// </summary>
+public class ExpandGraphRequest
+{
+    /// <summary>
+    /// Starting memory IDs for expansion.
+    /// </summary>
+    [JsonPropertyName("seedMemoryIds")]
+    public required List<string> SeedMemoryIds { get; set; }
+
+    /// <summary>
+    /// Maximum traversal depth (default: 2).
+    /// </summary>
+    [JsonPropertyName("maxHops")]
+    public int? MaxHops { get; set; }
+
+    /// <summary>
+    /// Minimum relationship strength (default: 0.3).
+    /// </summary>
+    [JsonPropertyName("minWeight")]
+    public double? MinWeight { get; set; }
+
+    /// <summary>
+    /// Filter by specific relationship types.
+    /// </summary>
+    [JsonPropertyName("relationshipTypes")]
+    public List<string>? RelationshipTypes { get; set; }
+
+    /// <summary>
+    /// Traversal direction (default: both).
+    /// </summary>
+    [JsonPropertyName("direction")]
+    public string? Direction { get; set; }
+
+    /// <summary>
+    /// Include full memory content (default: true).
+    /// </summary>
+    [JsonPropertyName("includeContent")]
+    public bool? IncludeContent { get; set; }
+
+    /// <summary>
+    /// Enable multi-signal hybrid scoring (default: false).
+    /// </summary>
+    [JsonPropertyName("applyHybridScoring")]
+    public bool? ApplyHybridScoring { get; set; }
+}
