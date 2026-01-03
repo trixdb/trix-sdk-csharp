@@ -100,10 +100,10 @@ public class GraphTraversalResult
 public class TraverseRequest
 {
     /// <summary>
-    /// Starting node ID for traversal.
+    /// Starting node IDs for traversal (supports multiple start nodes).
     /// </summary>
-    [JsonPropertyName("startNodeId")]
-    public string StartNodeId { get; set; } = string.Empty;
+    [JsonPropertyName("startNodeIds")]
+    public List<string> StartNodeIds { get; set; } = new();
 
     /// <summary>
     /// Maximum depth to traverse (default: 2).

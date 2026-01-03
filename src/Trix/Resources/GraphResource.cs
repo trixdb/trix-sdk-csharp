@@ -17,16 +17,24 @@ public class GraphResource : BaseResource
     }
 
     /// <summary>
-    /// Traverses the knowledge graph from a starting node.
+    /// Traverses the knowledge graph from starting nodes.
     /// </summary>
     /// <param name="request">Traversal parameters.</param>
     /// <param name="cancellationToken">Cancellation token.</param>
     /// <returns>The traversal result with nodes and edges.</returns>
+    /// <exception cref="ArgumentNullException">Thrown when request is null.</exception>
+    /// <exception cref="ArgumentException">Thrown when start node IDs list is empty.</exception>
     public virtual async Task<GraphTraversalResult> TraverseAsync(
         TraverseRequest request,
         CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(request);
+
+        if (request.StartNodeIds == null || request.StartNodeIds.Count == 0)
+        {
+            throw new ArgumentException("Start node IDs cannot be empty.", nameof(request));
+        }
+
         return await PostAsync<GraphTraversalResult>("/v1/graph/traverse", request, cancellationToken)
             .ConfigureAwait(false);
     }
