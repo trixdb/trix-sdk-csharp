@@ -1,6 +1,7 @@
 using System.Text.Json;
 using FluentAssertions;
 using Trix.Models;
+using Trix.Resources;
 
 namespace Trix.Tests;
 
@@ -437,5 +438,324 @@ public class ModelTests
         FeedbackType.Positive.Should().Be(FeedbackType.Positive);
         FeedbackType.Negative.Should().Be(FeedbackType.Negative);
         FeedbackType.Neutral.Should().Be(FeedbackType.Neutral);
+    }
+
+    [Fact]
+    public void TranscriptResult_BasicDeserialization()
+    {
+        // Arrange - Basic transcript without advanced features
+        var json = """
+        {
+            "memoryId": "mem_123",
+            "text": "Hello world",
+            "duration": 5.5,
+            "language": "en",
+            "provider": "assemblyai"
+        }
+        """;
+
+        // Act
+        var result = JsonSerializer.Deserialize<TranscriptResult>(json, JsonOptions);
+
+        // Assert
+        result.Should().NotBeNull();
+        result!.MemoryId.Should().Be("mem_123");
+        result.Text.Should().Be("Hello world");
+        result.Duration.Should().Be(5.5);
+        result.Language.Should().Be("en");
+        result.Provider.Should().Be("assemblyai");
+    }
+
+    [Fact]
+    public void TranscriptResult_FullDeserialization_WithAllFeatures()
+    {
+        // Arrange - Complete transcript with speaker diarization, entities, chapters, and content safety
+        var json = """
+        {
+            "memoryId": "mem_123",
+            "audioFileId": "file_456",
+            "text": "Speaker A: Hello. Speaker B: Hi there.",
+            "duration": 10.5,
+            "language": "en",
+            "languageConfidence": 0.98,
+            "provider": "assemblyai",
+            "summary": "A greeting conversation between two people.",
+            "contentSafetyLabels": [
+                {
+                    "label": "profanity",
+                    "confidence": 0.85,
+                    "severity": "low",
+                    "timestamp": { "start": 1.5, "end": 2.0 }
+                }
+            ],
+            "providerMetadata": {
+                "modelVersion": "v2.1",
+                "processingTime": 3.2
+            },
+            "segments": [
+                {
+                    "id": "seg_1",
+                    "startTime": 0.0,
+                    "endTime": 2.5,
+                    "text": "Hello",
+                    "segmentIndex": 0,
+                    "confidence": 0.95,
+                    "speaker": "A",
+                    "words": [
+                        {
+                            "word": "Hello",
+                            "start": 0.0,
+                            "end": 0.5,
+                            "confidence": 0.95,
+                            "speaker": "A"
+                        }
+                    ],
+                    "wordConfidenceAvg": 0.95
+                }
+            ],
+            "entities": [
+                {
+                    "id": "ent_1",
+                    "entityType": "person",
+                    "text": "John Smith",
+                    "startTime": 1.0,
+                    "endTime": 2.0,
+                    "confidence": 0.92,
+                    "metadata": {
+                        "category": "name"
+                    }
+                }
+            ],
+            "chapters": [
+                {
+                    "id": "ch_1",
+                    "chapterIndex": 0,
+                    "headline": "Introduction",
+                    "summary": "Initial greetings",
+                    "gist": "Greetings",
+                    "startTime": 0.0,
+                    "endTime": 5.0
+                }
+            ],
+            "words": [
+                {
+                    "word": "Hello",
+                    "start": 0.0,
+                    "end": 0.5,
+                    "confidence": 0.95,
+                    "speaker": "A"
+                }
+            ]
+        }
+        """;
+
+        // Act
+        var result = JsonSerializer.Deserialize<TranscriptResult>(json, JsonOptions);
+
+        // Assert - Basic fields
+        result.Should().NotBeNull();
+        result!.MemoryId.Should().Be("mem_123");
+        result.AudioFileId.Should().Be("file_456");
+        result.Text.Should().Contain("Speaker A");
+        result.Duration.Should().Be(10.5);
+        result.Language.Should().Be("en");
+        result.LanguageConfidence.Should().Be(0.98);
+        result.Provider.Should().Be("assemblyai");
+        result.Summary.Should().Be("A greeting conversation between two people.");
+
+        // Assert - Content safety
+        result.ContentSafetyLabels.Should().NotBeNull();
+        result.ContentSafetyLabels.Should().HaveCount(1);
+        result.ContentSafetyLabels![0].Label.Should().Be("profanity");
+        result.ContentSafetyLabels[0].Confidence.Should().Be(0.85);
+        result.ContentSafetyLabels[0].Severity.Should().Be("low");
+        result.ContentSafetyLabels[0].Timestamp.Should().NotBeNull();
+        result.ContentSafetyLabels[0].Timestamp!.Start.Should().Be(1.5);
+        result.ContentSafetyLabels[0].Timestamp.End.Should().Be(2.0);
+
+        // Assert - Provider metadata
+        result.ProviderMetadata.Should().NotBeNull();
+        result.ProviderMetadata.Should().ContainKey("modelVersion");
+
+        // Assert - Segments with speaker diarization
+        result.Segments.Should().NotBeNull();
+        result.Segments.Should().HaveCount(1);
+        result.Segments![0].Id.Should().Be("seg_1");
+        result.Segments[0].Speaker.Should().Be("A");
+        result.Segments[0].Text.Should().Be("Hello");
+        result.Segments[0].Confidence.Should().Be(0.95);
+        result.Segments[0].Words.Should().HaveCount(1);
+        result.Segments[0].Words![0].Speaker.Should().Be("A");
+
+        // Assert - Entities
+        result.Entities.Should().NotBeNull();
+        result.Entities.Should().HaveCount(1);
+        result.Entities![0].Id.Should().Be("ent_1");
+        result.Entities[0].EntityType.Should().Be("person");
+        result.Entities[0].Text.Should().Be("John Smith");
+        result.Entities[0].Confidence.Should().Be(0.92);
+
+        // Assert - Chapters
+        result.Chapters.Should().NotBeNull();
+        result.Chapters.Should().HaveCount(1);
+        result.Chapters![0].Id.Should().Be("ch_1");
+        result.Chapters[0].Headline.Should().Be("Introduction");
+        result.Chapters[0].Summary.Should().Be("Initial greetings");
+        result.Chapters[0].Gist.Should().Be("Greetings");
+
+        // Assert - Words
+        result.Words.Should().NotBeNull();
+        result.Words.Should().HaveCount(1);
+        result.Words![0].Word.Should().Be("Hello");
+        result.Words[0].Speaker.Should().Be("A");
+    }
+
+    [Fact]
+    public void TranscriptSegment_Deserialization()
+    {
+        // Arrange
+        var json = """
+        {
+            "id": "seg_1",
+            "startTime": 0.0,
+            "endTime": 5.5,
+            "text": "This is a segment",
+            "segmentIndex": 0,
+            "confidence": 0.92,
+            "speaker": "A",
+            "wordConfidenceAvg": 0.91
+        }
+        """;
+
+        // Act
+        var segment = JsonSerializer.Deserialize<TranscriptSegment>(json, JsonOptions);
+
+        // Assert
+        segment.Should().NotBeNull();
+        segment!.Id.Should().Be("seg_1");
+        segment.StartTime.Should().Be(0.0);
+        segment.EndTime.Should().Be(5.5);
+        segment.Text.Should().Be("This is a segment");
+        segment.SegmentIndex.Should().Be(0);
+        segment.Confidence.Should().Be(0.92);
+        segment.Speaker.Should().Be("A");
+        segment.WordConfidenceAvg.Should().Be(0.91);
+    }
+
+    [Fact]
+    public void TranscriptEntity_Deserialization()
+    {
+        // Arrange
+        var json = """
+        {
+            "id": "ent_123",
+            "entityType": "organization",
+            "text": "Acme Corp",
+            "startTime": 2.5,
+            "endTime": 3.0,
+            "confidence": 0.88,
+            "metadata": {
+                "industry": "technology"
+            }
+        }
+        """;
+
+        // Act
+        var entity = JsonSerializer.Deserialize<TranscriptEntity>(json, JsonOptions);
+
+        // Assert
+        entity.Should().NotBeNull();
+        entity!.Id.Should().Be("ent_123");
+        entity.EntityType.Should().Be("organization");
+        entity.Text.Should().Be("Acme Corp");
+        entity.StartTime.Should().Be(2.5);
+        entity.EndTime.Should().Be(3.0);
+        entity.Confidence.Should().Be(0.88);
+        entity.Metadata.Should().ContainKey("industry");
+    }
+
+    [Fact]
+    public void TranscriptChapter_Deserialization()
+    {
+        // Arrange
+        var json = """
+        {
+            "id": "ch_1",
+            "chapterIndex": 0,
+            "headline": "Opening Remarks",
+            "summary": "The speaker introduces the main topic",
+            "gist": "Introduction",
+            "startTime": 0.0,
+            "endTime": 60.0
+        }
+        """;
+
+        // Act
+        var chapter = JsonSerializer.Deserialize<TranscriptChapter>(json, JsonOptions);
+
+        // Assert
+        chapter.Should().NotBeNull();
+        chapter!.Id.Should().Be("ch_1");
+        chapter.ChapterIndex.Should().Be(0);
+        chapter.Headline.Should().Be("Opening Remarks");
+        chapter.Summary.Should().Be("The speaker introduces the main topic");
+        chapter.Gist.Should().Be("Introduction");
+        chapter.StartTime.Should().Be(0.0);
+        chapter.EndTime.Should().Be(60.0);
+    }
+
+    [Fact]
+    public void ContentSafetyLabel_Deserialization()
+    {
+        // Arrange
+        var json = """
+        {
+            "label": "hate_speech",
+            "confidence": 0.95,
+            "severity": "high",
+            "timestamp": {
+                "start": 10.5,
+                "end": 12.0
+            }
+        }
+        """;
+
+        // Act
+        var label = JsonSerializer.Deserialize<ContentSafetyLabel>(json, JsonOptions);
+
+        // Assert
+        label.Should().NotBeNull();
+        label!.Label.Should().Be("hate_speech");
+        label.Confidence.Should().Be(0.95);
+        label.Severity.Should().Be("high");
+        label.Timestamp.Should().NotBeNull();
+        label.Timestamp!.Start.Should().Be(10.5);
+        label.Timestamp.End.Should().Be(12.0);
+    }
+
+    [Fact]
+    public void WordTimestamp_WithSpeaker_Deserialization()
+    {
+        // Arrange
+        var json = """
+        {
+            "word": "Hello",
+            "start": 0.0,
+            "end": 0.5,
+            "confidence": 0.98,
+            "speaker": "B"
+        }
+        """;
+
+        // Act
+        var word = JsonSerializer.Deserialize<WordTimestamp>(json, JsonOptions);
+
+        // Assert
+        word.Should().NotBeNull();
+        word!.Word.Should().Be("Hello");
+        word.Start.Should().Be(0.0);
+        word.End.Should().Be(0.5);
+        word.Confidence.Should().Be(0.98);
+        word.Speaker.Should().Be("B");
     }
 }

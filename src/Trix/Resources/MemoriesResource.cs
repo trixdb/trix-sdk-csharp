@@ -347,21 +347,48 @@ public class BulkUpdateItem
 }
 
 /// <summary>
-/// Result of transcription.
+/// Result of transcription with full metadata, segments, entities, and chapters.
 /// </summary>
 public class TranscriptResult
 {
     /// <summary>Gets or sets the memory ID.</summary>
     public string MemoryId { get; set; } = string.Empty;
 
-    /// <summary>Gets or sets the transcript text.</summary>
+    /// <summary>Gets or sets the audio file ID.</summary>
+    public string? AudioFileId { get; set; }
+
+    /// <summary>Gets or sets the full transcript text.</summary>
     public string Text { get; set; } = string.Empty;
 
     /// <summary>Gets or sets the duration in seconds.</summary>
     public double? Duration { get; set; }
 
-    /// <summary>Gets or sets the language detected.</summary>
+    /// <summary>Gets or sets the detected language code.</summary>
     public string? Language { get; set; }
+
+    /// <summary>Gets or sets the language detection confidence (0-1).</summary>
+    public double? LanguageConfidence { get; set; }
+
+    /// <summary>Gets or sets the transcription provider used ('assemblyai', 'openai').</summary>
+    public string? Provider { get; set; }
+
+    /// <summary>Gets or sets the auto-generated summary (when EnableAutoSummarization is true).</summary>
+    public string? Summary { get; set; }
+
+    /// <summary>Gets or sets content safety labels (when EnableContentSafety is true).</summary>
+    public List<ContentSafetyLabel>? ContentSafetyLabels { get; set; }
+
+    /// <summary>Gets or sets provider-specific metadata.</summary>
+    public Dictionary<string, object>? ProviderMetadata { get; set; }
+
+    /// <summary>Gets or sets transcript segments with speaker information (when EnableSpeakerDiarization is true).</summary>
+    public List<TranscriptSegment>? Segments { get; set; }
+
+    /// <summary>Gets or sets detected entities (when EnableEntityDetection is true).</summary>
+    public List<TranscriptEntity>? Entities { get; set; }
+
+    /// <summary>Gets or sets auto-generated chapters (when EnableAutoChapters is true).</summary>
+    public List<TranscriptChapter>? Chapters { get; set; }
 
     /// <summary>Gets or sets word-level timestamps.</summary>
     public List<WordTimestamp>? Words { get; set; }
@@ -383,6 +410,126 @@ public class WordTimestamp
 
     /// <summary>Gets or sets the confidence score.</summary>
     public double? Confidence { get; set; }
+
+    /// <summary>Gets or sets the speaker label (when diarization is enabled).</summary>
+    public string? Speaker { get; set; }
+}
+
+/// <summary>
+/// Transcript segment with speaker information and word-level details.
+/// </summary>
+public class TranscriptSegment
+{
+    /// <summary>Gets or sets the segment ID.</summary>
+    public string? Id { get; set; }
+
+    /// <summary>Gets or sets the start time in seconds.</summary>
+    public double StartTime { get; set; }
+
+    /// <summary>Gets or sets the end time in seconds.</summary>
+    public double EndTime { get; set; }
+
+    /// <summary>Gets or sets the segment text.</summary>
+    public string Text { get; set; } = string.Empty;
+
+    /// <summary>Gets or sets the segment index.</summary>
+    public int SegmentIndex { get; set; }
+
+    /// <summary>Gets or sets the confidence score (0-1).</summary>
+    public double? Confidence { get; set; }
+
+    /// <summary>Gets or sets the speaker label (e.g., 'A', 'B', 'Speaker 1').</summary>
+    public string? Speaker { get; set; }
+
+    /// <summary>Gets or sets word-level timestamps for this segment.</summary>
+    public List<WordTimestamp>? Words { get; set; }
+
+    /// <summary>Gets or sets the average word confidence.</summary>
+    public double? WordConfidenceAvg { get; set; }
+}
+
+/// <summary>
+/// Entity detected in the transcript.
+/// </summary>
+public class TranscriptEntity
+{
+    /// <summary>Gets or sets the entity ID.</summary>
+    public string? Id { get; set; }
+
+    /// <summary>Gets or sets the entity type (e.g., 'person_name', 'organization', 'location').</summary>
+    public string EntityType { get; set; } = string.Empty;
+
+    /// <summary>Gets or sets the entity text.</summary>
+    public string Text { get; set; } = string.Empty;
+
+    /// <summary>Gets or sets the start time in seconds.</summary>
+    public double? StartTime { get; set; }
+
+    /// <summary>Gets or sets the end time in seconds.</summary>
+    public double? EndTime { get; set; }
+
+    /// <summary>Gets or sets the confidence score.</summary>
+    public double? Confidence { get; set; }
+
+    /// <summary>Gets or sets additional entity metadata.</summary>
+    public Dictionary<string, object>? Metadata { get; set; }
+}
+
+/// <summary>
+/// Auto-generated chapter in the transcript.
+/// </summary>
+public class TranscriptChapter
+{
+    /// <summary>Gets or sets the chapter ID.</summary>
+    public string? Id { get; set; }
+
+    /// <summary>Gets or sets the chapter index.</summary>
+    public int ChapterIndex { get; set; }
+
+    /// <summary>Gets or sets the chapter headline.</summary>
+    public string Headline { get; set; } = string.Empty;
+
+    /// <summary>Gets or sets the chapter summary.</summary>
+    public string? Summary { get; set; }
+
+    /// <summary>Gets or sets the short gist/title.</summary>
+    public string? Gist { get; set; }
+
+    /// <summary>Gets or sets the start time in seconds.</summary>
+    public double StartTime { get; set; }
+
+    /// <summary>Gets or sets the end time in seconds.</summary>
+    public double EndTime { get; set; }
+}
+
+/// <summary>
+/// Time range for content safety labels.
+/// </summary>
+public class TimestampRange
+{
+    /// <summary>Gets or sets the start time in seconds.</summary>
+    public double Start { get; set; }
+
+    /// <summary>Gets or sets the end time in seconds.</summary>
+    public double End { get; set; }
+}
+
+/// <summary>
+/// Content safety label from transcript analysis.
+/// </summary>
+public class ContentSafetyLabel
+{
+    /// <summary>Gets or sets the label type (e.g., 'profanity', 'hate_speech').</summary>
+    public string Label { get; set; } = string.Empty;
+
+    /// <summary>Gets or sets the confidence score (0-1).</summary>
+    public double Confidence { get; set; }
+
+    /// <summary>Gets or sets the severity level.</summary>
+    public string? Severity { get; set; }
+
+    /// <summary>Gets or sets the timestamp range.</summary>
+    public TimestampRange? Timestamp { get; set; }
 }
 
 /// <summary>
