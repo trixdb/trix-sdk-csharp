@@ -60,6 +60,68 @@ public enum TranscriptStatus
 }
 
 /// <summary>
+/// Origin types for memory context classification (life domain context).
+/// </summary>
+[JsonConverter(typeof(JsonStringEnumConverter))]
+public enum OriginType
+{
+    /// <summary>Work-related context.</summary>
+    [JsonPropertyName("work")] Work,
+
+    /// <summary>Private/personal context.</summary>
+    [JsonPropertyName("private")] Private,
+
+    /// <summary>Shared context.</summary>
+    [JsonPropertyName("shared")] Shared,
+
+    /// <summary>Learning context.</summary>
+    [JsonPropertyName("learning")] Learning
+}
+
+/// <summary>
+/// Source types for memory provenance tracking (how/where memory was captured).
+/// </summary>
+[JsonConverter(typeof(JsonStringEnumConverter))]
+public enum SourceType
+{
+    /// <summary>Email source.</summary>
+    [JsonPropertyName("email")] Email,
+
+    /// <summary>Meeting source.</summary>
+    [JsonPropertyName("meeting")] Meeting,
+
+    /// <summary>Chat/messaging source.</summary>
+    [JsonPropertyName("chat")] Chat,
+
+    /// <summary>Document source.</summary>
+    [JsonPropertyName("document")] Document,
+
+    /// <summary>Webpage source.</summary>
+    [JsonPropertyName("webpage")] Webpage,
+
+    /// <summary>Audio recording source.</summary>
+    [JsonPropertyName("audio")] Audio,
+
+    /// <summary>Video recording source.</summary>
+    [JsonPropertyName("video")] Video,
+
+    /// <summary>Screenshot source.</summary>
+    [JsonPropertyName("screenshot")] Screenshot,
+
+    /// <summary>Manual entry source.</summary>
+    [JsonPropertyName("manual")] Manual,
+
+    /// <summary>AI agent source.</summary>
+    [JsonPropertyName("agent")] Agent,
+
+    /// <summary>API source.</summary>
+    [JsonPropertyName("api")] Api,
+
+    /// <summary>Import source.</summary>
+    [JsonPropertyName("import")] Import
+}
+
+/// <summary>
 /// Represents a memory in Trix.
 /// </summary>
 public class Memory
@@ -123,6 +185,26 @@ public class Memory
     /// <summary>Gets or sets the quality score for this memory (0-1).</summary>
     [JsonPropertyName("qualityScore")]
     public double? QualityScore { get; set; }
+
+    /// <summary>Gets or sets the session ID this memory belongs to.</summary>
+    [JsonPropertyName("sessionId")]
+    public string? SessionId { get; set; }
+
+    /// <summary>Gets or sets the origin type (life domain context).</summary>
+    [JsonPropertyName("originType")]
+    public OriginType? OriginType { get; set; }
+
+    /// <summary>Gets or sets the source type (provenance tracking).</summary>
+    [JsonPropertyName("sourceType")]
+    public SourceType? SourceType { get; set; }
+
+    /// <summary>Gets or sets the source ID.</summary>
+    [JsonPropertyName("sourceId")]
+    public string? SourceId { get; set; }
+
+    /// <summary>Gets or sets the source metadata.</summary>
+    [JsonPropertyName("sourceMetadata")]
+    public Dictionary<string, object>? SourceMetadata { get; set; }
 }
 
 /// <summary>
@@ -161,6 +243,30 @@ public class CreateMemoryRequest
     /// <summary>Gets or sets the protection level for the memory.</summary>
     [JsonPropertyName("protectionLevel")]
     public ProtectionLevel ProtectionLevel { get; set; } = ProtectionLevel.None;
+
+    /// <summary>Gets or sets the session ID.</summary>
+    [JsonPropertyName("sessionId")]
+    public string? SessionId { get; set; }
+
+    /// <summary>Gets or sets the origin type (life domain context).</summary>
+    [JsonPropertyName("originType")]
+    public OriginType? OriginType { get; set; }
+
+    /// <summary>Gets or sets the source type (provenance tracking).</summary>
+    [JsonPropertyName("sourceType")]
+    public SourceType? SourceType { get; set; }
+
+    /// <summary>Gets or sets the source ID.</summary>
+    [JsonPropertyName("sourceId")]
+    public string? SourceId { get; set; }
+
+    /// <summary>Gets or sets the source metadata.</summary>
+    [JsonPropertyName("sourceMetadata")]
+    public Dictionary<string, object>? SourceMetadata { get; set; }
+
+    /// <summary>Gets or sets resource IDs to link.</summary>
+    [JsonPropertyName("resourceIds")]
+    public List<string>? ResourceIds { get; set; }
 }
 
 /// <summary>
@@ -183,6 +289,22 @@ public class UpdateMemoryRequest
     /// <summary>Gets or sets the embedding.</summary>
     [JsonPropertyName("embedding")]
     public float[]? Embedding { get; set; }
+
+    /// <summary>Gets or sets the origin type (life domain context).</summary>
+    [JsonPropertyName("originType")]
+    public OriginType? OriginType { get; set; }
+
+    /// <summary>Gets or sets the source type (provenance tracking).</summary>
+    [JsonPropertyName("sourceType")]
+    public SourceType? SourceType { get; set; }
+
+    /// <summary>Gets or sets the source ID.</summary>
+    [JsonPropertyName("sourceId")]
+    public string? SourceId { get; set; }
+
+    /// <summary>Gets or sets the source metadata.</summary>
+    [JsonPropertyName("sourceMetadata")]
+    public Dictionary<string, object>? SourceMetadata { get; set; }
 }
 
 /// <summary>

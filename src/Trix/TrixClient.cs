@@ -50,6 +50,8 @@ public sealed class TrixClient : IDisposable
     private readonly FactsResource _facts;
     private readonly EntitiesResource _entities;
     private readonly EnrichmentsResource _enrichments;
+    private readonly SessionsResource _sessions;
+    private readonly ResourcesResource _resources;
 
     /// <summary>
     /// Gets the memories resource for managing memories.
@@ -136,6 +138,18 @@ public sealed class TrixClient : IDisposable
     public EnrichmentsResource Enrichments { get { ThrowIfDisposed(); return _enrichments; } }
 
     /// <summary>
+    /// Gets the sessions resource for managing CLI sessions.
+    /// </summary>
+    /// <exception cref="ObjectDisposedException">If the client has been disposed.</exception>
+    public SessionsResource Sessions { get { ThrowIfDisposed(); return _sessions; } }
+
+    /// <summary>
+    /// Gets the resources resource for managing resources (projects, topics, etc.).
+    /// </summary>
+    /// <exception cref="ObjectDisposedException">If the client has been disposed.</exception>
+    public ResourcesResource Resources { get { ThrowIfDisposed(); return _resources; } }
+
+    /// <summary>
     /// Creates a new Trix client with the specified API key.
     /// </summary>
     /// <param name="apiKey">The API key for authentication.</param>
@@ -180,6 +194,8 @@ public sealed class TrixClient : IDisposable
         _facts = new FactsResource(_pipeline);
         _entities = new EntitiesResource(_pipeline);
         _enrichments = new EnrichmentsResource(_pipeline);
+        _sessions = new SessionsResource(_pipeline);
+        _resources = new ResourcesResource(_pipeline);
 
         _logger.LogInformation("TrixClient initialized (SDK v{Version})", Version);
     }

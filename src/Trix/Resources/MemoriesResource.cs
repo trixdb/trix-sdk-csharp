@@ -995,6 +995,55 @@ public class MemoriesResource : BaseResource
     }
 
     #endregion
+
+    #region Resource Linking
+
+    /// <summary>
+    /// Links a resource to a memory.
+    /// </summary>
+    public virtual async Task<LinkResourceResult> LinkResourceAsync(
+        string id,
+        string resourceId,
+        ResourceRelationshipType? relationshipType = null,
+        CancellationToken cancellationToken = default)
+    {
+        ArgumentException.ThrowIfNullOrEmpty(id);
+        ArgumentException.ThrowIfNullOrEmpty(resourceId);
+
+        var request = new LinkResourceRequest
+        {
+            ResourceId = resourceId,
+            RelationshipType = relationshipType
+        };
+
+        return await PostAsync<LinkResourceResult>($"{BasePath}/{id}/resources", request, cancellationToken).ConfigureAwait(false);
+    }
+
+    /// <summary>
+    /// Gets resources linked to a memory.
+    /// </summary>
+    public virtual async Task<MemoryResourcesResult> GetResourcesAsync(
+        string id,
+        CancellationToken cancellationToken = default)
+    {
+        ArgumentException.ThrowIfNullOrEmpty(id);
+        return await GetAsync<MemoryResourcesResult>($"{BasePath}/{id}/resources", cancellationToken: cancellationToken).ConfigureAwait(false);
+    }
+
+    /// <summary>
+    /// Unlinks a resource from a memory.
+    /// </summary>
+    public virtual async Task<UnlinkResourceResult> UnlinkResourceAsync(
+        string id,
+        string resourceId,
+        CancellationToken cancellationToken = default)
+    {
+        ArgumentException.ThrowIfNullOrEmpty(id);
+        ArgumentException.ThrowIfNullOrEmpty(resourceId);
+        return await DeleteAsync<UnlinkResourceResult>($"{BasePath}/{id}/resources/{resourceId}", cancellationToken).ConfigureAwait(false);
+    }
+
+    #endregion
 }
 
 /// <summary>
