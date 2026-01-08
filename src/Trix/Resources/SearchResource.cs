@@ -16,6 +16,42 @@ public class SearchResource : BaseResource
     }
 
     /// <summary>
+    /// Searches for memories using semantic search.
+    /// </summary>
+    /// <param name="query">The search query.</param>
+    /// <param name="request">Optional search parameters.</param>
+    /// <param name="cancellationToken">Cancellation token.</param>
+    /// <returns>List of memories matching the search query.</returns>
+    public virtual async Task<List<Memory>> SearchAsync(
+        string query,
+        SearchRequest? request = null,
+        CancellationToken cancellationToken = default)
+    {
+        ArgumentException.ThrowIfNullOrEmpty(query);
+
+        var queryParams = new Dictionary<string, string?>
+        {
+            ["query"] = query
+        };
+
+        if (request != null)
+        {
+            if (request.Limit != null) queryParams["limit"] = request.Limit.ToString();
+            if (request.ClusterScale != null) queryParams["clusterScale"] = request.ClusterScale.ToString()?.ToLowerInvariant();
+            if (request.SpaceId != null) queryParams["spaceId"] = request.SpaceId;
+            if (request.Threshold != null) queryParams["threshold"] = request.Threshold.Value.ToString(System.Globalization.CultureInfo.InvariantCulture);
+            if (request.Tags != null && request.Tags.Count > 0)
+            {
+                queryParams["tags"] = string.Join(",", request.Tags);
+            }
+        }
+
+        var response = await GetAsync<PaginatedResponse<Memory>>("/v1/search", queryParams, cancellationToken)
+            .ConfigureAwait(false);
+        return response.Data;
+    }
+
+    /// <summary>
     /// Finds memories similar to a given memory.
     /// </summary>
     /// <param name="memoryId">Memory ID to find similar memories for.</param>
@@ -33,7 +69,8 @@ public class SearchResource : BaseResource
             ("limit", request?.Limit),
             ("threshold", request?.Threshold),
             ("includeEmbedding", request?.IncludeEmbedding),
-            ("spaceId", request?.SpaceId)
+            ("spaceId", request?.SpaceId),
+            ("clusterScale", request?.ClusterScale?.ToString()?.ToLowerInvariant())
         );
 
         return await GetAsync<SimilarityResult>($"/v1/search/similar/{memoryId}", queryParams, cancellationToken)

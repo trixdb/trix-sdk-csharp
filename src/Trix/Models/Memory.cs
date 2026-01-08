@@ -22,6 +22,22 @@ public enum MemoryType
 }
 
 /// <summary>
+/// Represents the protection level for a memory.
+/// </summary>
+[JsonConverter(typeof(JsonStringEnumConverter))]
+public enum ProtectionLevel
+{
+    /// <summary>No protection - memory can be modified or deleted freely.</summary>
+    [JsonPropertyName("none")] None,
+
+    /// <summary>Soft protection - requires confirmation for modifications.</summary>
+    [JsonPropertyName("soft")] Soft,
+
+    /// <summary>Hard protection - memory cannot be modified or deleted.</summary>
+    [JsonPropertyName("hard")] Hard
+}
+
+/// <summary>
 /// Represents the transcript status of audio memories.
 /// </summary>
 [JsonConverter(typeof(JsonStringEnumConverter))]
@@ -84,6 +100,26 @@ public class Memory
     /// <summary>Gets or sets the transcript status for audio memories.</summary>
     [JsonPropertyName("transcriptStatus")]
     public TranscriptStatus? TranscriptStatus { get; set; }
+
+    /// <summary>Gets or sets whether this memory is pinned.</summary>
+    [JsonPropertyName("isPinned")]
+    public bool IsPinned { get; set; }
+
+    /// <summary>Gets or sets the protection level for this memory.</summary>
+    [JsonPropertyName("protectionLevel")]
+    public ProtectionLevel ProtectionLevel { get; set; } = ProtectionLevel.None;
+
+    /// <summary>Gets or sets whether this memory is soft deleted.</summary>
+    [JsonPropertyName("isDeleted")]
+    public bool IsDeleted { get; set; }
+
+    /// <summary>Gets or sets the deletion timestamp (for soft deleted memories).</summary>
+    [JsonPropertyName("deletedAt")]
+    public DateTimeOffset? DeletedAt { get; set; }
+
+    /// <summary>Gets or sets the quality score for this memory (0-1).</summary>
+    [JsonPropertyName("qualityScore")]
+    public double? QualityScore { get; set; }
 }
 
 /// <summary>
@@ -114,6 +150,14 @@ public class CreateMemoryRequest
     /// <summary>Gets or sets a pre-computed embedding.</summary>
     [JsonPropertyName("embedding")]
     public float[]? Embedding { get; set; }
+
+    /// <summary>Gets or sets whether the memory should be pinned on creation.</summary>
+    [JsonPropertyName("isPinned")]
+    public bool IsPinned { get; set; }
+
+    /// <summary>Gets or sets the protection level for the memory.</summary>
+    [JsonPropertyName("protectionLevel")]
+    public ProtectionLevel ProtectionLevel { get; set; } = ProtectionLevel.None;
 }
 
 /// <summary>
@@ -172,6 +216,18 @@ public class ListMemoriesRequest
 
     /// <summary>Sort order (asc or desc).</summary>
     public string? SortOrder { get; set; }
+
+    /// <summary>Filter by pinned status (true for pinned only, false for unpinned only).</summary>
+    public bool? Pinned { get; set; }
+
+    /// <summary>Filter by protection status (true for protected memories only).</summary>
+    public bool? Protected { get; set; }
+
+    /// <summary>Filter by minimum quality score (0-1).</summary>
+    public double? MinQuality { get; set; }
+
+    /// <summary>Include soft-deleted memories in results.</summary>
+    public bool? IncludeDeleted { get; set; }
 }
 
 /// <summary>

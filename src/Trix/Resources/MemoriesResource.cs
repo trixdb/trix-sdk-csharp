@@ -98,6 +98,10 @@ public class MemoriesResource : BaseResource
             {
                 queryParams["tags"] = string.Join(",", request.Tags);
             }
+            if (request.Pinned != null) queryParams["pinned"] = request.Pinned.Value.ToString().ToLowerInvariant();
+            if (request.Protected != null) queryParams["protected"] = request.Protected.Value.ToString().ToLowerInvariant();
+            if (request.MinQuality != null) queryParams["minQuality"] = request.MinQuality.Value.ToString(System.Globalization.CultureInfo.InvariantCulture);
+            if (request.IncludeDeleted != null) queryParams["includeDeleted"] = request.IncludeDeleted.Value.ToString().ToLowerInvariant();
         }
 
         return await GetAsync<PaginatedResponse<Memory>>(BasePath, queryParams, cancellationToken).ConfigureAwait(false);
@@ -302,6 +306,93 @@ public class MemoriesResource : BaseResource
     }
 
     /// <summary>
+    /// Pins a memory to prevent it from being automatically cleaned up.
+    /// </summary>
+    /// <param name="id">The memory ID.</param>
+    /// <param name="cancellationToken">Cancellation token.</param>
+    /// <returns>The updated memory.</returns>
+    public virtual async Task<Memory> PinAsync(
+        string id,
+        CancellationToken cancellationToken = default)
+    {
+        ArgumentException.ThrowIfNullOrEmpty(id);
+        return await PostAsync<Memory>($"{BasePath}/{id}/pin", null, cancellationToken).ConfigureAwait(false);
+    }
+
+    /// <summary>
+    /// Unpins a memory.
+    /// </summary>
+    /// <param name="id">The memory ID.</param>
+    /// <param name="cancellationToken">Cancellation token.</param>
+    /// <returns>The updated memory.</returns>
+    public virtual async Task<Memory> UnpinAsync(
+        string id,
+        CancellationToken cancellationToken = default)
+    {
+        ArgumentException.ThrowIfNullOrEmpty(id);
+        return await PostAsync<Memory>($"{BasePath}/{id}/unpin", null, cancellationToken).ConfigureAwait(false);
+    }
+
+    /// <summary>
+    /// Sets the protection level for a memory.
+    /// </summary>
+    /// <param name="id">The memory ID.</param>
+    /// <param name="level">The protection level to set.</param>
+    /// <param name="cancellationToken">Cancellation token.</param>
+    /// <returns>The updated memory.</returns>
+    public virtual async Task<Memory> SetProtectionLevelAsync(
+        string id,
+        ProtectionLevel level,
+        CancellationToken cancellationToken = default)
+    {
+        ArgumentException.ThrowIfNullOrEmpty(id);
+        return await PostAsync<Memory>($"{BasePath}/{id}/protection", new { level = level.ToString().ToLowerInvariant() }, cancellationToken).ConfigureAwait(false);
+    }
+
+    /// <summary>
+    /// Soft deletes a memory (marks it as deleted but retains the data).
+    /// </summary>
+    /// <param name="id">The memory ID.</param>
+    /// <param name="cancellationToken">Cancellation token.</param>
+    /// <returns>The updated memory.</returns>
+    public virtual async Task<Memory> SoftDeleteAsync(
+        string id,
+        CancellationToken cancellationToken = default)
+    {
+        ArgumentException.ThrowIfNullOrEmpty(id);
+        return await PostAsync<Memory>($"{BasePath}/{id}/soft-delete", null, cancellationToken).ConfigureAwait(false);
+    }
+
+    /// <summary>
+    /// Restores a soft-deleted memory.
+    /// </summary>
+    /// <param name="id">The memory ID.</param>
+    /// <param name="cancellationToken">Cancellation token.</param>
+    /// <returns>The restored memory.</returns>
+    public virtual async Task<Memory> RestoreAsync(
+        string id,
+        CancellationToken cancellationToken = default)
+    {
+        ArgumentException.ThrowIfNullOrEmpty(id);
+        return await PostAsync<Memory>($"{BasePath}/{id}/restore", null, cancellationToken).ConfigureAwait(false);
+    }
+
+    /// <summary>
+    /// Gets the quality score for a memory.
+    /// </summary>
+    /// <param name="id">The memory ID.</param>
+    /// <param name="cancellationToken">Cancellation token.</param>
+    /// <returns>The quality score (0-1).</returns>
+    public virtual async Task<double> GetQualityScoreAsync(
+        string id,
+        CancellationToken cancellationToken = default)
+    {
+        ArgumentException.ThrowIfNullOrEmpty(id);
+        var result = await GetAsync<QualityScoreResponse>($"{BasePath}/{id}/quality", cancellationToken: cancellationToken).ConfigureAwait(false);
+        return result.Score;
+    }
+
+    /// <summary>
     /// Gets memory statistics.
     /// </summary>
     /// <param name="request">Statistics parameters.</param>
@@ -325,6 +416,74 @@ public class MemoriesResource : BaseResource
         }
 
         return await GetAsync<MemoryStats>($"{BasePath}/stats", queryParams, cancellationToken).ConfigureAwait(false);
+    }
+
+    /// <summary>
+    /// Gets topics extracted from a memory.
+    /// </summary>
+    /// <param name="id">The memory ID.</param>
+    /// <param name="options">Options for retrieving topics.</param>
+    /// <param name="cancellationToken">Cancellation token.</param>
+    /// <returns>List of topics extracted from the memory.</returns>
+    public virtual async Task<List<Topic>> GetTopicsAsync(
+        string id,
+        GetTopicsOptions? options = null,
+        CancellationToken cancellationToken = default)
+    {
+        ArgumentException.ThrowIfNullOrEmpty(id);
+
+        var queryParams = new Dictionary<string, string?>();
+        if (options != null)
+        {
+            if (options.Refresh) queryParams["refresh"] = "true";
+            if (options.MinRelevance != null) queryParams["minRelevance"] = options.MinRelevance.Value.ToString(System.Globalization.CultureInfo.InvariantCulture);
+            if (options.Categories != null && options.Categories.Count > 0)
+            {
+                queryParams["categories"] = string.Join(",", options.Categories);
+            }
+        }
+
+        return await GetAsync<List<Topic>>($"{BasePath}/{id}/topics", queryParams, cancellationToken).ConfigureAwait(false);
+    }
+
+    /// <summary>
+    /// Searches for memories by topic.
+    /// </summary>
+    /// <param name="topic">The topic to search for.</param>
+    /// <param name="limit">Maximum number of results to return.</param>
+    /// <param name="cancellationToken">Cancellation token.</param>
+    /// <returns>List of memories matching the topic.</returns>
+    public virtual async Task<List<Memory>> SearchByTopicAsync(
+        string topic,
+        int limit = 10,
+        CancellationToken cancellationToken = default)
+    {
+        ArgumentException.ThrowIfNullOrEmpty(topic);
+
+        var queryParams = new Dictionary<string, string?>
+        {
+            ["topic"] = topic,
+            ["limit"] = limit.ToString()
+        };
+
+        var response = await GetAsync<PaginatedResponse<Memory>>($"{BasePath}/search/topic", queryParams, cancellationToken).ConfigureAwait(false);
+        return response.Data;
+    }
+
+    /// <summary>
+    /// Enriches a memory with additional extracted information.
+    /// </summary>
+    /// <param name="id">The memory ID.</param>
+    /// <param name="options">Enrichment options specifying which operations to perform.</param>
+    /// <param name="cancellationToken">Cancellation token.</param>
+    /// <returns>The enrichment result containing extracted information.</returns>
+    public virtual async Task<EnrichmentResult> EnrichAsync(
+        string id,
+        EnrichMemoryOptions? options = null,
+        CancellationToken cancellationToken = default)
+    {
+        ArgumentException.ThrowIfNullOrEmpty(id);
+        return await PostAsync<EnrichmentResult>($"{BasePath}/{id}/enrich", options, cancellationToken).ConfigureAwait(false);
     }
 }
 
@@ -563,4 +722,98 @@ public class TranscribeRequest
 
     /// <summary>Gets or sets the expected number of speakers (hint for diarization).</summary>
     public int? SpeakersExpected { get; set; }
+}
+
+/// <summary>
+/// Response containing a quality score.
+/// </summary>
+public class QualityScoreResponse
+{
+    /// <summary>Gets or sets the memory ID.</summary>
+    [JsonPropertyName("memoryId")]
+    public string MemoryId { get; set; } = string.Empty;
+
+    /// <summary>Gets or sets the quality score (0-1).</summary>
+    [JsonPropertyName("score")]
+    public double Score { get; set; }
+}
+
+/// <summary>
+/// Represents a topic extracted from a memory.
+/// </summary>
+public class Topic
+{
+    /// <summary>Gets or sets the topic name.</summary>
+    [JsonPropertyName("name")]
+    public string Name { get; set; } = string.Empty;
+
+    /// <summary>Gets or sets the relevance score (0-1).</summary>
+    [JsonPropertyName("relevance")]
+    public double Relevance { get; set; }
+
+    /// <summary>Gets or sets the topic category.</summary>
+    [JsonPropertyName("category")]
+    public string Category { get; set; } = string.Empty;
+}
+
+/// <summary>
+/// Options for retrieving topics from a memory.
+/// </summary>
+public class GetTopicsOptions
+{
+    /// <summary>Gets or sets whether to refresh the topics (re-extract from content).</summary>
+    public bool Refresh { get; set; }
+
+    /// <summary>Gets or sets the minimum relevance threshold (0-1).</summary>
+    public double? MinRelevance { get; set; }
+
+    /// <summary>Gets or sets the categories to filter by.</summary>
+    public List<string>? Categories { get; set; }
+}
+
+/// <summary>
+/// Enrichment operation types.
+/// </summary>
+[JsonConverter(typeof(JsonStringEnumConverter))]
+public enum EnrichmentOperation
+{
+    /// <summary>Extract topics from the memory.</summary>
+    [JsonPropertyName("topics")] Topics,
+
+    /// <summary>Generate a summary of the memory.</summary>
+    [JsonPropertyName("summary")] Summary,
+
+    /// <summary>Extract named entities from the memory.</summary>
+    [JsonPropertyName("entities")] Entities,
+
+    /// <summary>Calculate quality score for the memory.</summary>
+    [JsonPropertyName("quality")] Quality
+}
+
+/// <summary>
+/// Result of enriching a memory.
+/// </summary>
+public class EnrichmentResult
+{
+    /// <summary>Gets or sets the memory ID.</summary>
+    [JsonPropertyName("memoryId")]
+    public string MemoryId { get; set; } = string.Empty;
+
+    /// <summary>Gets or sets the operations that were performed.</summary>
+    [JsonPropertyName("operations")]
+    public List<EnrichmentOperation> Operations { get; set; } = new();
+
+    /// <summary>Gets or sets the results of the enrichment operations.</summary>
+    [JsonPropertyName("results")]
+    public Dictionary<string, object> Results { get; set; } = new();
+}
+
+/// <summary>
+/// Options for enriching a memory.
+/// </summary>
+public class EnrichMemoryOptions
+{
+    /// <summary>Gets or sets the enrichment operations to perform. If null, all operations are performed.</summary>
+    [JsonPropertyName("operations")]
+    public List<EnrichmentOperation>? Operations { get; set; }
 }

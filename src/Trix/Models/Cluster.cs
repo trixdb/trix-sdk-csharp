@@ -3,6 +3,22 @@ using System.Text.Json.Serialization;
 namespace Trix.Models;
 
 /// <summary>
+/// Represents the scale/granularity of a cluster.
+/// </summary>
+[JsonConverter(typeof(JsonStringEnumConverter))]
+public enum ClusterScale
+{
+    /// <summary>Fine-grained clusters with tightly related memories.</summary>
+    [JsonPropertyName("fine")] Fine,
+
+    /// <summary>Medium-grained clusters with moderately related memories.</summary>
+    [JsonPropertyName("medium")] Medium,
+
+    /// <summary>Coarse-grained clusters with broadly related memories.</summary>
+    [JsonPropertyName("coarse")] Coarse
+}
+
+/// <summary>
 /// Represents a cluster of related memories.
 /// </summary>
 public class Cluster
@@ -42,6 +58,14 @@ public class Cluster
     /// <summary>Gets or sets the last update timestamp.</summary>
     [JsonPropertyName("updatedAt")]
     public DateTimeOffset UpdatedAt { get; set; }
+
+    /// <summary>Gets or sets the cluster scale/granularity.</summary>
+    [JsonPropertyName("scale")]
+    public ClusterScale? Scale { get; set; }
+
+    /// <summary>Gets or sets the full memories (when requested with IncludeMemories option).</summary>
+    [JsonPropertyName("memories")]
+    public List<Memory>? Memories { get; set; }
 }
 
 /// <summary>
@@ -110,6 +134,18 @@ public class ListClustersRequest
 
     /// <summary>Sort order.</summary>
     public string? SortOrder { get; set; }
+
+    /// <summary>Filter by cluster scale (Fine, Medium, or Coarse).</summary>
+    public ClusterScale? Scale { get; set; }
+}
+
+/// <summary>
+/// Options for getting a cluster.
+/// </summary>
+public class GetClusterOptions
+{
+    /// <summary>Gets or sets whether to include full memory objects in the response.</summary>
+    public bool IncludeMemories { get; set; }
 }
 
 /// <summary>

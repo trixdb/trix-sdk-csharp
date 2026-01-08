@@ -44,12 +44,22 @@ public class ClustersResource : BaseResource
     /// <summary>
     /// Gets a cluster by ID.
     /// </summary>
+    /// <param name="id">The cluster ID.</param>
+    /// <param name="options">Options for retrieving the cluster.</param>
+    /// <param name="cancellationToken">Cancellation token.</param>
+    /// <returns>The cluster.</returns>
     public virtual async Task<Cluster> GetAsync(
         string id,
+        GetClusterOptions? options = null,
         CancellationToken cancellationToken = default)
     {
         ArgumentException.ThrowIfNullOrEmpty(id);
-        return await GetAsync<Cluster>($"{BasePath}/{id}", cancellationToken: cancellationToken).ConfigureAwait(false);
+        var queryParams = new Dictionary<string, string?>();
+        if (options?.IncludeMemories == true)
+        {
+            queryParams["includeMemories"] = "true";
+        }
+        return await GetAsync<Cluster>($"{BasePath}/{id}", queryParams, cancellationToken).ConfigureAwait(false);
     }
 
     /// <summary>
@@ -93,6 +103,7 @@ public class ClustersResource : BaseResource
             if (request.SpaceId != null) queryParams["spaceId"] = request.SpaceId;
             if (request.SortBy != null) queryParams["sortBy"] = request.SortBy;
             if (request.SortOrder != null) queryParams["sortOrder"] = request.SortOrder;
+            if (request.Scale != null) queryParams["scale"] = request.Scale.ToString()?.ToLowerInvariant();
         }
 
         return await GetAsync<PaginatedResponse<Cluster>>(BasePath, queryParams, cancellationToken).ConfigureAwait(false);

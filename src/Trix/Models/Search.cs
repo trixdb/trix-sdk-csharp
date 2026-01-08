@@ -66,6 +66,54 @@ public class SimilarRequest
     /// </summary>
     [JsonPropertyName("spaceId")]
     public string? SpaceId { get; set; }
+
+    /// <summary>
+    /// Cluster scale for search (Fine, Medium, or Coarse).
+    /// </summary>
+    [JsonPropertyName("clusterScale")]
+    public ClusterScale? ClusterScale { get; set; }
+}
+
+/// <summary>
+/// Request parameters for semantic search.
+/// </summary>
+public class SearchRequest
+{
+    /// <summary>
+    /// The search query.
+    /// </summary>
+    [JsonPropertyName("query")]
+    public required string Query { get; set; }
+
+    /// <summary>
+    /// Maximum number of results to return.
+    /// </summary>
+    [JsonPropertyName("limit")]
+    public int? Limit { get; set; }
+
+    /// <summary>
+    /// Cluster scale for search (Fine, Medium, or Coarse).
+    /// </summary>
+    [JsonPropertyName("clusterScale")]
+    public ClusterScale? ClusterScale { get; set; }
+
+    /// <summary>
+    /// Filter by space ID.
+    /// </summary>
+    [JsonPropertyName("spaceId")]
+    public string? SpaceId { get; set; }
+
+    /// <summary>
+    /// Filter by tags.
+    /// </summary>
+    [JsonPropertyName("tags")]
+    public List<string>? Tags { get; set; }
+
+    /// <summary>
+    /// Minimum similarity threshold (0-1).
+    /// </summary>
+    [JsonPropertyName("threshold")]
+    public double? Threshold { get; set; }
 }
 
 /// <summary>
