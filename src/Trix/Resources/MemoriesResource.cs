@@ -485,6 +485,516 @@ public class MemoriesResource : BaseResource
         ArgumentException.ThrowIfNullOrEmpty(id);
         return await PostAsync<EnrichmentResult>($"{BasePath}/{id}/enrich", options, cancellationToken).ConfigureAwait(false);
     }
+
+    #region Image Methods
+
+    /// <summary>
+    /// Creates a memory from image data.
+    ///
+    /// Supported image formats: jpg, jpeg, png, gif, webp, bmp, tiff
+    /// </summary>
+    /// <param name="imageData">The image data stream.</param>
+    /// <param name="fileName">The file name.</param>
+    /// <param name="contentType">The content type (e.g., 'image/jpeg', 'image/png').</param>
+    /// <param name="request">Optional creation parameters.</param>
+    /// <param name="cancellationToken">Cancellation token.</param>
+    /// <returns>The created memory.</returns>
+    /// <example>
+    /// <code>
+    /// // Upload image from file
+    /// using var imageStream = File.OpenRead("photo.jpg");
+    /// var memory = await client.Memories.CreateFromImageAsync(
+    ///     imageStream,
+    ///     "photo.jpg",
+    ///     "image/jpeg"
+    /// );
+    ///
+    /// // Upload with auto-tagging
+    /// var memory = await client.Memories.CreateFromImageAsync(
+    ///     imageStream,
+    ///     "photo.jpg",
+    ///     "image/jpeg",
+    ///     new CreateImageMemoryRequest { AutoTag = true }
+    /// );
+    /// </code>
+    /// </example>
+    public virtual async Task<Memory> CreateFromImageAsync(
+        Stream imageData,
+        string fileName,
+        string contentType = "image/jpeg",
+        CreateImageMemoryRequest? request = null,
+        CancellationToken cancellationToken = default)
+    {
+        ArgumentNullException.ThrowIfNull(imageData);
+        ArgumentException.ThrowIfNullOrEmpty(fileName);
+
+        var additionalFields = new Dictionary<string, object>();
+        if (request != null)
+        {
+            if (request.Tags != null) additionalFields["tags"] = request.Tags;
+            if (request.Metadata != null) additionalFields["metadata"] = request.Metadata;
+            if (request.SpaceId != null) additionalFields["spaceId"] = request.SpaceId;
+            if (request.AutoTag != null) additionalFields["autoTag"] = request.AutoTag;
+            if (request.ExtractText != null) additionalFields["extractText"] = request.ExtractText;
+            if (request.Description != null) additionalFields["description"] = request.Description;
+        }
+
+        return await PostMultipartAsync<Memory>(
+            BasePath,
+            imageData,
+            fileName,
+            contentType,
+            additionalFields.Count > 0 ? additionalFields : null,
+            cancellationToken).ConfigureAwait(false);
+    }
+
+    /// <summary>
+    /// Creates a memory from image data provided as byte array.
+    /// </summary>
+    /// <param name="imageData">The image data.</param>
+    /// <param name="fileName">The file name.</param>
+    /// <param name="contentType">The content type (e.g., 'image/jpeg', 'image/png').</param>
+    /// <param name="request">Optional creation parameters.</param>
+    /// <param name="cancellationToken">Cancellation token.</param>
+    /// <returns>The created memory.</returns>
+    public virtual async Task<Memory> CreateFromImageAsync(
+        byte[] imageData,
+        string fileName,
+        string contentType = "image/jpeg",
+        CreateImageMemoryRequest? request = null,
+        CancellationToken cancellationToken = default)
+    {
+        ArgumentNullException.ThrowIfNull(imageData);
+        using var stream = new MemoryStream(imageData);
+        return await CreateFromImageAsync(stream, fileName, contentType, request, cancellationToken).ConfigureAwait(false);
+    }
+
+    /// <summary>
+    /// Gets the original image for a memory.
+    /// </summary>
+    /// <param name="id">The memory ID.</param>
+    /// <param name="cancellationToken">Cancellation token.</param>
+    /// <returns>The image data as a stream.</returns>
+    /// <example>
+    /// <code>
+    /// using var imageStream = await client.Memories.GetImageAsync("mem_123");
+    /// using var fileStream = File.Create("downloaded.jpg");
+    /// await imageStream.CopyToAsync(fileStream);
+    /// </code>
+    /// </example>
+    public virtual async Task<Stream> GetImageAsync(
+        string id,
+        CancellationToken cancellationToken = default)
+    {
+        ArgumentException.ThrowIfNullOrEmpty(id);
+        return await GetStreamAsync($"{BasePath}/{id}/image", cancellationToken).ConfigureAwait(false);
+    }
+
+    /// <summary>
+    /// Gets the original image for a memory as a byte array.
+    /// </summary>
+    /// <param name="id">The memory ID.</param>
+    /// <param name="cancellationToken">Cancellation token.</param>
+    /// <returns>The image data as bytes.</returns>
+    public virtual async Task<byte[]> GetImageBytesAsync(
+        string id,
+        CancellationToken cancellationToken = default)
+    {
+        using var stream = await GetImageAsync(id, cancellationToken).ConfigureAwait(false);
+        using var memoryStream = new MemoryStream();
+        await stream.CopyToAsync(memoryStream, cancellationToken).ConfigureAwait(false);
+        return memoryStream.ToArray();
+    }
+
+    /// <summary>
+    /// Gets the thumbnail for a memory.
+    /// </summary>
+    /// <param name="id">The memory ID.</param>
+    /// <param name="cancellationToken">Cancellation token.</param>
+    /// <returns>The thumbnail data as a stream.</returns>
+    public virtual async Task<Stream> GetThumbnailAsync(
+        string id,
+        CancellationToken cancellationToken = default)
+    {
+        ArgumentException.ThrowIfNullOrEmpty(id);
+        return await GetStreamAsync($"{BasePath}/{id}/thumbnail", cancellationToken).ConfigureAwait(false);
+    }
+
+    /// <summary>
+    /// Gets the thumbnail for a memory as a byte array.
+    /// </summary>
+    /// <param name="id">The memory ID.</param>
+    /// <param name="cancellationToken">Cancellation token.</param>
+    /// <returns>The thumbnail data as bytes.</returns>
+    public virtual async Task<byte[]> GetThumbnailBytesAsync(
+        string id,
+        CancellationToken cancellationToken = default)
+    {
+        using var stream = await GetThumbnailAsync(id, cancellationToken).ConfigureAwait(false);
+        using var memoryStream = new MemoryStream();
+        await stream.CopyToAsync(memoryStream, cancellationToken).ConfigureAwait(false);
+        return memoryStream.ToArray();
+    }
+
+    /// <summary>
+    /// Searches for visually similar images using an uploaded image.
+    /// </summary>
+    /// <param name="imageData">The query image data.</param>
+    /// <param name="fileName">The file name.</param>
+    /// <param name="contentType">The content type.</param>
+    /// <param name="request">Optional search parameters.</param>
+    /// <param name="cancellationToken">Cancellation token.</param>
+    /// <returns>Visual search results.</returns>
+    /// <example>
+    /// <code>
+    /// using var queryImage = File.OpenRead("query.jpg");
+    /// var results = await client.Memories.SearchVisualAsync(
+    ///     queryImage,
+    ///     "query.jpg",
+    ///     "image/jpeg",
+    ///     new VisualSearchRequest { Limit = 10, Threshold = 0.7 }
+    /// );
+    /// foreach (var match in results.Results)
+    /// {
+    ///     Console.WriteLine($"Found: {match.Memory.Id} (similarity: {match.Similarity})");
+    /// }
+    /// </code>
+    /// </example>
+    public virtual async Task<VisualSearchResult> SearchVisualAsync(
+        Stream imageData,
+        string fileName,
+        string contentType = "image/jpeg",
+        VisualSearchRequest? request = null,
+        CancellationToken cancellationToken = default)
+    {
+        ArgumentNullException.ThrowIfNull(imageData);
+        ArgumentException.ThrowIfNullOrEmpty(fileName);
+
+        var additionalFields = new Dictionary<string, object>();
+        if (request != null)
+        {
+            if (request.Limit != null) additionalFields["limit"] = request.Limit;
+            if (request.Threshold != null) additionalFields["threshold"] = request.Threshold;
+            if (request.SpaceId != null) additionalFields["spaceId"] = request.SpaceId;
+            if (request.IncludeEmbedding != null) additionalFields["includeEmbedding"] = request.IncludeEmbedding;
+        }
+
+        return await PostMultipartAsync<VisualSearchResult>(
+            $"{BasePath}/search/visual",
+            imageData,
+            fileName,
+            contentType,
+            additionalFields.Count > 0 ? additionalFields : null,
+            cancellationToken).ConfigureAwait(false);
+    }
+
+    /// <summary>
+    /// Searches for visually similar images using a byte array.
+    /// </summary>
+    /// <param name="imageData">The query image data.</param>
+    /// <param name="fileName">The file name.</param>
+    /// <param name="contentType">The content type.</param>
+    /// <param name="request">Optional search parameters.</param>
+    /// <param name="cancellationToken">Cancellation token.</param>
+    /// <returns>Visual search results.</returns>
+    public virtual async Task<VisualSearchResult> SearchVisualAsync(
+        byte[] imageData,
+        string fileName,
+        string contentType = "image/jpeg",
+        VisualSearchRequest? request = null,
+        CancellationToken cancellationToken = default)
+    {
+        ArgumentNullException.ThrowIfNull(imageData);
+        using var stream = new MemoryStream(imageData);
+        return await SearchVisualAsync(stream, fileName, contentType, request, cancellationToken).ConfigureAwait(false);
+    }
+
+    /// <summary>
+    /// Searches for images using a text query (text-to-image search).
+    /// Uses multi-modal embeddings to find images matching the text description.
+    /// </summary>
+    /// <param name="query">The text query describing the desired images.</param>
+    /// <param name="request">Optional search parameters.</param>
+    /// <param name="cancellationToken">Cancellation token.</param>
+    /// <returns>Visual search results.</returns>
+    /// <example>
+    /// <code>
+    /// var results = await client.Memories.SearchByTextAsync(
+    ///     "sunset over the ocean",
+    ///     new TextToImageSearchRequest { Limit = 10 }
+    /// );
+    /// </code>
+    /// </example>
+    public virtual async Task<VisualSearchResult> SearchByTextAsync(
+        string query,
+        TextToImageSearchRequest? request = null,
+        CancellationToken cancellationToken = default)
+    {
+        ArgumentException.ThrowIfNullOrEmpty(query);
+
+        var body = new Dictionary<string, object> { ["query"] = query };
+        if (request != null)
+        {
+            if (request.Limit != null) body["limit"] = request.Limit;
+            if (request.Threshold != null) body["threshold"] = request.Threshold;
+            if (request.SpaceId != null) body["spaceId"] = request.SpaceId;
+            if (request.Tags != null) body["tags"] = request.Tags;
+        }
+
+        return await PostAsync<VisualSearchResult>($"{BasePath}/search/text", body, cancellationToken).ConfigureAwait(false);
+    }
+
+    /// <summary>
+    /// Finds visually similar images to an existing memory.
+    /// </summary>
+    /// <param name="id">The memory ID to find similar images for.</param>
+    /// <param name="request">Optional search parameters.</param>
+    /// <param name="cancellationToken">Cancellation token.</param>
+    /// <returns>Similar memories with similarity scores.</returns>
+    /// <example>
+    /// <code>
+    /// var similar = await client.Memories.FindSimilarAsync(
+    ///     "mem_123",
+    ///     new FindSimilarImagesRequest { Type = SimilarityType.Image, Limit = 5 }
+    /// );
+    /// </code>
+    /// </example>
+    public virtual async Task<SimilarityResult> FindSimilarAsync(
+        string id,
+        FindSimilarImagesRequest? request = null,
+        CancellationToken cancellationToken = default)
+    {
+        ArgumentException.ThrowIfNullOrEmpty(id);
+
+        var queryParams = new Dictionary<string, string?>();
+        if (request != null)
+        {
+            if (request.Type != null) queryParams["type"] = request.Type.ToString()?.ToLowerInvariant();
+            if (request.Limit != null) queryParams["limit"] = request.Limit.ToString();
+            if (request.Threshold != null) queryParams["threshold"] = request.Threshold.Value.ToString(System.Globalization.CultureInfo.InvariantCulture);
+            if (request.SpaceId != null) queryParams["spaceId"] = request.SpaceId;
+            if (request.IncludeEmbedding != null) queryParams["includeEmbedding"] = request.IncludeEmbedding.Value.ToString().ToLowerInvariant();
+        }
+
+        return await GetAsync<SimilarityResult>($"{BasePath}/{id}/similar", queryParams, cancellationToken).ConfigureAwait(false);
+    }
+
+    /// <summary>
+    /// Checks for duplicate images by uploading an image.
+    /// </summary>
+    /// <param name="imageData">The image data to check.</param>
+    /// <param name="fileName">The file name.</param>
+    /// <param name="contentType">The content type.</param>
+    /// <param name="request">Optional parameters.</param>
+    /// <param name="cancellationToken">Cancellation token.</param>
+    /// <returns>Duplicate check result.</returns>
+    /// <example>
+    /// <code>
+    /// using var imageStream = File.OpenRead("photo.jpg");
+    /// var result = await client.Memories.CheckDuplicatesAsync(
+    ///     imageStream,
+    ///     "photo.jpg",
+    ///     "image/jpeg"
+    /// );
+    /// if (result.HasDuplicates)
+    /// {
+    ///     Console.WriteLine($"Found {result.Duplicates.Count} duplicates");
+    /// }
+    /// </code>
+    /// </example>
+    public virtual async Task<DuplicateCheckResult> CheckDuplicatesAsync(
+        Stream imageData,
+        string fileName,
+        string contentType = "image/jpeg",
+        CheckDuplicatesRequest? request = null,
+        CancellationToken cancellationToken = default)
+    {
+        ArgumentNullException.ThrowIfNull(imageData);
+        ArgumentException.ThrowIfNullOrEmpty(fileName);
+
+        var additionalFields = new Dictionary<string, object>();
+        if (request != null)
+        {
+            if (request.Threshold != null) additionalFields["threshold"] = request.Threshold;
+            if (request.SpaceId != null) additionalFields["spaceId"] = request.SpaceId;
+            if (request.Limit != null) additionalFields["limit"] = request.Limit;
+        }
+
+        return await PostMultipartAsync<DuplicateCheckResult>(
+            $"{BasePath}/check-duplicates",
+            imageData,
+            fileName,
+            contentType,
+            additionalFields.Count > 0 ? additionalFields : null,
+            cancellationToken).ConfigureAwait(false);
+    }
+
+    /// <summary>
+    /// Checks for duplicate images using a byte array.
+    /// </summary>
+    /// <param name="imageData">The image data to check.</param>
+    /// <param name="fileName">The file name.</param>
+    /// <param name="contentType">The content type.</param>
+    /// <param name="request">Optional parameters.</param>
+    /// <param name="cancellationToken">Cancellation token.</param>
+    /// <returns>Duplicate check result.</returns>
+    public virtual async Task<DuplicateCheckResult> CheckDuplicatesAsync(
+        byte[] imageData,
+        string fileName,
+        string contentType = "image/jpeg",
+        CheckDuplicatesRequest? request = null,
+        CancellationToken cancellationToken = default)
+    {
+        ArgumentNullException.ThrowIfNull(imageData);
+        using var stream = new MemoryStream(imageData);
+        return await CheckDuplicatesAsync(stream, fileName, contentType, request, cancellationToken).ConfigureAwait(false);
+    }
+
+    /// <summary>
+    /// Checks for duplicates of an existing memory.
+    /// </summary>
+    /// <param name="id">The memory ID to check duplicates for.</param>
+    /// <param name="request">Optional parameters.</param>
+    /// <param name="cancellationToken">Cancellation token.</param>
+    /// <returns>Duplicate check result.</returns>
+    public virtual async Task<DuplicateCheckResult> CheckDuplicatesAsync(
+        string id,
+        CheckDuplicatesRequest? request = null,
+        CancellationToken cancellationToken = default)
+    {
+        ArgumentException.ThrowIfNullOrEmpty(id);
+
+        var body = new Dictionary<string, object>();
+        if (request != null)
+        {
+            if (request.Threshold != null) body["threshold"] = request.Threshold;
+            if (request.SpaceId != null) body["spaceId"] = request.SpaceId;
+            if (request.Limit != null) body["limit"] = request.Limit;
+        }
+
+        return await PostAsync<DuplicateCheckResult>($"{BasePath}/{id}/check-duplicates", body.Count > 0 ? body : null, cancellationToken).ConfigureAwait(false);
+    }
+
+    /// <summary>
+    /// Clusters images by visual similarity.
+    /// </summary>
+    /// <param name="request">Optional clustering parameters.</param>
+    /// <param name="cancellationToken">Cancellation token.</param>
+    /// <returns>Cluster result with grouped images.</returns>
+    /// <example>
+    /// <code>
+    /// var result = await client.Memories.ClusterImagesAsync(
+    ///     new ClusterImagesRequest { NumClusters = 10 }
+    /// );
+    /// foreach (var cluster in result.Clusters)
+    /// {
+    ///     Console.WriteLine($"Cluster {cluster.Id}: {cluster.MemoryIds.Count} images");
+    /// }
+    /// </code>
+    /// </example>
+    public virtual async Task<ImageClusterResult> ClusterImagesAsync(
+        ClusterImagesRequest? request = null,
+        CancellationToken cancellationToken = default)
+    {
+        return await PostAsync<ImageClusterResult>($"{BasePath}/images/cluster", request, cancellationToken).ConfigureAwait(false);
+    }
+
+    /// <summary>
+    /// Auto-tags an image with detected objects, scenes, and colors.
+    /// </summary>
+    /// <param name="imageId">The image/memory ID to auto-tag.</param>
+    /// <param name="cancellationToken">Cancellation token.</param>
+    /// <returns>Auto-tag result with generated tags.</returns>
+    /// <example>
+    /// <code>
+    /// var result = await client.Memories.AutoTagAsync("mem_123");
+    /// foreach (var tag in result.Tags)
+    /// {
+    ///     Console.WriteLine($"Tag: {tag.Name} (confidence: {tag.Confidence})");
+    /// }
+    /// </code>
+    /// </example>
+    public virtual async Task<AutoTagResult> AutoTagAsync(
+        string imageId,
+        CancellationToken cancellationToken = default)
+    {
+        ArgumentException.ThrowIfNullOrEmpty(imageId);
+        return await PostAsync<AutoTagResult>($"{BasePath}/images/{imageId}/auto-tag", null, cancellationToken).ConfigureAwait(false);
+    }
+
+    /// <summary>
+    /// Auto-tags multiple images in batch.
+    /// </summary>
+    /// <param name="imageIds">The image/memory IDs to auto-tag.</param>
+    /// <param name="request">Optional batch parameters.</param>
+    /// <param name="cancellationToken">Cancellation token.</param>
+    /// <returns>Batch auto-tag result.</returns>
+    /// <example>
+    /// <code>
+    /// var result = await client.Memories.BatchAutoTagAsync(
+    ///     new[] { "mem_1", "mem_2", "mem_3" },
+    ///     new BatchAutoTagRequest { ApplyTags = true, MinConfidence = 0.8 }
+    /// );
+    /// Console.WriteLine($"Tagged {result.Success} images");
+    /// </code>
+    /// </example>
+    public virtual async Task<BatchAutoTagResult> BatchAutoTagAsync(
+        IEnumerable<string> imageIds,
+        BatchAutoTagRequest? request = null,
+        CancellationToken cancellationToken = default)
+    {
+        ArgumentNullException.ThrowIfNull(imageIds);
+
+        var body = new Dictionary<string, object>
+        {
+            ["imageIds"] = imageIds.ToList()
+        };
+
+        if (request != null)
+        {
+            if (request.ApplyTags != null) body["applyTags"] = request.ApplyTags;
+            if (request.MinConfidence != null) body["minConfidence"] = request.MinConfidence;
+        }
+
+        return await PostAsync<BatchAutoTagResult>($"{BasePath}/images/batch-auto-tag", body, cancellationToken).ConfigureAwait(false);
+    }
+
+    /// <summary>
+    /// Gets query suggestions based on image content in the space.
+    /// </summary>
+    /// <param name="request">Optional parameters.</param>
+    /// <param name="cancellationToken">Cancellation token.</param>
+    /// <returns>Query suggestions.</returns>
+    /// <example>
+    /// <code>
+    /// var suggestions = await client.Memories.SuggestQueriesAsync(
+    ///     new SuggestQueriesRequest { Limit = 10 }
+    /// );
+    /// foreach (var suggestion in suggestions.Suggestions)
+    /// {
+    ///     Console.WriteLine($"Try searching: {suggestion.Query}");
+    /// }
+    /// </code>
+    /// </example>
+    public virtual async Task<QuerySuggestionsResult> SuggestQueriesAsync(
+        SuggestQueriesRequest? request = null,
+        CancellationToken cancellationToken = default)
+    {
+        var queryParams = new Dictionary<string, string?>();
+        if (request != null)
+        {
+            if (request.SpaceId != null) queryParams["spaceId"] = request.SpaceId;
+            if (request.Limit != null) queryParams["limit"] = request.Limit.ToString();
+            if (request.Categories != null && request.Categories.Count > 0)
+            {
+                queryParams["categories"] = string.Join(",", request.Categories);
+            }
+        }
+
+        return await GetAsync<QuerySuggestionsResult>($"{BasePath}/images/suggest-queries", queryParams, cancellationToken).ConfigureAwait(false);
+    }
+
+    #endregion
 }
 
 /// <summary>

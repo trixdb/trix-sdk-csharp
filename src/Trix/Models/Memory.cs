@@ -18,7 +18,10 @@ public enum MemoryType
     [JsonPropertyName("url")] Url,
 
     /// <summary>Audio content.</summary>
-    [JsonPropertyName("audio")] Audio
+    [JsonPropertyName("audio")] Audio,
+
+    /// <summary>Image content.</summary>
+    [JsonPropertyName("image")] Image
 }
 
 /// <summary>
