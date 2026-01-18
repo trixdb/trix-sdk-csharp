@@ -15,6 +15,10 @@ public class Space
     [JsonPropertyName("name")]
     public required string Name { get; set; }
 
+    /// <summary>Gets or sets the space slug (URL-friendly identifier).</summary>
+    [JsonPropertyName("slug")]
+    public required string Slug { get; set; }
+
     /// <summary>Gets or sets the space description.</summary>
     [JsonPropertyName("description")]
     public string? Description { get; set; }
@@ -41,6 +45,10 @@ public class CreateSpaceRequest
     [JsonPropertyName("name")]
     public required string Name { get; set; }
 
+    /// <summary>Gets or sets the space slug (URL-friendly identifier). Auto-generated if not provided.</summary>
+    [JsonPropertyName("slug")]
+    public string? Slug { get; set; }
+
     /// <summary>Gets or sets the space description.</summary>
     [JsonPropertyName("description")]
     public string? Description { get; set; }
@@ -58,6 +66,10 @@ public class UpdateSpaceRequest
     /// <summary>Gets or sets the space name.</summary>
     [JsonPropertyName("name")]
     public string? Name { get; set; }
+
+    /// <summary>Gets or sets the space slug (URL-friendly identifier).</summary>
+    [JsonPropertyName("slug")]
+    public string? Slug { get; set; }
 
     /// <summary>Gets or sets the space description.</summary>
     [JsonPropertyName("description")]

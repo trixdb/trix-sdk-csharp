@@ -50,6 +50,20 @@ public class SpacesResource : BaseResource
     }
 
     /// <summary>
+    /// Gets a space by slug (URL-friendly identifier).
+    /// </summary>
+    /// <param name="slug">The space slug.</param>
+    /// <param name="cancellationToken">Cancellation token.</param>
+    /// <returns>The space with the specified slug.</returns>
+    public virtual async Task<Space> GetBySlugAsync(
+        string slug,
+        CancellationToken cancellationToken = default)
+    {
+        ArgumentException.ThrowIfNullOrEmpty(slug);
+        return await GetAsync<Space>($"{BasePath}/{Uri.EscapeDataString(slug)}", cancellationToken: cancellationToken).ConfigureAwait(false);
+    }
+
+    /// <summary>
     /// Updates an existing space.
     /// </summary>
     public virtual async Task<Space> UpdateAsync(
