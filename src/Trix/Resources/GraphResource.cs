@@ -40,16 +40,24 @@ public class GraphResource : BaseResource
     }
 
     /// <summary>
-    /// Gets contextual information for a memory.
+    /// Gets contextual information using semantic search as starting point.
     /// </summary>
-    /// <param name="request">Context request parameters.</param>
+    /// <param name="request">Context request parameters including semantic query.</param>
     /// <param name="cancellationToken">Cancellation token.</param>
-    /// <returns>The context result.</returns>
+    /// <returns>The context result with semantic matches and their graph neighbors.</returns>
+    /// <exception cref="ArgumentNullException">Thrown when request is null.</exception>
+    /// <exception cref="ArgumentException">Thrown when query is empty.</exception>
     public virtual async Task<ContextResult> GetContextAsync(
         GetContextRequest request,
         CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(request);
+
+        if (string.IsNullOrEmpty(request.Query))
+        {
+            throw new ArgumentException("Query cannot be empty.", nameof(request));
+        }
+
         return await PostAsync<ContextResult>("/v1/graph/context", request, cancellationToken)
             .ConfigureAwait(false);
     }
@@ -75,13 +83,13 @@ public class GraphResource : BaseResource
 
         var request = new
         {
-            sourceId,
-            targetId,
-            relationshipTypes,
-            maxDepth
+            source_id = sourceId,
+            target_id = targetId,
+            relationship_types = relationshipTypes,
+            max_depth = maxDepth
         };
 
-        return await PostAsync<ShortestPathResult>("/v1/graph/shortest-path", request, cancellationToken)
+        return await PostAsync<ShortestPathResult>("/v1/graph/path", request, cancellationToken)
             .ConfigureAwait(false);
     }
 
@@ -90,20 +98,29 @@ public class GraphResource : BaseResource
     /// </summary>
     /// <param name="nodeId">Node ID.</param>
     /// <param name="direction">Direction of relationships.</param>
+    /// <param name="limit">Maximum number of neighbors to return.</param>
+    /// <param name="depth">Depth of neighbor traversal (1-3).</param>
+    /// <param name="types">Relationship types to filter by.</param>
     /// <param name="cancellationToken">Cancellation token.</param>
     /// <returns>The neighbors result.</returns>
     public virtual async Task<GraphNeighborsResult> NeighborsAsync(
         string nodeId,
         TraversalDirection? direction = null,
+        int? limit = null,
+        int? depth = null,
+        List<string>? types = null,
         CancellationToken cancellationToken = default)
     {
         ArgumentException.ThrowIfNullOrEmpty(nodeId);
 
         var queryParams = BuildQueryParams(
-            ("direction", direction?.ToString().ToLowerInvariant())
+            ("direction", direction?.ToString().ToLowerInvariant()),
+            ("limit", limit),
+            ("depth", depth),
+            ("types", types != null ? string.Join(",", types) : null)
         );
 
-        return await GetAsync<GraphNeighborsResult>($"/v1/graph/nodes/{nodeId}/neighbors", queryParams, cancellationToken)
+        return await GetAsync<GraphNeighborsResult>($"/v1/graph/neighbors/{nodeId}", queryParams, cancellationToken)
             .ConfigureAwait(false);
     }
 

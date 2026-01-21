@@ -31,14 +31,13 @@ public class SearchResource : BaseResource
 
         var queryParams = new Dictionary<string, string?>
         {
-            ["query"] = query
+            ["q"] = query
         };
 
         if (request != null)
         {
             if (request.Limit != null) queryParams["limit"] = request.Limit.ToString();
-            if (request.ClusterScale != null) queryParams["clusterScale"] = request.ClusterScale.ToString()?.ToLowerInvariant();
-            if (request.SpaceId != null) queryParams["spaceId"] = request.SpaceId;
+            if (request.SpaceId != null) queryParams["space_id"] = request.SpaceId;
             if (request.Threshold != null) queryParams["threshold"] = request.Threshold.Value.ToString(System.Globalization.CultureInfo.InvariantCulture);
             if (request.Tags != null && request.Tags.Count > 0)
             {

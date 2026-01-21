@@ -102,19 +102,19 @@ public class TraverseRequest
     /// <summary>
     /// Starting node IDs for traversal (supports multiple start nodes).
     /// </summary>
-    [JsonPropertyName("startNodeIds")]
+    [JsonPropertyName("start_ids")]
     public List<string> StartNodeIds { get; set; } = new();
 
     /// <summary>
     /// Maximum depth to traverse (default: 2).
     /// </summary>
-    [JsonPropertyName("maxDepth")]
+    [JsonPropertyName("depth")]
     public int? MaxDepth { get; set; }
 
     /// <summary>
     /// Relationship types to follow.
     /// </summary>
-    [JsonPropertyName("relationshipTypes")]
+    [JsonPropertyName("relationship_types")]
     public List<string>? RelationshipTypes { get; set; }
 
     /// <summary>
@@ -126,8 +126,20 @@ public class TraverseRequest
     /// <summary>
     /// Maximum number of nodes to return.
     /// </summary>
-    [JsonPropertyName("limit")]
+    [JsonPropertyName("max_nodes")]
     public int? Limit { get; set; }
+
+    /// <summary>
+    /// Minimum relationship weight to follow (default: 0).
+    /// </summary>
+    [JsonPropertyName("min_weight")]
+    public double? MinWeight { get; set; }
+
+    /// <summary>
+    /// Include memory content in results (default: true).
+    /// </summary>
+    [JsonPropertyName("include_content")]
+    public bool? IncludeContent { get; set; }
 }
 
 /// <summary>
@@ -161,33 +173,45 @@ public class ContextResult
 }
 
 /// <summary>
-/// Request parameters for getting context.
+/// Request parameters for getting context via semantic search.
 /// </summary>
 public class GetContextRequest
 {
     /// <summary>
-    /// Memory ID to get context for.
+    /// Semantic query to find starting point for context.
     /// </summary>
-    [JsonPropertyName("memoryId")]
-    public string MemoryId { get; set; } = string.Empty;
+    [JsonPropertyName("query")]
+    public string Query { get; set; } = string.Empty;
 
     /// <summary>
-    /// Depth of context to retrieve (default: 2).
+    /// Hops to traverse from semantic matches (default: 2).
     /// </summary>
     [JsonPropertyName("depth")]
     public int? Depth { get; set; }
 
     /// <summary>
-    /// Relationship types to include.
+    /// Number of semantic matches to start from (default: 5).
     /// </summary>
-    [JsonPropertyName("relationshipTypes")]
+    [JsonPropertyName("semantic_limit")]
+    public int? SemanticLimit { get; set; }
+
+    /// <summary>
+    /// Minimum similarity for semantic matches (default: 0.5).
+    /// </summary>
+    [JsonPropertyName("semantic_threshold")]
+    public double? SemanticThreshold { get; set; }
+
+    /// <summary>
+    /// Relationship types to follow.
+    /// </summary>
+    [JsonPropertyName("relationship_types")]
     public List<string>? RelationshipTypes { get; set; }
 
     /// <summary>
-    /// Include metadata in response.
+    /// Maximum total nodes in subgraph (default: 50).
     /// </summary>
-    [JsonPropertyName("includeMetadata")]
-    public bool? IncludeMetadata { get; set; }
+    [JsonPropertyName("max_nodes")]
+    public int? MaxNodes { get; set; }
 }
 
 /// <summary>
