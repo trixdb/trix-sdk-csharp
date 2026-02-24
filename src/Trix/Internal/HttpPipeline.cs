@@ -106,6 +106,7 @@ internal sealed class HttpPipeline : IDisposable
         string path,
         object? body = null,
         Dictionary<string, string?>? queryParams = null,
+        Dictionary<string, string>? headers = null,
         CancellationToken cancellationToken = default)
     {
         var url = BuildUrl(path, queryParams);
@@ -121,6 +122,15 @@ internal sealed class HttpPipeline : IDisposable
                 if (body != null)
                 {
                     request.Content = JsonContent.Create(body, options: JsonOptions);
+                }
+
+                // Apply extra headers (e.g. If-Match for optimistic concurrency)
+                if (headers != null)
+                {
+                    foreach (var (key, value) in headers)
+                    {
+                        request.Headers.TryAddWithoutValidation(key, value);
+                    }
                 }
 
                 _logger.LogDebug("Request: {Method} {Url} (attempt {Attempt})", method, url, attempt + 1);

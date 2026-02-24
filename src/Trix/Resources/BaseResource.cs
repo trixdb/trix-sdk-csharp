@@ -117,6 +117,25 @@ public abstract class BaseResource
     }
 
     /// <summary>
+    /// Makes a PATCH request with extra headers and returns the response.
+    /// </summary>
+    protected virtual async Task<T> PatchAsync<T>(
+        string path,
+        object? body,
+        Dictionary<string, string>? headers,
+        CancellationToken cancellationToken = default)
+    {
+        using var response = await _pipeline.SendAsync(
+            new HttpMethod("PATCH"),
+            path,
+            body: body,
+            headers: headers,
+            cancellationToken: cancellationToken).ConfigureAwait(false);
+
+        return await DeserializeAsync<T>(response, cancellationToken).ConfigureAwait(false);
+    }
+
+    /// <summary>
     /// Makes a DELETE request.
     /// </summary>
     protected virtual async Task DeleteAsync(

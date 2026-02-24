@@ -52,6 +52,7 @@ public sealed class TrixClient : IDisposable
     private readonly EnrichmentsResource _enrichments;
     private readonly SessionsResource _sessions;
     private readonly ResourcesResource _resources;
+    private readonly SpaceConfigResource _spaceConfig;
 
     /// <summary>
     /// Gets the memories resource for managing memories.
@@ -150,6 +151,12 @@ public sealed class TrixClient : IDisposable
     public ResourcesResource Resources { get { ThrowIfDisposed(); return _resources; } }
 
     /// <summary>
+    /// Gets the space config resource for managing per-space configuration.
+    /// </summary>
+    /// <exception cref="ObjectDisposedException">If the client has been disposed.</exception>
+    public SpaceConfigResource SpaceConfig { get { ThrowIfDisposed(); return _spaceConfig; } }
+
+    /// <summary>
     /// Creates a new Trix client with the specified API key.
     /// </summary>
     /// <param name="apiKey">The API key for authentication.</param>
@@ -196,6 +203,7 @@ public sealed class TrixClient : IDisposable
         _enrichments = new EnrichmentsResource(_pipeline);
         _sessions = new SessionsResource(_pipeline);
         _resources = new ResourcesResource(_pipeline);
+        _spaceConfig = new SpaceConfigResource(_pipeline);
 
         _logger.LogInformation("TrixClient initialized (SDK v{Version})", Version);
     }
