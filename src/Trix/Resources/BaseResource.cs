@@ -224,7 +224,7 @@ public abstract class BaseResource
     {
         private readonly Stream _innerStream;
         private readonly HttpResponseMessage _response;
-        private bool _disposed;
+        private int _disposed;
 
         public ResponseOwningStream(Stream innerStream, HttpResponseMessage response)
         {
@@ -256,25 +256,31 @@ public abstract class BaseResource
 
         protected override void Dispose(bool disposing)
         {
-            if (!_disposed)
+            if (Interlocked.Exchange(ref _disposed, 1) == 0)
             {
                 if (disposing)
                 {
                     _innerStream.Dispose();
                     _response.Dispose();
                 }
-                _disposed = true;
             }
             base.Dispose(disposing);
         }
 
         public override async ValueTask DisposeAsync()
         {
-            if (!_disposed)
+            if (Interlocked.Exchange(ref _disposed, 1) == 0)
             {
-                await _innerStream.DisposeAsync().ConfigureAwait(false);
-                _response.Dispose();
-                _disposed = true;
+                try
+                {
+                    await _innerStream.DisposeAsync().ConfigureAwait(false);
+                    _response.Dispose();
+                }
+                finally
+                {
+                    await base.DisposeAsync().ConfigureAwait(false);
+                }
+                return;
             }
             await base.DisposeAsync().ConfigureAwait(false);
         }
