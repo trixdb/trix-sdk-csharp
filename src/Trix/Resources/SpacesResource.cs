@@ -46,7 +46,7 @@ public class SpacesResource : BaseResource
         CancellationToken cancellationToken = default)
     {
         ArgumentException.ThrowIfNullOrEmpty(id);
-        return await GetAsync<Space>($"{BasePath}/{id}", cancellationToken: cancellationToken).ConfigureAwait(false);
+        return await GetAsync<Space>($"{BasePath}/{Uri.EscapeDataString(id)}", cancellationToken: cancellationToken).ConfigureAwait(false);
     }
 
     /// <summary>
@@ -73,7 +73,7 @@ public class SpacesResource : BaseResource
     {
         ArgumentException.ThrowIfNullOrEmpty(id);
         ArgumentNullException.ThrowIfNull(request);
-        return await PatchAsync<Space>($"{BasePath}/{id}", request, cancellationToken).ConfigureAwait(false);
+        return await PatchAsync<Space>($"{BasePath}/{Uri.EscapeDataString(id)}", request, cancellationToken).ConfigureAwait(false);
     }
 
     /// <summary>
@@ -84,7 +84,7 @@ public class SpacesResource : BaseResource
         CancellationToken cancellationToken = default)
     {
         ArgumentException.ThrowIfNullOrEmpty(id);
-        await base.DeleteAsync($"{BasePath}/{id}", cancellationToken).ConfigureAwait(false);
+        await base.DeleteAsync($"{BasePath}/{Uri.EscapeDataString(id)}", cancellationToken).ConfigureAwait(false);
     }
 
     /// <summary>

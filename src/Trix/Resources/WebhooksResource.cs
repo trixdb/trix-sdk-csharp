@@ -42,7 +42,7 @@ public class WebhooksResource : BaseResource
         CancellationToken cancellationToken = default)
     {
         ArgumentException.ThrowIfNullOrEmpty(id);
-        return await GetAsync<Webhook>($"/v1/webhooks/{id}", cancellationToken: cancellationToken)
+        return await GetAsync<Webhook>($"/v1/webhooks/{Uri.EscapeDataString(id)}", cancellationToken: cancellationToken)
             .ConfigureAwait(false);
     }
 
@@ -60,7 +60,7 @@ public class WebhooksResource : BaseResource
     {
         ArgumentException.ThrowIfNullOrEmpty(id);
         ArgumentNullException.ThrowIfNull(request);
-        return await PatchAsync<Webhook>($"/v1/webhooks/{id}", request, cancellationToken)
+        return await PatchAsync<Webhook>($"/v1/webhooks/{Uri.EscapeDataString(id)}", request, cancellationToken)
             .ConfigureAwait(false);
     }
 
@@ -74,7 +74,7 @@ public class WebhooksResource : BaseResource
         CancellationToken cancellationToken = default)
     {
         ArgumentException.ThrowIfNullOrEmpty(id);
-        await base.DeleteAsync($"/v1/webhooks/{id}", cancellationToken)
+        await base.DeleteAsync($"/v1/webhooks/{Uri.EscapeDataString(id)}", cancellationToken)
             .ConfigureAwait(false);
     }
 
@@ -149,7 +149,7 @@ public class WebhooksResource : BaseResource
         ArgumentException.ThrowIfNullOrEmpty(id);
 
         var request = eventType != null ? new { eventType } : null;
-        return await PostAsync<WebhookTestResult>($"/v1/webhooks/{id}/test", request, cancellationToken)
+        return await PostAsync<WebhookTestResult>($"/v1/webhooks/{Uri.EscapeDataString(id)}/test", request, cancellationToken)
             .ConfigureAwait(false);
     }
 
@@ -174,7 +174,7 @@ public class WebhooksResource : BaseResource
             ("page", page)
         );
 
-        return await GetAsync<PaginatedResponse<WebhookDelivery>>($"/v1/webhooks/{id}/deliveries", queryParams, cancellationToken)
+        return await GetAsync<PaginatedResponse<WebhookDelivery>>($"/v1/webhooks/{Uri.EscapeDataString(id)}/deliveries", queryParams, cancellationToken)
             .ConfigureAwait(false);
     }
 
@@ -193,7 +193,7 @@ public class WebhooksResource : BaseResource
         ArgumentException.ThrowIfNullOrEmpty(webhookId);
         ArgumentException.ThrowIfNullOrEmpty(deliveryId);
 
-        return await PostAsync<WebhookDelivery>($"/v1/webhooks/{webhookId}/deliveries/{deliveryId}/retry", null, cancellationToken)
+        return await PostAsync<WebhookDelivery>($"/v1/webhooks/{Uri.EscapeDataString(webhookId)}/deliveries/{Uri.EscapeDataString(deliveryId)}/retry", null, cancellationToken)
             .ConfigureAwait(false);
     }
 

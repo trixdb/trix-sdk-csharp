@@ -30,7 +30,7 @@ public class SpaceConfigResource : BaseResource
     {
         ArgumentException.ThrowIfNullOrEmpty(spaceId);
         return await GetAsync<SpaceConfigResponse>(
-            $"/v1/spaces/{spaceId}/config",
+            $"/v1/spaces/{Uri.EscapeDataString(spaceId)}/config",
             cancellationToken: cancellationToken).ConfigureAwait(false);
     }
 
@@ -61,7 +61,7 @@ public class SpaceConfigResource : BaseResource
             };
         }
         return await PatchAsync<SpaceConfigResponse>(
-            $"/v1/spaces/{spaceId}/config",
+            $"/v1/spaces/{Uri.EscapeDataString(spaceId)}/config",
             patch,
             headers,
             cancellationToken).ConfigureAwait(false);
@@ -82,7 +82,7 @@ public class SpaceConfigResource : BaseResource
         ArgumentException.ThrowIfNullOrEmpty(spaceId);
         ArgumentNullException.ThrowIfNull(patch);
         return await PostAsync<SpaceConfigValidation>(
-            $"/v1/spaces/{spaceId}/config/validate",
+            $"/v1/spaces/{Uri.EscapeDataString(spaceId)}/config/validate",
             patch,
             cancellationToken).ConfigureAwait(false);
     }
@@ -107,7 +107,7 @@ public class SpaceConfigResource : BaseResource
             ("limit", limit),
             ("offset", offset));
         return await GetAsync<SpaceConfigAuditResponse>(
-            $"/v1/spaces/{spaceId}/config/audit",
+            $"/v1/spaces/{Uri.EscapeDataString(spaceId)}/config/audit",
             queryParams,
             cancellationToken).ConfigureAwait(false);
     }

@@ -50,7 +50,7 @@ public class ResourcesResource : BaseResource
         CancellationToken cancellationToken = default)
     {
         ArgumentException.ThrowIfNullOrEmpty(id);
-        return await GetAsync<Resource>($"{BasePath}/{id}", cancellationToken: cancellationToken).ConfigureAwait(false);
+        return await GetAsync<Resource>($"{BasePath}/{Uri.EscapeDataString(id)}", cancellationToken: cancellationToken).ConfigureAwait(false);
     }
 
     /// <summary>
@@ -86,7 +86,7 @@ public class ResourcesResource : BaseResource
     {
         ArgumentException.ThrowIfNullOrEmpty(id);
         ArgumentNullException.ThrowIfNull(request);
-        return await PatchAsync<Resource>($"{BasePath}/{id}", request, cancellationToken).ConfigureAwait(false);
+        return await PatchAsync<Resource>($"{BasePath}/{Uri.EscapeDataString(id)}", request, cancellationToken).ConfigureAwait(false);
     }
 
     /// <summary>
@@ -97,7 +97,7 @@ public class ResourcesResource : BaseResource
         CancellationToken cancellationToken = default)
     {
         ArgumentException.ThrowIfNullOrEmpty(id);
-        await base.DeleteAsync($"{BasePath}/{id}", cancellationToken).ConfigureAwait(false);
+        await base.DeleteAsync($"{BasePath}/{Uri.EscapeDataString(id)}", cancellationToken).ConfigureAwait(false);
     }
 
     /// <summary>
@@ -114,6 +114,6 @@ public class ResourcesResource : BaseResource
             ("limit", limit),
             ("offset", offset)
         );
-        return await GetAsync<ResourceMemoriesResult>($"{BasePath}/{id}/memories", queryParams, cancellationToken).ConfigureAwait(false);
+        return await GetAsync<ResourceMemoriesResult>($"{BasePath}/{Uri.EscapeDataString(id)}/memories", queryParams, cancellationToken).ConfigureAwait(false);
     }
 }

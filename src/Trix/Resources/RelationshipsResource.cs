@@ -52,7 +52,7 @@ public class RelationshipsResource : BaseResource
         CancellationToken cancellationToken = default)
     {
         ArgumentException.ThrowIfNullOrEmpty(id);
-        return await GetAsync<Relationship>($"{BasePath}/{id}", cancellationToken: cancellationToken).ConfigureAwait(false);
+        return await GetAsync<Relationship>($"{BasePath}/{Uri.EscapeDataString(id)}", cancellationToken: cancellationToken).ConfigureAwait(false);
     }
 
     /// <summary>
@@ -65,7 +65,7 @@ public class RelationshipsResource : BaseResource
     {
         ArgumentException.ThrowIfNullOrEmpty(id);
         ArgumentNullException.ThrowIfNull(request);
-        return await PatchAsync<Relationship>($"{BasePath}/{id}", request, cancellationToken).ConfigureAwait(false);
+        return await PatchAsync<Relationship>($"{BasePath}/{Uri.EscapeDataString(id)}", request, cancellationToken).ConfigureAwait(false);
     }
 
     /// <summary>
@@ -76,7 +76,7 @@ public class RelationshipsResource : BaseResource
         CancellationToken cancellationToken = default)
     {
         ArgumentException.ThrowIfNullOrEmpty(id);
-        await base.DeleteAsync($"{BasePath}/{id}", cancellationToken).ConfigureAwait(false);
+        await base.DeleteAsync($"{BasePath}/{Uri.EscapeDataString(id)}", cancellationToken).ConfigureAwait(false);
     }
 
     /// <summary>
@@ -89,7 +89,7 @@ public class RelationshipsResource : BaseResource
     {
         ArgumentException.ThrowIfNullOrEmpty(memoryId);
         var queryParams = BuildQueryParams(("limit", limit));
-        return await GetAsync<PaginatedResponse<Relationship>>($"/v1/memories/{memoryId}/relationships/incoming", queryParams, cancellationToken).ConfigureAwait(false);
+        return await GetAsync<PaginatedResponse<Relationship>>($"/v1/memories/{Uri.EscapeDataString(memoryId)}/relationships/incoming", queryParams, cancellationToken).ConfigureAwait(false);
     }
 
     /// <summary>
@@ -102,7 +102,7 @@ public class RelationshipsResource : BaseResource
     {
         ArgumentException.ThrowIfNullOrEmpty(memoryId);
         var queryParams = BuildQueryParams(("limit", limit));
-        return await GetAsync<PaginatedResponse<Relationship>>($"/v1/memories/{memoryId}/relationships/outgoing", queryParams, cancellationToken).ConfigureAwait(false);
+        return await GetAsync<PaginatedResponse<Relationship>>($"/v1/memories/{Uri.EscapeDataString(memoryId)}/relationships/outgoing", queryParams, cancellationToken).ConfigureAwait(false);
     }
 
     /// <summary>
@@ -114,7 +114,7 @@ public class RelationshipsResource : BaseResource
         CancellationToken cancellationToken = default)
     {
         ArgumentException.ThrowIfNullOrEmpty(id);
-        return await PostAsync<Relationship>($"{BasePath}/{id}/reinforce", new { amount }, cancellationToken).ConfigureAwait(false);
+        return await PostAsync<Relationship>($"{BasePath}/{Uri.EscapeDataString(id)}/reinforce", new { amount }, cancellationToken).ConfigureAwait(false);
     }
 
     /// <summary>
@@ -126,6 +126,6 @@ public class RelationshipsResource : BaseResource
         CancellationToken cancellationToken = default)
     {
         ArgumentException.ThrowIfNullOrEmpty(id);
-        return await PostAsync<Relationship>($"{BasePath}/{id}/weaken", new { amount }, cancellationToken).ConfigureAwait(false);
+        return await PostAsync<Relationship>($"{BasePath}/{Uri.EscapeDataString(id)}/weaken", new { amount }, cancellationToken).ConfigureAwait(false);
     }
 }

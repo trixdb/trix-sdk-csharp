@@ -31,7 +31,7 @@ public class HighlightsResource : BaseResource
         ArgumentException.ThrowIfNullOrEmpty(memoryId);
         ArgumentNullException.ThrowIfNull(request);
 
-        return await PostAsync<Highlight>($"/v1/memories/{memoryId}/highlights", request, cancellationToken)
+        return await PostAsync<Highlight>($"/v1/memories/{Uri.EscapeDataString(memoryId)}/highlights", request, cancellationToken)
             .ConfigureAwait(false);
     }
 
@@ -50,7 +50,7 @@ public class HighlightsResource : BaseResource
         ArgumentException.ThrowIfNullOrEmpty(memoryId);
         ArgumentException.ThrowIfNullOrEmpty(highlightId);
 
-        return await GetAsync<Highlight>($"/v1/memories/{memoryId}/highlights/{highlightId}", cancellationToken: cancellationToken)
+        return await GetAsync<Highlight>($"/v1/memories/{Uri.EscapeDataString(memoryId)}/highlights/{Uri.EscapeDataString(highlightId)}", cancellationToken: cancellationToken)
             .ConfigureAwait(false);
     }
 
@@ -72,7 +72,7 @@ public class HighlightsResource : BaseResource
         ArgumentException.ThrowIfNullOrEmpty(highlightId);
         ArgumentNullException.ThrowIfNull(request);
 
-        return await PatchAsync<Highlight>($"/v1/memories/{memoryId}/highlights/{highlightId}", request, cancellationToken)
+        return await PatchAsync<Highlight>($"/v1/memories/{Uri.EscapeDataString(memoryId)}/highlights/{Uri.EscapeDataString(highlightId)}", request, cancellationToken)
             .ConfigureAwait(false);
     }
 
@@ -90,7 +90,7 @@ public class HighlightsResource : BaseResource
         ArgumentException.ThrowIfNullOrEmpty(memoryId);
         ArgumentException.ThrowIfNullOrEmpty(highlightId);
 
-        await base.DeleteAsync($"/v1/memories/{memoryId}/highlights/{highlightId}", cancellationToken)
+        await base.DeleteAsync($"/v1/memories/{Uri.EscapeDataString(memoryId)}/highlights/{Uri.EscapeDataString(highlightId)}", cancellationToken)
             .ConfigureAwait(false);
     }
 
@@ -113,7 +113,7 @@ public class HighlightsResource : BaseResource
             ("page", request?.Page)
         );
 
-        return await GetAsync<PaginatedResponse<Highlight>>($"/v1/memories/{memoryId}/highlights", queryParams, cancellationToken)
+        return await GetAsync<PaginatedResponse<Highlight>>($"/v1/memories/{Uri.EscapeDataString(memoryId)}/highlights", queryParams, cancellationToken)
             .ConfigureAwait(false);
     }
 
@@ -170,7 +170,7 @@ public class HighlightsResource : BaseResource
     {
         ArgumentException.ThrowIfNullOrEmpty(memoryId);
 
-        return await PostAsync<ExtractHighlightsResult>($"/v1/memories/{memoryId}/highlights/extract", request, cancellationToken)
+        return await PostAsync<ExtractHighlightsResult>($"/v1/memories/{Uri.EscapeDataString(memoryId)}/highlights/extract", request, cancellationToken)
             .ConfigureAwait(false);
     }
 
@@ -236,7 +236,7 @@ public class HighlightsResource : BaseResource
         ArgumentException.ThrowIfNullOrEmpty(highlightId);
         ArgumentNullException.ThrowIfNull(request);
 
-        return await PostAsync<HighlightLinkResult>($"/v1/highlights/{highlightId}/link", request, cancellationToken)
+        return await PostAsync<HighlightLinkResult>($"/v1/highlights/{Uri.EscapeDataString(highlightId)}/link", request, cancellationToken)
             .ConfigureAwait(false);
     }
 }

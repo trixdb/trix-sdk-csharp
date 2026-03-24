@@ -42,7 +42,7 @@ public class FactsResource : BaseResource
         CancellationToken cancellationToken = default)
     {
         ArgumentException.ThrowIfNullOrEmpty(id);
-        return await GetAsync<Fact>($"/v1/facts/{id}", cancellationToken: cancellationToken)
+        return await GetAsync<Fact>($"/v1/facts/{Uri.EscapeDataString(id)}", cancellationToken: cancellationToken)
             .ConfigureAwait(false);
     }
 
@@ -60,7 +60,7 @@ public class FactsResource : BaseResource
     {
         ArgumentException.ThrowIfNullOrEmpty(id);
         ArgumentNullException.ThrowIfNull(request);
-        return await PatchAsync<Fact>($"/v1/facts/{id}", request, cancellationToken)
+        return await PatchAsync<Fact>($"/v1/facts/{Uri.EscapeDataString(id)}", request, cancellationToken)
             .ConfigureAwait(false);
     }
 
@@ -74,7 +74,7 @@ public class FactsResource : BaseResource
         CancellationToken cancellationToken = default)
     {
         ArgumentException.ThrowIfNullOrEmpty(id);
-        await base.DeleteAsync($"/v1/facts/{id}", cancellationToken)
+        await base.DeleteAsync($"/v1/facts/{Uri.EscapeDataString(id)}", cancellationToken)
             .ConfigureAwait(false);
     }
 
@@ -192,7 +192,7 @@ public class FactsResource : BaseResource
         ArgumentException.ThrowIfNullOrEmpty(memoryId);
 
         var request = new { save };
-        return await PostAsync<FactExtractionResult>($"/v1/memories/{memoryId}/facts/extract", request, cancellationToken)
+        return await PostAsync<FactExtractionResult>($"/v1/memories/{Uri.EscapeDataString(memoryId)}/facts/extract", request, cancellationToken)
             .ConfigureAwait(false);
     }
 
@@ -207,7 +207,7 @@ public class FactsResource : BaseResource
         CancellationToken cancellationToken = default)
     {
         ArgumentException.ThrowIfNullOrEmpty(id);
-        return await PostAsync<FactVerificationResult>($"/v1/facts/{id}/verify", null, cancellationToken)
+        return await PostAsync<FactVerificationResult>($"/v1/facts/{Uri.EscapeDataString(id)}/verify", null, cancellationToken)
             .ConfigureAwait(false);
     }
 

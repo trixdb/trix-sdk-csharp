@@ -42,7 +42,7 @@ public class JobsResource : BaseResource
         ArgumentException.ThrowIfNullOrEmpty(queue);
         ArgumentException.ThrowIfNullOrEmpty(id);
 
-        return await GetAsync<Job>($"/v1/jobs/{queue}/{id}", cancellationToken: cancellationToken)
+        return await GetAsync<Job>($"/v1/jobs/{Uri.EscapeDataString(queue)}/{Uri.EscapeDataString(id)}", cancellationToken: cancellationToken)
             .ConfigureAwait(false);
     }
 
@@ -119,7 +119,7 @@ public class JobsResource : BaseResource
         ArgumentException.ThrowIfNullOrEmpty(queue);
         ArgumentException.ThrowIfNullOrEmpty(id);
 
-        return await PostAsync<Job>($"/v1/jobs/{queue}/{id}/retry", null, cancellationToken)
+        return await PostAsync<Job>($"/v1/jobs/{Uri.EscapeDataString(queue)}/{Uri.EscapeDataString(id)}/retry", null, cancellationToken)
             .ConfigureAwait(false);
     }
 
@@ -137,7 +137,7 @@ public class JobsResource : BaseResource
         ArgumentException.ThrowIfNullOrEmpty(queue);
         ArgumentException.ThrowIfNullOrEmpty(id);
 
-        await base.DeleteAsync($"/v1/jobs/{queue}/{id}", cancellationToken)
+        await base.DeleteAsync($"/v1/jobs/{Uri.EscapeDataString(queue)}/{Uri.EscapeDataString(id)}", cancellationToken)
             .ConfigureAwait(false);
     }
 
@@ -166,7 +166,7 @@ public class JobsResource : BaseResource
             limit
         };
 
-        return await PostAsync<CleanJobsResult>($"/v1/jobs/{queue}/clean", request, cancellationToken)
+        return await PostAsync<CleanJobsResult>($"/v1/jobs/{Uri.EscapeDataString(queue)}/clean", request, cancellationToken)
             .ConfigureAwait(false);
     }
 }

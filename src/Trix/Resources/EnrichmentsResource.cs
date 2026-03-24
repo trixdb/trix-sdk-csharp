@@ -26,7 +26,7 @@ public class EnrichmentsResource : BaseResource
         CancellationToken cancellationToken = default)
     {
         ArgumentException.ThrowIfNullOrEmpty(memoryId);
-        return await GetAsync<List<Enrichment>>($"/v1/memories/{memoryId}/enrichments", cancellationToken: cancellationToken)
+        return await GetAsync<List<Enrichment>>($"/v1/memories/{Uri.EscapeDataString(memoryId)}/enrichments", cancellationToken: cancellationToken)
             .ConfigureAwait(false);
     }
 
@@ -45,7 +45,7 @@ public class EnrichmentsResource : BaseResource
         ArgumentException.ThrowIfNullOrEmpty(memoryId);
 
         var typeName = enrichmentType.ToString().ToLowerInvariant();
-        return await GetAsync<Enrichment>($"/v1/memories/{memoryId}/enrichments/{typeName}", cancellationToken: cancellationToken)
+        return await GetAsync<Enrichment>($"/v1/memories/{Uri.EscapeDataString(memoryId)}/enrichments/{Uri.EscapeDataString(typeName)}", cancellationToken: cancellationToken)
             .ConfigureAwait(false);
     }
 
@@ -62,7 +62,7 @@ public class EnrichmentsResource : BaseResource
         CancellationToken cancellationToken = default)
     {
         ArgumentException.ThrowIfNullOrEmpty(memoryId);
-        return await PostAsync<TriggerEnrichmentResult>($"/v1/memories/{memoryId}/enrichments/trigger", request, cancellationToken)
+        return await PostAsync<TriggerEnrichmentResult>($"/v1/memories/{Uri.EscapeDataString(memoryId)}/enrichments/trigger", request, cancellationToken)
             .ConfigureAwait(false);
     }
 
@@ -81,7 +81,7 @@ public class EnrichmentsResource : BaseResource
         ArgumentException.ThrowIfNullOrEmpty(memoryId);
 
         var typeName = enrichmentType.ToString().ToLowerInvariant();
-        return await PostAsync<TriggerEnrichmentResult>($"/v1/memories/{memoryId}/enrichments/{typeName}/retry", null, cancellationToken)
+        return await PostAsync<TriggerEnrichmentResult>($"/v1/memories/{Uri.EscapeDataString(memoryId)}/enrichments/{Uri.EscapeDataString(typeName)}/retry", null, cancellationToken)
             .ConfigureAwait(false);
     }
 }

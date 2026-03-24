@@ -42,7 +42,7 @@ public class EntitiesResource : BaseResource
         CancellationToken cancellationToken = default)
     {
         ArgumentException.ThrowIfNullOrEmpty(id);
-        return await GetAsync<Entity>($"/v1/entities/{id}", cancellationToken: cancellationToken)
+        return await GetAsync<Entity>($"/v1/entities/{Uri.EscapeDataString(id)}", cancellationToken: cancellationToken)
             .ConfigureAwait(false);
     }
 
@@ -60,7 +60,7 @@ public class EntitiesResource : BaseResource
     {
         ArgumentException.ThrowIfNullOrEmpty(id);
         ArgumentNullException.ThrowIfNull(request);
-        return await PatchAsync<Entity>($"/v1/entities/{id}", request, cancellationToken)
+        return await PatchAsync<Entity>($"/v1/entities/{Uri.EscapeDataString(id)}", request, cancellationToken)
             .ConfigureAwait(false);
     }
 
@@ -74,7 +74,7 @@ public class EntitiesResource : BaseResource
         CancellationToken cancellationToken = default)
     {
         ArgumentException.ThrowIfNullOrEmpty(id);
-        await base.DeleteAsync($"/v1/entities/{id}", cancellationToken)
+        await base.DeleteAsync($"/v1/entities/{Uri.EscapeDataString(id)}", cancellationToken)
             .ConfigureAwait(false);
     }
 
@@ -173,7 +173,7 @@ public class EntitiesResource : BaseResource
             ("offset", offset)
         );
 
-        return await GetAsync<PaginatedResponse<Entity>>($"/v1/entities/type/{entityType}", queryParams, cancellationToken)
+        return await GetAsync<PaginatedResponse<Entity>>($"/v1/entities/type/{Uri.EscapeDataString(entityType)}", queryParams, cancellationToken)
             .ConfigureAwait(false);
     }
 
@@ -188,7 +188,7 @@ public class EntitiesResource : BaseResource
         CancellationToken cancellationToken = default)
     {
         ArgumentException.ThrowIfNullOrEmpty(memoryId);
-        return await GetAsync<List<Entity>>($"/v1/memories/{memoryId}/entities", cancellationToken: cancellationToken)
+        return await GetAsync<List<Entity>>($"/v1/memories/{Uri.EscapeDataString(memoryId)}/entities", cancellationToken: cancellationToken)
             .ConfigureAwait(false);
     }
 
@@ -227,7 +227,7 @@ public class EntitiesResource : BaseResource
         ArgumentException.ThrowIfNullOrEmpty(sourceId);
 
         var request = new { sourceId };
-        return await PostAsync<Entity>($"/v1/entities/{targetId}/merge", request, cancellationToken)
+        return await PostAsync<Entity>($"/v1/entities/{Uri.EscapeDataString(targetId)}/merge", request, cancellationToken)
             .ConfigureAwait(false);
     }
 
@@ -246,7 +246,7 @@ public class EntitiesResource : BaseResource
         ArgumentException.ThrowIfNullOrEmpty(memoryId);
 
         var request = new { memoryId };
-        await PostAsync($"/v1/entities/{entityId}/link", request, cancellationToken)
+        await PostAsync($"/v1/entities/{Uri.EscapeDataString(entityId)}/link", request, cancellationToken)
             .ConfigureAwait(false);
     }
 
@@ -264,7 +264,7 @@ public class EntitiesResource : BaseResource
         ArgumentException.ThrowIfNullOrEmpty(entityId);
         ArgumentException.ThrowIfNullOrEmpty(memoryId);
 
-        await base.DeleteAsync($"/v1/entities/{entityId}/link/{memoryId}", cancellationToken)
+        await base.DeleteAsync($"/v1/entities/{Uri.EscapeDataString(entityId)}/link/{Uri.EscapeDataString(memoryId)}", cancellationToken)
             .ConfigureAwait(false);
     }
 
@@ -285,7 +285,7 @@ public class EntitiesResource : BaseResource
         ArgumentException.ThrowIfNullOrEmpty(memoryId);
 
         var request = new { save, link };
-        return await PostAsync<EntityExtractionResult>($"/v1/memories/{memoryId}/entities/extract", request, cancellationToken)
+        return await PostAsync<EntityExtractionResult>($"/v1/memories/{Uri.EscapeDataString(memoryId)}/entities/extract", request, cancellationToken)
             .ConfigureAwait(false);
     }
 
@@ -312,7 +312,7 @@ public class EntitiesResource : BaseResource
         CancellationToken cancellationToken = default)
     {
         ArgumentException.ThrowIfNullOrEmpty(entityId);
-        return await GetAsync<List<Fact>>($"/v1/entities/{entityId}/facts", cancellationToken: cancellationToken)
+        return await GetAsync<List<Fact>>($"/v1/entities/{Uri.EscapeDataString(entityId)}/facts", cancellationToken: cancellationToken)
             .ConfigureAwait(false);
     }
 

@@ -38,7 +38,7 @@ public class MemoriesResource : BaseResource
         CancellationToken cancellationToken = default)
     {
         ArgumentException.ThrowIfNullOrEmpty(id);
-        return await GetAsync<Memory>($"{BasePath}/{id}", cancellationToken: cancellationToken).ConfigureAwait(false);
+        return await GetAsync<Memory>($"{BasePath}/{Uri.EscapeDataString(id)}", cancellationToken: cancellationToken).ConfigureAwait(false);
     }
 
     /// <summary>
@@ -55,7 +55,7 @@ public class MemoriesResource : BaseResource
     {
         ArgumentException.ThrowIfNullOrEmpty(id);
         ArgumentNullException.ThrowIfNull(request);
-        return await PatchAsync<Memory>($"{BasePath}/{id}", request, cancellationToken).ConfigureAwait(false);
+        return await PatchAsync<Memory>($"{BasePath}/{Uri.EscapeDataString(id)}", request, cancellationToken).ConfigureAwait(false);
     }
 
     /// <summary>
@@ -68,7 +68,7 @@ public class MemoriesResource : BaseResource
         CancellationToken cancellationToken = default)
     {
         ArgumentException.ThrowIfNullOrEmpty(id);
-        await base.DeleteAsync($"{BasePath}/{id}", cancellationToken).ConfigureAwait(false);
+        await base.DeleteAsync($"{BasePath}/{Uri.EscapeDataString(id)}", cancellationToken).ConfigureAwait(false);
     }
 
     /// <summary>
@@ -118,7 +118,11 @@ public class MemoriesResource : BaseResource
         CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(requests);
-        return await PostAsync<BulkResult>($"{BasePath}/bulk", new { memories = requests.ToList() }, cancellationToken).ConfigureAwait(false);
+        const int MaxBatchSize = 1000;
+        var list = requests.ToList();
+        if (list.Count > MaxBatchSize)
+            throw new ArgumentException($"Batch size {list.Count} exceeds maximum {MaxBatchSize}");
+        return await PostAsync<BulkResult>($"{BasePath}/bulk", new { memories = list }, cancellationToken).ConfigureAwait(false);
     }
 
     /// <summary>
@@ -132,7 +136,11 @@ public class MemoriesResource : BaseResource
         CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(updates);
-        return await PostAsync<BulkResult>($"{BasePath}/bulk-update", new { updates = updates.ToList() }, cancellationToken).ConfigureAwait(false);
+        const int MaxBatchSize = 1000;
+        var list = updates.ToList();
+        if (list.Count > MaxBatchSize)
+            throw new ArgumentException($"Batch size {list.Count} exceeds maximum {MaxBatchSize}");
+        return await PostAsync<BulkResult>($"{BasePath}/bulk-update", new { updates = list }, cancellationToken).ConfigureAwait(false);
     }
 
     /// <summary>
@@ -146,7 +154,11 @@ public class MemoriesResource : BaseResource
         CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(ids);
-        return await PostAsync<BulkResult>($"{BasePath}/bulk-delete", new { ids = ids.ToList() }, cancellationToken).ConfigureAwait(false);
+        const int MaxBatchSize = 1000;
+        var list = ids.ToList();
+        if (list.Count > MaxBatchSize)
+            throw new ArgumentException($"Batch size {list.Count} exceeds maximum {MaxBatchSize}");
+        return await PostAsync<BulkResult>($"{BasePath}/bulk-delete", new { ids = list }, cancellationToken).ConfigureAwait(false);
     }
 
     /// <summary>
@@ -160,7 +172,7 @@ public class MemoriesResource : BaseResource
         CancellationToken cancellationToken = default)
     {
         ArgumentException.ThrowIfNullOrEmpty(id);
-        return await GetStreamAsync($"{BasePath}/{id}/audio", cancellationToken).ConfigureAwait(false);
+        return await GetStreamAsync($"{BasePath}/{Uri.EscapeDataString(id)}/audio", cancellationToken).ConfigureAwait(false);
     }
 
     /// <summary>
@@ -174,7 +186,7 @@ public class MemoriesResource : BaseResource
         CancellationToken cancellationToken = default)
     {
         ArgumentException.ThrowIfNullOrEmpty(id);
-        return await GetAsync<TranscriptResult>($"{BasePath}/{id}/transcript", cancellationToken: cancellationToken).ConfigureAwait(false);
+        return await GetAsync<TranscriptResult>($"{BasePath}/{Uri.EscapeDataString(id)}/transcript", cancellationToken: cancellationToken).ConfigureAwait(false);
     }
 
     /// <summary>
@@ -206,7 +218,7 @@ public class MemoriesResource : BaseResource
         CancellationToken cancellationToken = default)
     {
         ArgumentException.ThrowIfNullOrEmpty(id);
-        return await PostAsync<TranscriptResult>($"{BasePath}/{id}/transcribe", request, cancellationToken).ConfigureAwait(false);
+        return await PostAsync<TranscriptResult>($"{BasePath}/{Uri.EscapeDataString(id)}/transcribe", request, cancellationToken).ConfigureAwait(false);
     }
 
     /// <summary>
@@ -316,7 +328,7 @@ public class MemoriesResource : BaseResource
         CancellationToken cancellationToken = default)
     {
         ArgumentException.ThrowIfNullOrEmpty(id);
-        return await PostAsync<Memory>($"{BasePath}/{id}/pin", null, cancellationToken).ConfigureAwait(false);
+        return await PostAsync<Memory>($"{BasePath}/{Uri.EscapeDataString(id)}/pin", null, cancellationToken).ConfigureAwait(false);
     }
 
     /// <summary>
@@ -330,7 +342,7 @@ public class MemoriesResource : BaseResource
         CancellationToken cancellationToken = default)
     {
         ArgumentException.ThrowIfNullOrEmpty(id);
-        return await PostAsync<Memory>($"{BasePath}/{id}/unpin", null, cancellationToken).ConfigureAwait(false);
+        return await PostAsync<Memory>($"{BasePath}/{Uri.EscapeDataString(id)}/unpin", null, cancellationToken).ConfigureAwait(false);
     }
 
     /// <summary>
@@ -346,7 +358,7 @@ public class MemoriesResource : BaseResource
         CancellationToken cancellationToken = default)
     {
         ArgumentException.ThrowIfNullOrEmpty(id);
-        return await PostAsync<Memory>($"{BasePath}/{id}/protection", new { level = level.ToString().ToLowerInvariant() }, cancellationToken).ConfigureAwait(false);
+        return await PostAsync<Memory>($"{BasePath}/{Uri.EscapeDataString(id)}/protection", new { level = level.ToString().ToLowerInvariant() }, cancellationToken).ConfigureAwait(false);
     }
 
     /// <summary>
@@ -360,7 +372,7 @@ public class MemoriesResource : BaseResource
         CancellationToken cancellationToken = default)
     {
         ArgumentException.ThrowIfNullOrEmpty(id);
-        return await PostAsync<Memory>($"{BasePath}/{id}/soft-delete", null, cancellationToken).ConfigureAwait(false);
+        return await PostAsync<Memory>($"{BasePath}/{Uri.EscapeDataString(id)}/soft-delete", null, cancellationToken).ConfigureAwait(false);
     }
 
     /// <summary>
@@ -374,7 +386,7 @@ public class MemoriesResource : BaseResource
         CancellationToken cancellationToken = default)
     {
         ArgumentException.ThrowIfNullOrEmpty(id);
-        return await PostAsync<Memory>($"{BasePath}/{id}/restore", null, cancellationToken).ConfigureAwait(false);
+        return await PostAsync<Memory>($"{BasePath}/{Uri.EscapeDataString(id)}/restore", null, cancellationToken).ConfigureAwait(false);
     }
 
     /// <summary>
@@ -388,7 +400,7 @@ public class MemoriesResource : BaseResource
         CancellationToken cancellationToken = default)
     {
         ArgumentException.ThrowIfNullOrEmpty(id);
-        var result = await GetAsync<QualityScoreResponse>($"{BasePath}/{id}/quality", cancellationToken: cancellationToken).ConfigureAwait(false);
+        var result = await GetAsync<QualityScoreResponse>($"{BasePath}/{Uri.EscapeDataString(id)}/quality", cancellationToken: cancellationToken).ConfigureAwait(false);
         return result.Score;
     }
 
@@ -443,7 +455,7 @@ public class MemoriesResource : BaseResource
             }
         }
 
-        return await GetAsync<List<Topic>>($"{BasePath}/{id}/topics", queryParams, cancellationToken).ConfigureAwait(false);
+        return await GetAsync<List<Topic>>($"{BasePath}/{Uri.EscapeDataString(id)}/topics", queryParams, cancellationToken).ConfigureAwait(false);
     }
 
     /// <summary>
@@ -483,7 +495,7 @@ public class MemoriesResource : BaseResource
         CancellationToken cancellationToken = default)
     {
         ArgumentException.ThrowIfNullOrEmpty(id);
-        return await PostAsync<EnrichmentResult>($"{BasePath}/{id}/enrich", options, cancellationToken).ConfigureAwait(false);
+        return await PostAsync<EnrichmentResult>($"{BasePath}/{Uri.EscapeDataString(id)}/enrich", options, cancellationToken).ConfigureAwait(false);
     }
 
     #region Image Methods
@@ -587,7 +599,7 @@ public class MemoriesResource : BaseResource
         CancellationToken cancellationToken = default)
     {
         ArgumentException.ThrowIfNullOrEmpty(id);
-        return await GetStreamAsync($"{BasePath}/{id}/image", cancellationToken).ConfigureAwait(false);
+        return await GetStreamAsync($"{BasePath}/{Uri.EscapeDataString(id)}/image", cancellationToken).ConfigureAwait(false);
     }
 
     /// <summary>
@@ -617,7 +629,7 @@ public class MemoriesResource : BaseResource
         CancellationToken cancellationToken = default)
     {
         ArgumentException.ThrowIfNullOrEmpty(id);
-        return await GetStreamAsync($"{BasePath}/{id}/thumbnail", cancellationToken).ConfigureAwait(false);
+        return await GetStreamAsync($"{BasePath}/{Uri.EscapeDataString(id)}/thumbnail", cancellationToken).ConfigureAwait(false);
     }
 
     /// <summary>
@@ -776,7 +788,7 @@ public class MemoriesResource : BaseResource
             if (request.IncludeEmbedding != null) queryParams["includeEmbedding"] = request.IncludeEmbedding.Value.ToString().ToLowerInvariant();
         }
 
-        return await GetAsync<SimilarityResult>($"{BasePath}/{id}/similar", queryParams, cancellationToken).ConfigureAwait(false);
+        return await GetAsync<SimilarityResult>($"{BasePath}/{Uri.EscapeDataString(id)}/similar", queryParams, cancellationToken).ConfigureAwait(false);
     }
 
     /// <summary>
@@ -872,7 +884,7 @@ public class MemoriesResource : BaseResource
             if (request.Limit != null) body["limit"] = request.Limit;
         }
 
-        return await PostAsync<DuplicateCheckResult>($"{BasePath}/{id}/check-duplicates", body.Count > 0 ? body : null, cancellationToken).ConfigureAwait(false);
+        return await PostAsync<DuplicateCheckResult>($"{BasePath}/{Uri.EscapeDataString(id)}/check-duplicates", body.Count > 0 ? body : null, cancellationToken).ConfigureAwait(false);
     }
 
     /// <summary>
@@ -919,7 +931,7 @@ public class MemoriesResource : BaseResource
         CancellationToken cancellationToken = default)
     {
         ArgumentException.ThrowIfNullOrEmpty(imageId);
-        return await PostAsync<AutoTagResult>($"{BasePath}/images/{imageId}/auto-tag", null, cancellationToken).ConfigureAwait(false);
+        return await PostAsync<AutoTagResult>($"{BasePath}/images/{Uri.EscapeDataString(imageId)}/auto-tag", null, cancellationToken).ConfigureAwait(false);
     }
 
     /// <summary>
@@ -1016,7 +1028,7 @@ public class MemoriesResource : BaseResource
             RelationshipType = relationshipType
         };
 
-        return await PostAsync<LinkResourceResult>($"{BasePath}/{id}/resources", request, cancellationToken).ConfigureAwait(false);
+        return await PostAsync<LinkResourceResult>($"{BasePath}/{Uri.EscapeDataString(id)}/resources", request, cancellationToken).ConfigureAwait(false);
     }
 
     /// <summary>
@@ -1027,7 +1039,7 @@ public class MemoriesResource : BaseResource
         CancellationToken cancellationToken = default)
     {
         ArgumentException.ThrowIfNullOrEmpty(id);
-        return await GetAsync<MemoryResourcesResult>($"{BasePath}/{id}/resources", cancellationToken: cancellationToken).ConfigureAwait(false);
+        return await GetAsync<MemoryResourcesResult>($"{BasePath}/{Uri.EscapeDataString(id)}/resources", cancellationToken: cancellationToken).ConfigureAwait(false);
     }
 
     /// <summary>
@@ -1040,7 +1052,7 @@ public class MemoriesResource : BaseResource
     {
         ArgumentException.ThrowIfNullOrEmpty(id);
         ArgumentException.ThrowIfNullOrEmpty(resourceId);
-        return await DeleteAsync<UnlinkResourceResult>($"{BasePath}/{id}/resources/{resourceId}", cancellationToken).ConfigureAwait(false);
+        return await DeleteAsync<UnlinkResourceResult>($"{BasePath}/{Uri.EscapeDataString(id)}/resources/{Uri.EscapeDataString(resourceId)}", cancellationToken).ConfigureAwait(false);
     }
 
     #endregion

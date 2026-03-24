@@ -120,7 +120,7 @@ public class GraphResource : BaseResource
             ("types", types != null ? string.Join(",", types) : null)
         );
 
-        return await GetAsync<GraphNeighborsResult>($"/v1/graph/neighbors/{nodeId}", queryParams, cancellationToken)
+        return await GetAsync<GraphNeighborsResult>($"/v1/graph/neighbors/{Uri.EscapeDataString(nodeId)}", queryParams, cancellationToken)
             .ConfigureAwait(false);
     }
 

@@ -134,7 +134,7 @@ public class SessionsResource : BaseResource
     {
         ArgumentException.ThrowIfNullOrEmpty(id);
         return await GetAsync<CliSession>(
-            $"{BasePath}/{id}",
+            $"{BasePath}/{Uri.EscapeDataString(id)}",
             cancellationToken: cancellationToken).ConfigureAwait(false);
     }
 
@@ -155,7 +155,7 @@ public class SessionsResource : BaseResource
         ArgumentException.ThrowIfNullOrEmpty(id);
         ArgumentNullException.ThrowIfNull(request);
         return await PatchAsync<CliSession>(
-            $"{BasePath}/{id}",
+            $"{BasePath}/{Uri.EscapeDataString(id)}",
             request,
             cancellationToken).ConfigureAwait(false);
     }
@@ -171,7 +171,7 @@ public class SessionsResource : BaseResource
         CancellationToken cancellationToken = default)
     {
         ArgumentException.ThrowIfNullOrEmpty(id);
-        await base.DeleteAsync($"{BasePath}/{id}", cancellationToken).ConfigureAwait(false);
+        await base.DeleteAsync($"{BasePath}/{Uri.EscapeDataString(id)}", cancellationToken).ConfigureAwait(false);
     }
 
     /// <summary>
@@ -187,7 +187,7 @@ public class SessionsResource : BaseResource
     {
         ArgumentException.ThrowIfNullOrEmpty(id);
         return await PostAsync<CliSession>(
-            $"{BasePath}/{id}/pause",
+            $"{BasePath}/{Uri.EscapeDataString(id)}/pause",
             cancellationToken: cancellationToken).ConfigureAwait(false);
     }
 
@@ -204,7 +204,7 @@ public class SessionsResource : BaseResource
     {
         ArgumentException.ThrowIfNullOrEmpty(id);
         return await PostAsync<CliSession>(
-            $"{BasePath}/{id}/resume",
+            $"{BasePath}/{Uri.EscapeDataString(id)}/resume",
             cancellationToken: cancellationToken).ConfigureAwait(false);
     }
 
@@ -223,7 +223,7 @@ public class SessionsResource : BaseResource
     {
         ArgumentException.ThrowIfNullOrEmpty(id);
         return await PostAsync<CliSession>(
-            $"{BasePath}/{id}/complete",
+            $"{BasePath}/{Uri.EscapeDataString(id)}/complete",
             request,
             cancellationToken).ConfigureAwait(false);
     }
@@ -250,7 +250,7 @@ public class SessionsResource : BaseResource
             ("page", page));
 
         return await GetAsync<PaginatedResponse<Memory>>(
-            $"{BasePath}/{id}/memories",
+            $"{BasePath}/{Uri.EscapeDataString(id)}/memories",
             queryParams.Count > 0 ? queryParams : null,
             cancellationToken).ConfigureAwait(false);
     }

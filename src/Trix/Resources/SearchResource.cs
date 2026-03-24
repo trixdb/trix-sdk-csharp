@@ -72,7 +72,7 @@ public class SearchResource : BaseResource
             ("clusterScale", request?.ClusterScale?.ToString()?.ToLowerInvariant())
         );
 
-        return await GetAsync<SimilarityResult>($"/v1/search/similar/{memoryId}", queryParams, cancellationToken)
+        return await GetAsync<SimilarityResult>($"/v1/search/similar/{Uri.EscapeDataString(memoryId)}", queryParams, cancellationToken)
             .ConfigureAwait(false);
     }
 

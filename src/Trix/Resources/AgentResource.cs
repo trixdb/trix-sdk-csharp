@@ -52,7 +52,7 @@ public class AgentResource : BaseResource
             ("limit", limit)
         );
 
-        return await GetAsync<SessionHistory>($"/v1/agent/sessions/{sessionId}", queryParams, cancellationToken)
+        return await GetAsync<SessionHistory>($"/v1/agent/sessions/{Uri.EscapeDataString(sessionId)}", queryParams, cancellationToken)
             .ConfigureAwait(false);
     }
 
@@ -129,7 +129,7 @@ public class AgentResource : BaseResource
         ArgumentException.ThrowIfNullOrEmpty(sessionId);
         ArgumentNullException.ThrowIfNull(request);
 
-        return await PostAsync<SessionMemory>($"/v1/agent/sessions/{sessionId}/memories", request, cancellationToken)
+        return await PostAsync<SessionMemory>($"/v1/agent/sessions/{Uri.EscapeDataString(sessionId)}/memories", request, cancellationToken)
             .ConfigureAwait(false);
     }
 
@@ -161,7 +161,7 @@ public class AgentResource : BaseResource
         CancellationToken cancellationToken = default)
     {
         ArgumentException.ThrowIfNullOrEmpty(sessionId);
-        return await PostAsync<EndSessionResult>($"/v1/agent/sessions/{sessionId}/end", request, cancellationToken)
+        return await PostAsync<EndSessionResult>($"/v1/agent/sessions/{Uri.EscapeDataString(sessionId)}/end", request, cancellationToken)
             .ConfigureAwait(false);
     }
 
@@ -176,7 +176,7 @@ public class AgentResource : BaseResource
         CancellationToken cancellationToken = default)
     {
         ArgumentException.ThrowIfNullOrEmpty(sessionId);
-        return await GetAsync<CoreMemory>($"/v1/agent/sessions/{sessionId}/core-memory", cancellationToken: cancellationToken)
+        return await GetAsync<CoreMemory>($"/v1/agent/sessions/{Uri.EscapeDataString(sessionId)}/core-memory", cancellationToken: cancellationToken)
             .ConfigureAwait(false);
     }
 
@@ -196,7 +196,7 @@ public class AgentResource : BaseResource
         ArgumentNullException.ThrowIfNull(blocks);
 
         var request = new { blocks };
-        return await PutAsync<CoreMemory>($"/v1/agent/sessions/{sessionId}/core-memory", request, cancellationToken)
+        return await PutAsync<CoreMemory>($"/v1/agent/sessions/{Uri.EscapeDataString(sessionId)}/core-memory", request, cancellationToken)
             .ConfigureAwait(false);
     }
 
@@ -211,7 +211,7 @@ public class AgentResource : BaseResource
         CancellationToken cancellationToken = default)
     {
         ArgumentException.ThrowIfNullOrEmpty(sessionId);
-        return await GetAsync<CoreMemoryContext>($"/v1/agent/sessions/{sessionId}/core-memory/format", cancellationToken: cancellationToken)
+        return await GetAsync<CoreMemoryContext>($"/v1/agent/sessions/{Uri.EscapeDataString(sessionId)}/core-memory/format", cancellationToken: cancellationToken)
             .ConfigureAwait(false);
     }
 

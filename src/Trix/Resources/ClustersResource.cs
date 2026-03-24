@@ -59,7 +59,7 @@ public class ClustersResource : BaseResource
         {
             queryParams["includeMemories"] = "true";
         }
-        return await GetAsync<Cluster>($"{BasePath}/{id}", queryParams, cancellationToken).ConfigureAwait(false);
+        return await GetAsync<Cluster>($"{BasePath}/{Uri.EscapeDataString(id)}", queryParams, cancellationToken).ConfigureAwait(false);
     }
 
     /// <summary>
@@ -72,7 +72,7 @@ public class ClustersResource : BaseResource
     {
         ArgumentException.ThrowIfNullOrEmpty(id);
         ArgumentNullException.ThrowIfNull(request);
-        return await PatchAsync<Cluster>($"{BasePath}/{id}", request, cancellationToken).ConfigureAwait(false);
+        return await PatchAsync<Cluster>($"{BasePath}/{Uri.EscapeDataString(id)}", request, cancellationToken).ConfigureAwait(false);
     }
 
     /// <summary>
@@ -83,7 +83,7 @@ public class ClustersResource : BaseResource
         CancellationToken cancellationToken = default)
     {
         ArgumentException.ThrowIfNullOrEmpty(id);
-        await base.DeleteAsync($"{BasePath}/{id}", cancellationToken).ConfigureAwait(false);
+        await base.DeleteAsync($"{BasePath}/{Uri.EscapeDataString(id)}", cancellationToken).ConfigureAwait(false);
     }
 
     /// <summary>
@@ -120,7 +120,7 @@ public class ClustersResource : BaseResource
     {
         ArgumentException.ThrowIfNullOrEmpty(clusterId);
         ArgumentException.ThrowIfNullOrEmpty(memoryId);
-        await PostAsync($"{BasePath}/{clusterId}/memories", new { memoryId, confidence }, cancellationToken).ConfigureAwait(false);
+        await PostAsync($"{BasePath}/{Uri.EscapeDataString(clusterId)}/memories", new { memoryId, confidence }, cancellationToken).ConfigureAwait(false);
     }
 
     /// <summary>
@@ -133,7 +133,7 @@ public class ClustersResource : BaseResource
     {
         ArgumentException.ThrowIfNullOrEmpty(clusterId);
         ArgumentException.ThrowIfNullOrEmpty(memoryId);
-        await base.DeleteAsync($"{BasePath}/{clusterId}/memories/{memoryId}", cancellationToken).ConfigureAwait(false);
+        await base.DeleteAsync($"{BasePath}/{Uri.EscapeDataString(clusterId)}/memories/{Uri.EscapeDataString(memoryId)}", cancellationToken).ConfigureAwait(false);
     }
 
     /// <summary>
@@ -147,7 +147,7 @@ public class ClustersResource : BaseResource
     {
         ArgumentException.ThrowIfNullOrEmpty(clusterId);
         var queryParams = BuildQueryParams(("limit", limit), ("threshold", threshold));
-        return await GetAsync<ExpandResult>($"{BasePath}/{clusterId}/expand", queryParams, cancellationToken).ConfigureAwait(false);
+        return await GetAsync<ExpandResult>($"{BasePath}/{Uri.EscapeDataString(clusterId)}/expand", queryParams, cancellationToken).ConfigureAwait(false);
     }
 
     /// <summary>
@@ -187,7 +187,11 @@ public class ClustersResource : BaseResource
         CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(clusters);
-        return await PostAsync<BulkResult>($"{BasePath}/bulk", new { clusters = clusters.ToList() }, cancellationToken).ConfigureAwait(false);
+        const int MaxBatchSize = 1000;
+        var list = clusters.ToList();
+        if (list.Count > MaxBatchSize)
+            throw new ArgumentException($"Batch size {list.Count} exceeds maximum {MaxBatchSize}");
+        return await PostAsync<BulkResult>($"{BasePath}/bulk", new { clusters = list }, cancellationToken).ConfigureAwait(false);
     }
 
     /// <summary>
@@ -198,7 +202,11 @@ public class ClustersResource : BaseResource
         CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(updates);
-        return await PatchAsync<BulkResult>($"{BasePath}/bulk", new { updates = updates.ToList() }, cancellationToken).ConfigureAwait(false);
+        const int MaxBatchSize = 1000;
+        var list = updates.ToList();
+        if (list.Count > MaxBatchSize)
+            throw new ArgumentException($"Batch size {list.Count} exceeds maximum {MaxBatchSize}");
+        return await PatchAsync<BulkResult>($"{BasePath}/bulk", new { updates = list }, cancellationToken).ConfigureAwait(false);
     }
 
     /// <summary>
@@ -209,7 +217,11 @@ public class ClustersResource : BaseResource
         CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(ids);
-        return await PostAsync<BulkResult>($"{BasePath}/bulk-delete", new { ids = ids.ToList() }, cancellationToken).ConfigureAwait(false);
+        const int MaxBatchSize = 1000;
+        var list = ids.ToList();
+        if (list.Count > MaxBatchSize)
+            throw new ArgumentException($"Batch size {list.Count} exceeds maximum {MaxBatchSize}");
+        return await PostAsync<BulkResult>($"{BasePath}/bulk-delete", new { ids = list }, cancellationToken).ConfigureAwait(false);
     }
 
     /// <summary>
@@ -239,7 +251,7 @@ public class ClustersResource : BaseResource
         CancellationToken cancellationToken = default)
     {
         ArgumentException.ThrowIfNullOrEmpty(clusterId);
-        return await PostAsync<Cluster>($"{BasePath}/{clusterId}/refresh-metrics", null, cancellationToken).ConfigureAwait(false);
+        return await PostAsync<Cluster>($"{BasePath}/{Uri.EscapeDataString(clusterId)}/refresh-metrics", null, cancellationToken).ConfigureAwait(false);
     }
 
     /// <summary>
@@ -250,7 +262,7 @@ public class ClustersResource : BaseResource
         CancellationToken cancellationToken = default)
     {
         ArgumentException.ThrowIfNullOrEmpty(clusterId);
-        return await PostAsync<Cluster>($"{BasePath}/{clusterId}/recompute-centroid", null, cancellationToken).ConfigureAwait(false);
+        return await PostAsync<Cluster>($"{BasePath}/{Uri.EscapeDataString(clusterId)}/recompute-centroid", null, cancellationToken).ConfigureAwait(false);
     }
 
     /// <summary>
@@ -261,7 +273,7 @@ public class ClustersResource : BaseResource
         CancellationToken cancellationToken = default)
     {
         ArgumentException.ThrowIfNullOrEmpty(clusterId);
-        return await GetAsync<ClusterQuality>($"{BasePath}/{clusterId}/quality", cancellationToken: cancellationToken).ConfigureAwait(false);
+        return await GetAsync<ClusterQuality>($"{BasePath}/{Uri.EscapeDataString(clusterId)}/quality", cancellationToken: cancellationToken).ConfigureAwait(false);
     }
 
     /// <summary>
@@ -272,7 +284,7 @@ public class ClustersResource : BaseResource
         CancellationToken cancellationToken = default)
     {
         ArgumentException.ThrowIfNullOrEmpty(clusterId);
-        return await GetAsync<ClusterTopics>($"{BasePath}/{clusterId}/topics", cancellationToken: cancellationToken).ConfigureAwait(false);
+        return await GetAsync<ClusterTopics>($"{BasePath}/{Uri.EscapeDataString(clusterId)}/topics", cancellationToken: cancellationToken).ConfigureAwait(false);
     }
 }
 
