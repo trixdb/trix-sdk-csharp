@@ -189,10 +189,17 @@ public abstract class BaseResource
             path,
             cancellationToken: cancellationToken).ConfigureAwait(false);
 
-        var contentStream = await response.Content.ReadAsStreamAsync(cancellationToken).ConfigureAwait(false);
-
-        // Return a wrapper that disposes the response when the stream is disposed
-        return new ResponseOwningStream(contentStream, response);
+        try
+        {
+            var contentStream = await response.Content.ReadAsStreamAsync(cancellationToken).ConfigureAwait(false);
+            // Return a wrapper that disposes the response when the stream is disposed
+            return new ResponseOwningStream(contentStream, response);
+        }
+        catch
+        {
+            response.Dispose();
+            throw;
+        }
     }
 
     /// <summary>
