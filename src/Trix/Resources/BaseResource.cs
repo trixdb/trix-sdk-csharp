@@ -170,6 +170,10 @@ public abstract class BaseResource
         HttpResponseMessage response,
         CancellationToken cancellationToken)
     {
+        const long MaxResponseSize = 50 * 1024 * 1024; // 50MB
+        if (response.Content.Headers.ContentLength > MaxResponseSize)
+            throw new InvalidOperationException($"Response size exceeds {MaxResponseSize} bytes");
+
         var result = await response.Content.ReadFromJsonAsync<T>(JsonOptions, cancellationToken)
             .ConfigureAwait(false);
 
