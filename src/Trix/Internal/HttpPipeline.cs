@@ -367,7 +367,7 @@ internal sealed class HttpPipeline : IDisposable
         return new RateLimitException(message, retryAfter, resetAt, errorCode, requestId);
     }
 
-    private static async Task<ErrorResponse?> ReadErrorBodyAsync(
+    private async Task<ErrorResponse?> ReadErrorBodyAsync(
         HttpResponseMessage response,
         CancellationToken cancellationToken)
     {
@@ -376,8 +376,9 @@ internal sealed class HttpPipeline : IDisposable
             return await response.Content.ReadFromJsonAsync<ErrorResponse>(JsonOptions, cancellationToken)
                 .ConfigureAwait(false);
         }
-        catch
+        catch (Exception ex)
         {
+            _logger.LogDebug(ex, "Failed to read error response body");
             return null;
         }
     }
