@@ -117,6 +117,7 @@ public class ModelTests
         var space = new Space
         {
             Id = "space_123",
+            Slug = "test-space",
             Name = "Test Space",
             Description = "A test space",
             CreatedAt = DateTimeOffset.UtcNow,
