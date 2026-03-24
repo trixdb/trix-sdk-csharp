@@ -205,6 +205,30 @@ public class Memory
     /// <summary>Gets or sets the source metadata.</summary>
     [JsonPropertyName("sourceMetadata")]
     public Dictionary<string, object>? SourceMetadata { get; set; }
+
+    /// <summary>Gets or sets the salience score.</summary>
+    [JsonPropertyName("salience")]
+    public double? Salience { get; set; }
+
+    /// <summary>Gets or sets the decay rate.</summary>
+    [JsonPropertyName("decay_rate")]
+    public double? DecayRate { get; set; }
+
+    /// <summary>Gets or sets whether this memory is dormant.</summary>
+    [JsonPropertyName("is_dormant")]
+    public bool? IsDormant { get; set; }
+
+    /// <summary>Gets or sets the priority level.</summary>
+    [JsonPropertyName("priority")]
+    public int? Priority { get; set; }
+
+    /// <summary>Gets or sets whether this memory is private.</summary>
+    [JsonPropertyName("is_private")]
+    public bool? IsPrivate { get; set; }
+
+    /// <summary>Gets or sets the expiration timestamp.</summary>
+    [JsonPropertyName("expires_at")]
+    public DateTimeOffset? ExpiresAt { get; set; }
 }
 
 /// <summary>
@@ -267,6 +291,22 @@ public class CreateMemoryRequest
     /// <summary>Gets or sets resource IDs to link.</summary>
     [JsonPropertyName("resourceIds")]
     public List<string>? ResourceIds { get; set; }
+
+    /// <summary>Gets or sets the priority level.</summary>
+    [JsonPropertyName("priority")]
+    public int? Priority { get; set; }
+
+    /// <summary>Gets or sets whether this memory is private.</summary>
+    [JsonPropertyName("is_private")]
+    public bool? IsPrivate { get; set; }
+
+    /// <summary>Gets or sets the expiration timestamp.</summary>
+    [JsonPropertyName("expires_at")]
+    public DateTimeOffset? ExpiresAt { get; set; }
+
+    /// <summary>Gets or sets whether to skip duplicate checking.</summary>
+    [JsonPropertyName("skip_duplicate_check")]
+    public bool? SkipDuplicateCheck { get; set; }
 }
 
 /// <summary>
