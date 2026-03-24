@@ -108,7 +108,7 @@ public abstract class BaseResource
         CancellationToken cancellationToken = default)
     {
         using var response = await _pipeline.SendAsync(
-            new HttpMethod("PATCH"),
+            HttpMethod.Patch,
             path,
             body: body,
             cancellationToken: cancellationToken).ConfigureAwait(false);
@@ -126,7 +126,7 @@ public abstract class BaseResource
         CancellationToken cancellationToken = default)
     {
         using var response = await _pipeline.SendAsync(
-            new HttpMethod("PATCH"),
+            HttpMethod.Patch,
             path,
             body: body,
             headers: headers,
