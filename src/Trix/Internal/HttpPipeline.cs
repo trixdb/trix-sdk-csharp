@@ -87,13 +87,11 @@ internal sealed class HttpPipeline : IDisposable
             client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", options.JwtToken);
         }
 
-        // Add custom headers
-        if (options.CustomHeaders != null)
+        // Add custom headers (defensive copy to avoid mutation after construction)
+        var headers = options.CustomHeaders?.ToList() ?? [];
+        foreach (var (key, value) in headers)
         {
-            foreach (var (key, value) in options.CustomHeaders)
-            {
-                client.DefaultRequestHeaders.Add(key, value);
-            }
+            client.DefaultRequestHeaders.Add(key, value);
         }
 
         return client;
