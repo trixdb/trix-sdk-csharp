@@ -88,9 +88,11 @@ internal sealed class HttpPipeline : IDisposable
         }
 
         // Add custom headers (defensive copy to avoid mutation after construction)
-        var headers = options.CustomHeaders?.ToList() ?? [];
-        foreach (var (key, value) in headers)
+        var customHeaders = options.CustomHeaders?.ToList() ?? [];
+        foreach (var (key, value) in customHeaders)
         {
+            if (value.Contains('\r') || value.Contains('\n'))
+                throw new ArgumentException($"Header value for '{key}' contains invalid characters");
             client.DefaultRequestHeaders.Add(key, value);
         }
 
@@ -131,6 +133,8 @@ internal sealed class HttpPipeline : IDisposable
                 {
                     foreach (var (key, value) in headers)
                     {
+                        if (value.Contains('\r') || value.Contains('\n'))
+                            throw new ArgumentException($"Header value for '{key}' contains invalid characters");
                         request.Headers.TryAddWithoutValidation(key, value);
                     }
                 }
