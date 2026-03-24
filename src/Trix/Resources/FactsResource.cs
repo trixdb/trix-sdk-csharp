@@ -134,9 +134,14 @@ public class FactsResource : BaseResource
     {
         var page = 1;
         const int limit = 100;
+        int pages = 0;
+        const int MaxPages = 1000;
 
         while (!cancellationToken.IsCancellationRequested)
         {
+            if (++pages > MaxPages)
+                throw new InvalidOperationException($"Pagination exceeded {MaxPages} pages");
+
             var response = await ListAsync(subject, predicate, obj, minConfidence, spaceId, limit, page, cancellationToken)
                 .ConfigureAwait(false);
 

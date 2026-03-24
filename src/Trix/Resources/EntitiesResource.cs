@@ -109,9 +109,14 @@ public class EntitiesResource : BaseResource
     {
         var offset = 0;
         const int limit = 100;
+        int pages = 0;
+        const int MaxPages = 1000;
 
         while (!cancellationToken.IsCancellationRequested)
         {
+            if (++pages > MaxPages)
+                throw new InvalidOperationException($"Pagination exceeded {MaxPages} pages");
+
             var response = await ListAsync(limit, offset, cancellationToken)
                 .ConfigureAwait(false);
 

@@ -79,9 +79,14 @@ public class JobsResource : BaseResource
     {
         var offset = 0;
         var limit = request?.Limit ?? 100;
+        int pages = 0;
+        const int MaxPages = 1000;
 
         while (!cancellationToken.IsCancellationRequested)
         {
+            if (++pages > MaxPages)
+                throw new InvalidOperationException($"Pagination exceeded {MaxPages} pages");
+
             var response = await ListAsync(new ListJobsRequest
             {
                 Queue = request?.Queue,

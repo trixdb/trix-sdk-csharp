@@ -288,8 +288,14 @@ public class MemoriesResource : BaseResource
         request.Limit ??= 100;
         request.Page ??= 1;
 
+        int pages = 0;
+        const int MaxPages = 1000;
+
         while (true)
         {
+            if (++pages > MaxPages)
+                throw new InvalidOperationException($"Pagination exceeded {MaxPages} pages");
+
             var response = await ListAsync(request, cancellationToken).ConfigureAwait(false);
 
             foreach (var memory in response.Data)
