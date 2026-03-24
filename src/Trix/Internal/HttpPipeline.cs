@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using System.Net;
 using System.Net.Http.Headers;
 using System.Net.Http.Json;
@@ -124,6 +125,9 @@ internal sealed class HttpPipeline : IDisposable
                     request.Content = JsonContent.Create(body, options: JsonOptions);
                 }
 
+                var correlationId = Guid.NewGuid().ToString("N")[..16];
+                request.Headers.TryAddWithoutValidation("X-Correlation-Id", correlationId);
+
                 // Apply extra headers (e.g. If-Match for optimistic concurrency)
                 if (headers != null)
                 {
@@ -133,11 +137,16 @@ internal sealed class HttpPipeline : IDisposable
                     }
                 }
 
-                _logger.LogDebug("Request: {Method} {Url} (attempt {Attempt})", method, url, attempt + 1);
+                _logger.LogDebug("Request: {Method} {Url} (attempt {Attempt}, corr:{CorrelationId})", method, url, attempt + 1, correlationId);
 
+                var stopwatch = Stopwatch.StartNew();
                 var response = await _httpClient.SendAsync(request, cancellationToken).ConfigureAwait(false);
+                stopwatch.Stop();
 
-                _logger.LogDebug("Response: {StatusCode} from {Url}", (int)response.StatusCode, url);
+                _logger.LogDebug("Response: {StatusCode} from {Url} (corr:{CorrelationId})", (int)response.StatusCode, url, correlationId);
+
+                if (stopwatch.Elapsed.TotalSeconds > 5)
+                    _logger.LogWarning("Slow request: {Method} {Url} took {ElapsedMs}ms (corr:{CorrelationId})", method, url, stopwatch.ElapsedMilliseconds, correlationId);
 
                 await HandleResponseAsync(response, cancellationToken).ConfigureAwait(false);
 
@@ -332,6 +341,7 @@ internal sealed class HttpPipeline : IDisposable
         string? errorCode,
         string? requestId)
     {
+        const int MaxRetryAfterSeconds = 60;
         int? retryAfter = null;
         DateTimeOffset? resetAt = null;
 
@@ -346,6 +356,11 @@ internal sealed class HttpPipeline : IDisposable
             {
                 resetAt = date;
                 retryAfter = (int)(date - DateTimeOffset.UtcNow).TotalSeconds;
+            }
+
+            if (retryAfter > MaxRetryAfterSeconds)
+            {
+                retryAfter = MaxRetryAfterSeconds;
             }
         }
 
