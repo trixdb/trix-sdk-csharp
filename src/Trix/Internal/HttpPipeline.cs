@@ -450,5 +450,7 @@ internal sealed class HttpPipeline : IDisposable
 
         // Do NOT dispose the inner stream
         protected override void Dispose(bool disposing) => base.Dispose(disposing);
+
+        public override ValueTask DisposeAsync() => default;
     }
 }
