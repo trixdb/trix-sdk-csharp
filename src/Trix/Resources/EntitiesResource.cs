@@ -327,8 +327,12 @@ public class EntitiesResource : BaseResource
         CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(entities);
+        const int MaxBatchSize = 1000;
+        var list = entities.ToList();
+        if (list.Count > MaxBatchSize)
+            throw new ArgumentException($"Batch size {list.Count} exceeds maximum {MaxBatchSize}");
 
-        var request = new { entities = entities.ToList() };
+        var request = new { entities = list };
         return await PostAsync<BulkResult>("/v1/entities/bulk", request, cancellationToken)
             .ConfigureAwait(false);
     }
@@ -344,8 +348,12 @@ public class EntitiesResource : BaseResource
         CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(ids);
+        const int MaxBatchSize = 1000;
+        var list = ids.ToList();
+        if (list.Count > MaxBatchSize)
+            throw new ArgumentException($"Batch size {list.Count} exceeds maximum {MaxBatchSize}");
 
-        var request = new { ids = ids.ToList() };
+        var request = new { ids = list };
         return await PostAsync<BulkResult>("/v1/entities/bulk-delete", request, cancellationToken)
             .ConfigureAwait(false);
     }

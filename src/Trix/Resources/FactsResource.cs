@@ -222,8 +222,12 @@ public class FactsResource : BaseResource
         CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(facts);
+        const int MaxBatchSize = 1000;
+        var list = facts.ToList();
+        if (list.Count > MaxBatchSize)
+            throw new ArgumentException($"Batch size {list.Count} exceeds maximum {MaxBatchSize}");
 
-        var request = new { facts = facts.ToList() };
+        var request = new { facts = list };
         return await PostAsync<BulkResult>("/v1/facts/bulk", request, cancellationToken)
             .ConfigureAwait(false);
     }
@@ -239,8 +243,12 @@ public class FactsResource : BaseResource
         CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(ids);
+        const int MaxBatchSize = 1000;
+        var list = ids.ToList();
+        if (list.Count > MaxBatchSize)
+            throw new ArgumentException($"Batch size {list.Count} exceeds maximum {MaxBatchSize}");
 
-        var request = new { ids = ids.ToList() };
+        var request = new { ids = list };
         return await PostAsync<BulkResult>("/v1/facts/bulk-delete", request, cancellationToken)
             .ConfigureAwait(false);
     }
