@@ -23,7 +23,7 @@ public sealed class TrixClient : IDisposable
 {
     private readonly HttpPipeline _pipeline;
     private readonly ILogger<TrixClient> _logger;
-    private bool _disposed;
+    private int _disposed;
 
     /// <summary>
     /// Gets the SDK version.
@@ -237,10 +237,9 @@ public sealed class TrixClient : IDisposable
     /// </summary>
     public void Dispose()
     {
-        if (_disposed) return;
+        if (Interlocked.Exchange(ref _disposed, 1) != 0) return;
 
         _pipeline.Dispose();
-        _disposed = true;
 
         _logger.LogDebug("TrixClient disposed");
     }
@@ -250,6 +249,6 @@ public sealed class TrixClient : IDisposable
     /// </summary>
     private void ThrowIfDisposed()
     {
-        ObjectDisposedException.ThrowIf(_disposed, this);
+        ObjectDisposedException.ThrowIf(Volatile.Read(ref _disposed) != 0, this);
     }
 }
