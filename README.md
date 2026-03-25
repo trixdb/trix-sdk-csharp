@@ -2,7 +2,7 @@
 
 The official .NET SDK for [Trix](https://trixdb.com) - a memory and knowledge management API.
 
-[![NuGet](https://img.shields.io/nuget/v/Trix.Client.svg)](https://www.nuget.org/packages/Trix.Client)
+[![NuGet](https://img.shields.io/nuget/v/Trix.svg)](https://www.nuget.org/packages/Trix)
 [![.NET](https://img.shields.io/badge/.NET-10.0-blue.svg)](https://dotnet.microsoft.com/)
 [![License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
 
@@ -11,13 +11,13 @@ The official .NET SDK for [Trix](https://trixdb.com) - a memory and knowledge ma
 Install via NuGet:
 
 ```bash
-dotnet add package Trix.Client
+dotnet add package Trix
 ```
 
 Or via the Package Manager Console:
 
 ```powershell
-Install-Package Trix.Client
+Install-Package Trix
 ```
 
 ## Quick Start
