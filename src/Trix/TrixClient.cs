@@ -53,6 +53,7 @@ public sealed class TrixClient : IDisposable
     private readonly SessionsResource _sessions;
     private readonly ResourcesResource _resources;
     private readonly SpaceConfigResource _spaceConfig;
+    private readonly HubRolesResource _hubRoles;
 
     /// <summary>
     /// Gets the memories resource for managing memories.
@@ -157,6 +158,12 @@ public sealed class TrixClient : IDisposable
     public SpaceConfigResource SpaceConfig { get { ThrowIfDisposed(); return _spaceConfig; } }
 
     /// <summary>
+    /// Gets the hub roles resource for managing custom roles (ADR-080).
+    /// </summary>
+    /// <exception cref="ObjectDisposedException">If the client has been disposed.</exception>
+    public HubRolesResource HubRoles { get { ThrowIfDisposed(); return _hubRoles; } }
+
+    /// <summary>
     /// Creates a new Trix client with the specified API key.
     /// </summary>
     /// <param name="apiKey">The API key for authentication.</param>
@@ -204,6 +211,7 @@ public sealed class TrixClient : IDisposable
         _sessions = new SessionsResource(_pipeline);
         _resources = new ResourcesResource(_pipeline);
         _spaceConfig = new SpaceConfigResource(_pipeline);
+        _hubRoles = new HubRolesResource(_pipeline);
 
         _logger.LogInformation("TrixClient initialized (SDK v{Version})", Version);
     }
