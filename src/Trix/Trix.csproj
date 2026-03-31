@@ -8,7 +8,7 @@
 
     <!-- NuGet Package Metadata -->
     <PackageId>Trix</PackageId>
-    <Version>0.1.0</Version>
+    <Version>0.5.0</Version>
     <Authors>Trix Team</Authors>
     <Company>Trix</Company>
     <Product>Trix SDK for .NET</Product>
