@@ -121,7 +121,10 @@ public class SpacesResourceTests : IDisposable
                 ItExpr.IsAny<CancellationToken>())
             .Callback<HttpRequestMessage, CancellationToken>((req, _) =>
             {
-                capturedBody = req.Content?.ReadAsStringAsync().GetAwaiter().GetResult();
+                if (req.Content != null)
+#pragma warning disable xUnit1031 // Moq Callback does not support async delegates
+                    capturedBody = req.Content.ReadAsStringAsync().GetAwaiter().GetResult();
+#pragma warning restore xUnit1031
             })
             .ReturnsAsync(new HttpResponseMessage(HttpStatusCode.OK)
             {
@@ -292,7 +295,10 @@ public class SpacesResourceTests : IDisposable
                 ItExpr.IsAny<CancellationToken>())
             .Callback<HttpRequestMessage, CancellationToken>((req, _) =>
             {
-                capturedBody = req.Content?.ReadAsStringAsync().GetAwaiter().GetResult();
+                if (req.Content != null)
+#pragma warning disable xUnit1031 // Moq Callback does not support async delegates
+                    capturedBody = req.Content.ReadAsStringAsync().GetAwaiter().GetResult();
+#pragma warning restore xUnit1031
             })
             .ReturnsAsync(new HttpResponseMessage(HttpStatusCode.OK)
             {
@@ -337,7 +343,10 @@ public class SpacesResourceTests : IDisposable
                 ItExpr.IsAny<CancellationToken>())
             .Callback<HttpRequestMessage, CancellationToken>((req, _) =>
             {
-                capturedBody = req.Content?.ReadAsStringAsync().GetAwaiter().GetResult();
+                if (req.Content != null)
+#pragma warning disable xUnit1031 // Moq Callback does not support async delegates
+                    capturedBody = req.Content.ReadAsStringAsync().GetAwaiter().GetResult();
+#pragma warning restore xUnit1031
             })
             .ReturnsAsync(new HttpResponseMessage(HttpStatusCode.OK)
             {
