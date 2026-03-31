@@ -113,16 +113,20 @@ public class SpacesResourceTests : IDisposable
         }
         """;
 
-        HttpRequestMessage? capturedRequest = null;
+        string? capturedBody = null;
         _mockHandler.Protected()
             .Setup<Task<HttpResponseMessage>>(
                 "SendAsync",
                 ItExpr.IsAny<HttpRequestMessage>(),
                 ItExpr.IsAny<CancellationToken>())
-            .Callback<HttpRequestMessage, CancellationToken>((req, _) => capturedRequest = req)
+            .Callback<HttpRequestMessage, CancellationToken>((req, _) =>
+            {
+                capturedBody = req.Content?.ReadAsStringAsync().GetAwaiter().GetResult();
+            })
             .ReturnsAsync(new HttpResponseMessage(HttpStatusCode.OK)
             {
-                Content = new StringContent(responseJson, Encoding.UTF8, "application/json")
+                Content = new StringContent(
+                    responseJson, Encoding.UTF8, "application/json")
             });
 
         // Act
@@ -138,9 +142,8 @@ public class SpacesResourceTests : IDisposable
         space.Slug.Should().Be("custom-slug");
 
         // Verify request body contained slug
-        capturedRequest.Should().NotBeNull();
-        var requestBody = await capturedRequest!.Content!.ReadAsStringAsync();
-        requestBody.Should().Contain("\"slug\":\"custom-slug\"");
+        capturedBody.Should().NotBeNull();
+        capturedBody.Should().Contain("\"slug\":\"custom-slug\"");
     }
 
     [Fact]
@@ -281,16 +284,20 @@ public class SpacesResourceTests : IDisposable
         }
         """;
 
-        HttpRequestMessage? capturedRequest = null;
+        string? capturedBody = null;
         _mockHandler.Protected()
             .Setup<Task<HttpResponseMessage>>(
                 "SendAsync",
                 ItExpr.IsAny<HttpRequestMessage>(),
                 ItExpr.IsAny<CancellationToken>())
-            .Callback<HttpRequestMessage, CancellationToken>((req, _) => capturedRequest = req)
+            .Callback<HttpRequestMessage, CancellationToken>((req, _) =>
+            {
+                capturedBody = req.Content?.ReadAsStringAsync().GetAwaiter().GetResult();
+            })
             .ReturnsAsync(new HttpResponseMessage(HttpStatusCode.OK)
             {
-                Content = new StringContent(responseJson, Encoding.UTF8, "application/json")
+                Content = new StringContent(
+                    responseJson, Encoding.UTF8, "application/json")
             });
 
         // Act
@@ -304,9 +311,8 @@ public class SpacesResourceTests : IDisposable
         space.Slug.Should().Be("updated-slug");
 
         // Verify request body contained slug
-        capturedRequest.Should().NotBeNull();
-        var requestBody = await capturedRequest!.Content!.ReadAsStringAsync();
-        requestBody.Should().Contain("\"slug\":\"updated-slug\"");
+        capturedBody.Should().NotBeNull();
+        capturedBody.Should().Contain("\"slug\":\"updated-slug\"");
     }
 
     [Fact]
@@ -323,16 +329,20 @@ public class SpacesResourceTests : IDisposable
         }
         """;
 
-        HttpRequestMessage? capturedRequest = null;
+        string? capturedBody = null;
         _mockHandler.Protected()
             .Setup<Task<HttpResponseMessage>>(
                 "SendAsync",
                 ItExpr.IsAny<HttpRequestMessage>(),
                 ItExpr.IsAny<CancellationToken>())
-            .Callback<HttpRequestMessage, CancellationToken>((req, _) => capturedRequest = req)
+            .Callback<HttpRequestMessage, CancellationToken>((req, _) =>
+            {
+                capturedBody = req.Content?.ReadAsStringAsync().GetAwaiter().GetResult();
+            })
             .ReturnsAsync(new HttpResponseMessage(HttpStatusCode.OK)
             {
-                Content = new StringContent(responseJson, Encoding.UTF8, "application/json")
+                Content = new StringContent(
+                    responseJson, Encoding.UTF8, "application/json")
             });
 
         // Act
@@ -348,10 +358,9 @@ public class SpacesResourceTests : IDisposable
         space.Slug.Should().Be("updated-slug");
 
         // Verify request body
-        capturedRequest.Should().NotBeNull();
-        var requestBody = await capturedRequest!.Content!.ReadAsStringAsync();
-        requestBody.Should().Contain("\"name\":\"Updated Name\"");
-        requestBody.Should().Contain("\"slug\":\"updated-slug\"");
+        capturedBody.Should().NotBeNull();
+        capturedBody.Should().Contain("\"name\":\"Updated Name\"");
+        capturedBody.Should().Contain("\"slug\":\"updated-slug\"");
     }
 
     #endregion
