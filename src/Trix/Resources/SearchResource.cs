@@ -1,3 +1,4 @@
+using System.Text.Json;
 using Trix.Internal;
 using Trix.Models;
 
@@ -116,6 +117,39 @@ public class SearchResource : BaseResource
     public virtual async Task<SearchConfig> GetConfigAsync(CancellationToken cancellationToken = default)
     {
         return await GetAsync<SearchConfig>("/v1/search/config", cancellationToken: cancellationToken)
+            .ConfigureAwait(false);
+    }
+
+    /// <summary>
+    /// Executes multiple searches in a single request.
+    /// </summary>
+    /// <param name="searches">Array of search objects.</param>
+    /// <param name="deduplicate">Whether to deduplicate results across searches.</param>
+    /// <param name="cancellationToken">Cancellation token.</param>
+    /// <returns>The batch search results.</returns>
+    public virtual async Task<JsonElement> BatchSearchAsync(
+        object[] searches,
+        bool deduplicate = true,
+        CancellationToken cancellationToken = default)
+    {
+        var request = new { searches, deduplicate };
+        return await PostAsync<JsonElement>("/v1/search/batch", request, cancellationToken)
+            .ConfigureAwait(false);
+    }
+
+    /// <summary>
+    /// Suggests an optimal search strategy for a query.
+    /// </summary>
+    /// <param name="query">The query to suggest a strategy for.</param>
+    /// <param name="cancellationToken">Cancellation token.</param>
+    /// <returns>The suggested search strategy.</returns>
+    public virtual async Task<JsonElement> SuggestStrategyAsync(
+        string query,
+        CancellationToken cancellationToken = default)
+    {
+        ArgumentException.ThrowIfNullOrEmpty(query);
+        var request = new { query };
+        return await PostAsync<JsonElement>("/v1/search/suggest-strategy", request, cancellationToken)
             .ConfigureAwait(false);
     }
 }

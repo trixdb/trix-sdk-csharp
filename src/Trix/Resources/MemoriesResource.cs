@@ -1,3 +1,4 @@
+using System.Text.Json;
 using System.Text.Json.Serialization;
 using Trix.Internal;
 using Trix.Models;
@@ -1062,6 +1063,34 @@ public class MemoriesResource : BaseResource
     }
 
     #endregion
+
+    /// <summary>
+    /// Stores a memory and automatically organizes it with tags, metadata, and contradiction detection.
+    /// </summary>
+    /// <param name="content">The memory content to store.</param>
+    /// <param name="tags">Optional tags to apply.</param>
+    /// <param name="metadata">Optional metadata dictionary.</param>
+    /// <param name="spaceId">Optional space ID.</param>
+    /// <param name="detectContradictions">Whether to detect contradictions with existing memories.</param>
+    /// <param name="cancellationToken">Cancellation token.</param>
+    /// <returns>The store-and-organize result.</returns>
+    public virtual async Task<JsonElement> StoreAndOrganizeAsync(
+        string content,
+        string[]? tags = null,
+        Dictionary<string, object>? metadata = null,
+        string? spaceId = null,
+        bool detectContradictions = false,
+        CancellationToken cancellationToken = default)
+    {
+        ArgumentException.ThrowIfNullOrEmpty(content);
+        var request = new Dictionary<string, object> { ["content"] = content };
+        if (tags != null) request["tags"] = tags;
+        if (metadata != null) request["metadata"] = metadata;
+        if (spaceId != null) request["space_id"] = spaceId;
+        if (detectContradictions) request["detect_contradictions"] = true;
+        return await PostAsync<JsonElement>("/v1/memories/store-organize", request, cancellationToken)
+            .ConfigureAwait(false);
+    }
 }
 
 /// <summary>
