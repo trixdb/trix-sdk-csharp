@@ -228,4 +228,57 @@ public class AgentResource : BaseResource
         return await PostAsync<ConsolidationResult>("/v1/agent/consolidate", request, cancellationToken)
             .ConfigureAwait(false);
     }
+
+    // ==================== ADR-112 P10 — Ingestion-pipeline triggers ====================
+
+    /// <summary>
+    /// Enqueues a session_summary job for the given session. Returns 202 immediately;
+    /// the worker generates the summary asynchronously.
+    /// </summary>
+    public virtual async Task<TriggerJobResult> SummarizeSessionAsync(
+        string sessionId,
+        string? pipeline = null,
+        CancellationToken cancellationToken = default)
+    {
+        ArgumentException.ThrowIfNullOrEmpty(sessionId);
+        var body = pipeline is null ? (object)new { } : new { pipeline };
+        return await PostAsync<TriggerJobResult>(
+            $"/v1/agent/sessions/{Uri.EscapeDataString(sessionId)}/summarize",
+            body,
+            cancellationToken).ConfigureAwait(false);
+    }
+
+    /// <summary>
+    /// Enqueues a cross-session mega-summary generation job over an account or space.
+    /// </summary>
+    public virtual async Task<TriggerJobResult> TriggerMegaSummaryAsync(
+        string scopeId,
+        string scopeType = "account",
+        string? pipeline = null,
+        CancellationToken cancellationToken = default)
+    {
+        ArgumentException.ThrowIfNullOrEmpty(scopeId);
+        var body = pipeline is null
+            ? (object)new { scope_id = scopeId, scope_type = scopeType }
+            : new { scope_id = scopeId, scope_type = scopeType, pipeline };
+        return await PostAsync<TriggerJobResult>("/v1/agent/mega-summary/trigger", body, cancellationToken)
+            .ConfigureAwait(false);
+    }
+
+    /// <summary>
+    /// Enqueues a scoped fact harvest job over a session, space, or memory window.
+    /// </summary>
+    public virtual async Task<TriggerJobResult> TriggerScopedFactsAsync(
+        string scopeId,
+        string scopeType = "session",
+        string? pipeline = null,
+        CancellationToken cancellationToken = default)
+    {
+        ArgumentException.ThrowIfNullOrEmpty(scopeId);
+        var body = pipeline is null
+            ? (object)new { scope_id = scopeId, scope_type = scopeType }
+            : new { scope_id = scopeId, scope_type = scopeType, pipeline };
+        return await PostAsync<TriggerJobResult>("/v1/agent/scoped-facts/harvest", body, cancellationToken)
+            .ConfigureAwait(false);
+    }
 }

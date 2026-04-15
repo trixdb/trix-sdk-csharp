@@ -429,3 +429,34 @@ public class ListSessionsRequest
     [JsonPropertyName("active")]
     public bool? Active { get; set; }
 }
+
+/// <summary>
+/// ADR-112 P10 — Response from the explicit-trigger endpoints
+/// (session_summary, mega_summary, scoped_fact). Returns 202 + job ID.
+/// </summary>
+public class TriggerJobResult
+{
+    /// <summary>Scope identifier (set on mega_summary / scoped_fact triggers).</summary>
+    [JsonPropertyName("scope_id")]
+    public string? ScopeId { get; set; }
+
+    /// <summary>Session identifier (set on session_summary triggers).</summary>
+    [JsonPropertyName("session_id")]
+    public string? SessionId { get; set; }
+
+    /// <summary>Scope type ('account' | 'space' | 'session' | 'window').</summary>
+    [JsonPropertyName("scope_type")]
+    public string? ScopeType { get; set; }
+
+    /// <summary>True when the worker queue accepted the job.</summary>
+    [JsonPropertyName("enqueued")]
+    public bool Enqueued { get; set; }
+
+    /// <summary>BullMQ job ID; null if the queue isn't decorated.</summary>
+    [JsonPropertyName("job_id")]
+    public string? JobId { get; set; }
+
+    /// <summary>Pipeline preset name applied; null if none was supplied.</summary>
+    [JsonPropertyName("pipeline")]
+    public string? Pipeline { get; set; }
+}
