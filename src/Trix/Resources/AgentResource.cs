@@ -281,4 +281,41 @@ public class AgentResource : BaseResource
         return await PostAsync<TriggerJobResult>("/v1/agent/scoped-facts/harvest", body, cancellationToken)
             .ConfigureAwait(false);
     }
+
+    // ADR-109a — Account-level default pipeline preset.
+    // Placed here pragmatically; pipeline-presets has no dedicated SDK
+    // resource yet. Thin wrappers over /v1/pipeline-presets/_default.
+
+    /// <summary>
+    /// Returns the account's current default pipeline preset name, or null if unset.
+    /// </summary>
+    public virtual async Task<string?> GetDefaultPipelineAsync(CancellationToken cancellationToken = default)
+    {
+        var resp = await GetAsync<AccountDefaultPresetResult>(
+            "/v1/pipeline-presets/_default",
+            cancellationToken: cancellationToken).ConfigureAwait(false);
+        return resp?.Name;
+    }
+
+    /// <summary>
+    /// Sets the account default pipeline preset. Throws on unknown name.
+    /// </summary>
+    public virtual async Task<string> SetDefaultPipelineAsync(string name, CancellationToken cancellationToken = default)
+    {
+        ArgumentException.ThrowIfNullOrEmpty(name);
+        var resp = await PostAsync<AccountDefaultPresetResult>(
+            $"/v1/pipeline-presets/{Uri.EscapeDataString(name)}/set-default",
+            new { },
+            cancellationToken).ConfigureAwait(false);
+        return resp?.Name ?? name;
+    }
+
+    /// <summary>
+    /// Clears the account default pipeline preset.
+    /// </summary>
+    public virtual async Task ClearDefaultPipelineAsync(CancellationToken cancellationToken = default)
+    {
+        await DeleteAsync("/v1/pipeline-presets/_default", cancellationToken)
+            .ConfigureAwait(false);
+    }
 }

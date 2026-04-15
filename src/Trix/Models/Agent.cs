@@ -460,3 +460,14 @@ public class TriggerJobResult
     [JsonPropertyName("pipeline")]
     public string? Pipeline { get; set; }
 }
+
+/// <summary>
+/// ADR-109a — Response from GET /v1/pipeline-presets/_default and
+/// POST /v1/pipeline-presets/:name/set-default.
+/// </summary>
+public class AccountDefaultPresetResult
+{
+    /// <summary>The default preset name (null when unset).</summary>
+    [JsonPropertyName("name")]
+    public string? Name { get; set; }
+}
