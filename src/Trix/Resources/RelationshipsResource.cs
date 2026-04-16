@@ -13,14 +13,20 @@ public class RelationshipsResource : BaseResource
     internal RelationshipsResource(HttpPipeline pipeline) : base(pipeline) { }
 
     /// <summary>
-    /// Creates a new relationship.
+    /// Creates a new relationship from a source memory (ADR-145 wire contract).
+    /// POSTs to /v1/relationships/{sourceId} with the request in the body.
     /// </summary>
     public virtual async Task<Relationship> CreateAsync(
+        string sourceId,
         CreateRelationshipRequest request,
         CancellationToken cancellationToken = default)
     {
+        ArgumentException.ThrowIfNullOrEmpty(sourceId);
         ArgumentNullException.ThrowIfNull(request);
-        return await PostAsync<Relationship>(BasePath, request, cancellationToken).ConfigureAwait(false);
+        return await PostAsync<Relationship>(
+            $"{BasePath}/{Uri.EscapeDataString(sourceId)}",
+            request,
+            cancellationToken).ConfigureAwait(false);
     }
 
     /// <summary>
@@ -30,16 +36,15 @@ public class RelationshipsResource : BaseResource
         string sourceId,
         string targetId,
         string relationshipType,
-        double strength = 1.0,
+        double weight = 1.0,
         Dictionary<string, object>? metadata = null,
         CancellationToken cancellationToken = default)
     {
-        return await CreateAsync(new CreateRelationshipRequest
+        return await CreateAsync(sourceId, new CreateRelationshipRequest
         {
-            SourceId = sourceId,
             TargetId = targetId,
             RelationshipType = relationshipType,
-            Strength = strength,
+            Weight = weight,
             Metadata = metadata
         }, cancellationToken).ConfigureAwait(false);
     }
@@ -106,7 +111,7 @@ public class RelationshipsResource : BaseResource
     }
 
     /// <summary>
-    /// Reinforces a relationship, increasing its strength.
+    /// Reinforces a relationship, increasing its weight.
     /// </summary>
     public virtual async Task<Relationship> ReinforceAsync(
         string id,
@@ -118,7 +123,7 @@ public class RelationshipsResource : BaseResource
     }
 
     /// <summary>
-    /// Weakens a relationship, decreasing its strength.
+    /// Weakens a relationship, decreasing its weight.
     /// </summary>
     public virtual async Task<Relationship> WeakenAsync(
         string id,

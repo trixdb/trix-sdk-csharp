@@ -68,7 +68,7 @@ public class ModelTests
             SourceId = "mem_1",
             TargetId = "mem_2",
             RelationshipType = RelationshipTypes.RelatedTo,
-            Strength = 0.8,
+            Weight = 0.8,
             CreatedAt = DateTimeOffset.UtcNow,
             UpdatedAt = DateTimeOffset.UtcNow
         };
@@ -82,7 +82,7 @@ public class ModelTests
         deserialized!.Id.Should().Be(relationship.Id);
         deserialized.SourceId.Should().Be(relationship.SourceId);
         deserialized.TargetId.Should().Be(relationship.TargetId);
-        deserialized.Strength.Should().Be(0.8);
+        deserialized.Weight.Should().Be(0.8);
     }
 
     [Fact]
