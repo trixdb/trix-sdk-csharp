@@ -356,4 +356,32 @@ public class AgentResource : BaseResource
         await DeleteAsync($"/v1/spaces/{Uri.EscapeDataString(spaceId)}/default-pipeline", cancellationToken)
             .ConfigureAwait(false);
     }
+
+    /// <summary>
+    /// ADR-109a observability (tick 79) — dry-run 3-tier preset resolution.
+    /// Asks the server what preset would apply right now for the given
+    /// (spaceId, pipeline) pair, without running a search or chat.
+    /// </summary>
+    public virtual async Task<PipelineResolution> ResolvePipelineAsync(
+        string? spaceId = null,
+        string? pipeline = null,
+        CancellationToken cancellationToken = default)
+    {
+        var query = new List<string>();
+        if (!string.IsNullOrEmpty(spaceId))
+        {
+            query.Add($"space_id={Uri.EscapeDataString(spaceId)}");
+        }
+        if (!string.IsNullOrEmpty(pipeline))
+        {
+            query.Add($"pipeline={Uri.EscapeDataString(pipeline)}");
+        }
+        var path = "/v1/pipeline-presets/_resolve";
+        if (query.Count > 0)
+        {
+            path += "?" + string.Join("&", query);
+        }
+        return await GetAsync<PipelineResolution>(path, cancellationToken: cancellationToken)
+            .ConfigureAwait(false);
+    }
 }
