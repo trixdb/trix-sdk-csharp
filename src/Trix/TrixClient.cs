@@ -1,6 +1,10 @@
+using System.Diagnostics;
+using System.Net.Http.Json;
+using System.Text.Json;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 using Trix.Internal;
+using Trix.Models;
 using Trix.Resources;
 
 namespace Trix;
@@ -254,6 +258,34 @@ public sealed class TrixClient : IDisposable
         var options = TrixClientOptions.FromEnvironment();
         configure(options);
         return new TrixClient(options);
+    }
+
+    /// <summary>
+    /// Health-check round-trip against <c>GET /v1/health</c> (ADR-143).
+    ///
+    /// Unauthenticated and side-effect free. Returns the client-measured
+    /// round-trip time plus the server's reported version. <see cref="PingResult.Ok"/>
+    /// is true iff the server responds with <c>status == "ok"</c>.
+    /// </summary>
+    public async Task<PingResult> PingAsync(CancellationToken cancellationToken = default)
+    {
+        ThrowIfDisposed();
+        var stopwatch = Stopwatch.StartNew();
+        using var response = await _pipeline.SendAsync(
+            HttpMethod.Get,
+            "/v1/health",
+            cancellationToken: cancellationToken).ConfigureAwait(false);
+        stopwatch.Stop();
+
+        var body = await response.Content
+            .ReadFromJsonAsync<HealthResponse>(cancellationToken: cancellationToken)
+            .ConfigureAwait(false);
+        return new PingResult
+        {
+            Ok = body?.Status == "ok",
+            Version = body?.Version,
+            LatencyMs = stopwatch.ElapsedMilliseconds,
+        };
     }
 
     /// <summary>
