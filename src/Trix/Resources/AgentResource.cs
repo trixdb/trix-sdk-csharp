@@ -318,4 +318,42 @@ public class AgentResource : BaseResource
         await DeleteAsync("/v1/pipeline-presets/_default", cancellationToken)
             .ConfigureAwait(false);
     }
+
+    // ADR-109a — Space-level default pipeline preset.
+
+    /// <summary>
+    /// Returns the space's current default pipeline preset name, or null if unset.
+    /// </summary>
+    public virtual async Task<string?> GetSpaceDefaultPipelineAsync(string spaceId, CancellationToken cancellationToken = default)
+    {
+        ArgumentException.ThrowIfNullOrEmpty(spaceId);
+        var resp = await GetAsync<AccountDefaultPresetResult>(
+            $"/v1/spaces/{Uri.EscapeDataString(spaceId)}/default-pipeline",
+            cancellationToken: cancellationToken).ConfigureAwait(false);
+        return resp?.Name;
+    }
+
+    /// <summary>
+    /// Sets the space default pipeline preset. Throws on unknown name.
+    /// </summary>
+    public virtual async Task<string> SetSpaceDefaultPipelineAsync(string spaceId, string name, CancellationToken cancellationToken = default)
+    {
+        ArgumentException.ThrowIfNullOrEmpty(spaceId);
+        ArgumentException.ThrowIfNullOrEmpty(name);
+        var resp = await PostAsync<AccountDefaultPresetResult>(
+            $"/v1/spaces/{Uri.EscapeDataString(spaceId)}/default-pipeline/{Uri.EscapeDataString(name)}",
+            new { },
+            cancellationToken).ConfigureAwait(false);
+        return resp?.Name ?? name;
+    }
+
+    /// <summary>
+    /// Clears the space default pipeline preset.
+    /// </summary>
+    public virtual async Task ClearSpaceDefaultPipelineAsync(string spaceId, CancellationToken cancellationToken = default)
+    {
+        ArgumentException.ThrowIfNullOrEmpty(spaceId);
+        await DeleteAsync($"/v1/spaces/{Uri.EscapeDataString(spaceId)}/default-pipeline", cancellationToken)
+            .ConfigureAwait(false);
+    }
 }
