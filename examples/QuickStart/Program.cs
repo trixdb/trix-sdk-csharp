@@ -61,7 +61,7 @@ try
             sourceId: memories.Data[0].Id,
             targetId: memories.Data[1].Id,
             relationshipType: RelationshipTypes.RelatedTo,
-            strength: 0.8
+            weight: 0.8
         );
         Console.WriteLine($"Created relationship: {relationship.Id}");
         Console.WriteLine($"  {relationship.SourceId} --[{relationship.RelationshipType}]--> {relationship.TargetId}");
