@@ -119,6 +119,7 @@ public class GitHubResource : BaseResource
         int limit = 20,
         int? minQualityScore = null,
         int? maxQualityScore = null,
+        string? agent = null,
         CancellationToken cancellationToken = default)
     {
         ArgumentException.ThrowIfNullOrEmpty(projectId);
@@ -129,6 +130,8 @@ public class GitHubResource : BaseResource
             qs += $"&min_quality_score={minQualityScore.Value}";
         if (maxQualityScore.HasValue)
             qs += $"&max_quality_score={maxQualityScore.Value}";
+        if (!string.IsNullOrEmpty(agent))
+            qs += $"&agent={Uri.EscapeDataString(agent)}";
         return await GetAsync<PRBriefsResponse>(
             $"/v1/projects/{Esc(projectId)}/github/pr-briefs?{qs}",
             cancellationToken: cancellationToken).ConfigureAwait(false);
