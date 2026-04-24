@@ -344,4 +344,62 @@ public class GitHubResource : BaseResource
             $"/v1/projects/{Esc(projectId)}/github/improvements/stats",
             cancellationToken: cancellationToken).ConfigureAwait(false);
     }
+
+    /// <summary>Get technical debt aggregated by category.</summary>
+    public virtual async Task<TechnicalDebt> GetCodeDebtAsync(
+        string projectId,
+        CancellationToken cancellationToken = default)
+    {
+        ArgumentException.ThrowIfNullOrEmpty(projectId);
+        return await GetAsync<TechnicalDebt>(
+            $"/v1/projects/{Esc(projectId)}/github/improvements/debt",
+            cancellationToken: cancellationToken).ConfigureAwait(false);
+    }
+
+    /// <summary>Evaluate quality gate thresholds — returns pass/fail with per-check detail.</summary>
+    public virtual async Task<QualityGate> GetQualityGateAsync(
+        string projectId,
+        CancellationToken cancellationToken = default)
+    {
+        ArgumentException.ThrowIfNullOrEmpty(projectId);
+        return await GetAsync<QualityGate>(
+            $"/v1/projects/{Esc(projectId)}/github/improvements/quality-gate",
+            cancellationToken: cancellationToken).ConfigureAwait(false);
+    }
+
+    /// <summary>Run an agent PR review, posting a structured comment to GitHub.</summary>
+    public virtual async Task<PrReviewResult> ReviewPrAsync(
+        string projectId,
+        string connectionId,
+        int prNumber,
+        string reviewEvent = "COMMENT",
+        bool dryRun = false,
+        CancellationToken cancellationToken = default)
+    {
+        ArgumentException.ThrowIfNullOrEmpty(projectId);
+        ArgumentException.ThrowIfNullOrEmpty(connectionId);
+        return await PostAsync<PrReviewResult>(
+            $"/v1/projects/{Esc(projectId)}/github/review-pr",
+            new { connection_id = connectionId, pr_number = prNumber, @event = reviewEvent, dry_run = dryRun },
+            cancellationToken).ConfigureAwait(false);
+    }
+
+    /// <summary>Create a GitHub PR with agent-authored file changes (up to 50 files).</summary>
+    public virtual async Task<AgentPrResult> CreatePrAsync(
+        string projectId,
+        string connectionId,
+        string branchName,
+        string commitMessage,
+        string prTitle,
+        IEnumerable<PrFileChange> changes,
+        string baseBranch = "main",
+        string prBody = "",
+        CancellationToken cancellationToken = default)
+    {
+        ArgumentException.ThrowIfNullOrEmpty(projectId);
+        return await PostAsync<AgentPrResult>(
+            $"/v1/projects/{Esc(projectId)}/github/create-pr",
+            new { connection_id = connectionId, branch_name = branchName, base_branch = baseBranch, commit_message = commitMessage, pr_title = prTitle, pr_body = prBody, changes },
+            cancellationToken).ConfigureAwait(false);
+    }
 }

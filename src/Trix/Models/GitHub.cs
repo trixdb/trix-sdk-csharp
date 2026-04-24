@@ -473,3 +473,4 @@ public class CreatedGitHubIssue
     [JsonPropertyName("title")]
     public string Title { get; set; } = string.Empty;
 }
+
