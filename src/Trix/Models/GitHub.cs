@@ -136,6 +136,9 @@ public class PRBrief
     [JsonPropertyName("prNumber")]
     public int? PrNumber { get; set; }
 
+    [JsonPropertyName("prUrl")]
+    public string? PrUrl { get; set; }
+
     [JsonPropertyName("repo")]
     public string? Repo { get; set; }
 
