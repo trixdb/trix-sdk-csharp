@@ -20,11 +20,14 @@ public class DebtCategory
     [JsonPropertyName("category")]
     public string Category { get; set; } = string.Empty;
 
+    [JsonPropertyName("count")]
+    public int Count { get; set; }
+
     [JsonPropertyName("minutes")]
     public int Minutes { get; set; }
 }
 
-/// <summary>Quality gate result with per-check detail.</summary>
+/// <summary>Quality gate result with per-check detail and overall health score.</summary>
 public class QualityGate
 {
     [JsonPropertyName("passed")]
@@ -32,13 +35,19 @@ public class QualityGate
 
     [JsonPropertyName("checks")]
     public List<QualityCheck> Checks { get; set; } = [];
+
+    [JsonPropertyName("score")]
+    public int Score { get; set; }
 }
 
 /// <summary>A single quality gate check result.</summary>
 public class QualityCheck
 {
-    [JsonPropertyName("name")]
-    public string Name { get; set; } = string.Empty;
+    [JsonPropertyName("id")]
+    public string Id { get; set; } = string.Empty;
+
+    [JsonPropertyName("label")]
+    public string Label { get; set; } = string.Empty;
 
     [JsonPropertyName("passed")]
     public bool Passed { get; set; }
@@ -47,7 +56,10 @@ public class QualityCheck
     public double? Value { get; set; }
 
     [JsonPropertyName("threshold")]
-    public double? Threshold { get; set; }
+    public double Threshold { get; set; }
+
+    [JsonPropertyName("unit")]
+    public string? Unit { get; set; }
 }
 
 /// <summary>A dependency vulnerability found in a changed manifest.</summary>
@@ -205,34 +217,108 @@ public class PrFileChange
     public string Content { get; set; } = string.Empty;
 }
 
-// ── Code Health: Clone Groups, Dead Exports, Test Coverage, Load-bearing, Bug Density ──
+// ── Code Health: Summary, Clone Groups, Dead Exports, Test Coverage, Load-bearing, Bug Density ──
 
-/// <summary>High-level code health summary across all scanned files.</summary>
+/// <summary>High-level code health snapshot returned by GET /github/code-summary.</summary>
 public class CodeSummaryResult
 {
-    [JsonPropertyName("totalFiles")]
-    public int TotalFiles { get; set; }
+    [JsonPropertyName("qualityGate")]
+    public QualityGate QualityGate { get; set; } = new();
 
-    [JsonPropertyName("totalLoc")]
-    public int TotalLoc { get; set; }
+    [JsonPropertyName("debt")]
+    public CodeSummaryDebt Debt { get; set; } = new();
 
-    [JsonPropertyName("avgComplexity")]
-    public double AvgComplexity { get; set; }
+    [JsonPropertyName("hotspots")]
+    public List<CodeSummaryHotspot> Hotspots { get; set; } = [];
 
-    [JsonPropertyName("avgMaintainability")]
-    public double AvgMaintainability { get; set; }
+    [JsonPropertyName("openCounts")]
+    public CodeSummaryOpenCounts OpenCounts { get; set; } = new();
 
-    [JsonPropertyName("highComplexityFiles")]
-    public int HighComplexityFiles { get; set; }
-
-    [JsonPropertyName("lowMaintainabilityFiles")]
-    public int LowMaintainabilityFiles { get; set; }
-
-    [JsonPropertyName("hotspotFiles")]
-    public int HotspotFiles { get; set; }
+    [JsonPropertyName("topSmells")]
+    public List<CodeSummarySmell> TopSmells { get; set; } = [];
 
     [JsonPropertyName("languages")]
-    public List<string> Languages { get; set; } = [];
+    public List<CodeSummaryLanguage> Languages { get; set; } = [];
+
+    [JsonPropertyName("lastScannedAt")]
+    public string? LastScannedAt { get; set; }
+}
+
+/// <summary>Aggregated technical debt for the code-summary response.</summary>
+public class CodeSummaryDebt
+{
+    [JsonPropertyName("totalMinutes")]
+    public int TotalMinutes { get; set; }
+
+    [JsonPropertyName("totalHours")]
+    public double TotalHours { get; set; }
+
+    [JsonPropertyName("topCategories")]
+    public List<DebtCategory> TopCategories { get; set; } = [];
+}
+
+/// <summary>A hotspot file in the code-summary response.</summary>
+public class CodeSummaryHotspot
+{
+    [JsonPropertyName("file_path")]
+    public string FilePath { get; set; } = string.Empty;
+
+    [JsonPropertyName("repo_full_name")]
+    public string RepoFullName { get; set; } = string.Empty;
+
+    [JsonPropertyName("language")]
+    public string? Language { get; set; }
+
+    [JsonPropertyName("hotspot_score")]
+    public double? HotspotScore { get; set; }
+
+    [JsonPropertyName("cyclomatic_complexity")]
+    public int? CyclomaticComplexity { get; set; }
+
+    [JsonPropertyName("cognitive_complexity")]
+    public int? CognitiveComplexity { get; set; }
+
+    [JsonPropertyName("complexity_level")]
+    public string? ComplexityLevel { get; set; }
+
+    [JsonPropertyName("loc")]
+    public int? Loc { get; set; }
+}
+
+/// <summary>Open suggestion counts by priority.</summary>
+public class CodeSummaryOpenCounts
+{
+    [JsonPropertyName("critical")]
+    public int Critical { get; set; }
+
+    [JsonPropertyName("high")]
+    public int High { get; set; }
+
+    [JsonPropertyName("total")]
+    public int Total { get; set; }
+}
+
+/// <summary>A code smell kind with occurrence count.</summary>
+public class CodeSummarySmell
+{
+    [JsonPropertyName("kind")]
+    public string Kind { get; set; } = string.Empty;
+
+    [JsonPropertyName("count")]
+    public int Count { get; set; }
+}
+
+/// <summary>Language distribution entry in the code-summary response.</summary>
+public class CodeSummaryLanguage
+{
+    [JsonPropertyName("language")]
+    public string Language { get; set; } = string.Empty;
+
+    [JsonPropertyName("files")]
+    public int Files { get; set; }
+
+    [JsonPropertyName("loc")]
+    public int Loc { get; set; }
 }
 
 /// <summary>One instance of a duplicated (cloned) function.</summary>
