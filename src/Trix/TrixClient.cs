@@ -60,6 +60,7 @@ public sealed class TrixClient : IDisposable
     private readonly HubRolesResource _hubRoles;
     private readonly CalendarResource _calendar;
     private readonly KnowledgeResource _knowledge;
+    private readonly GitHubResource _gitHub;
 
     /// <summary>
     /// Gets the memories resource for managing memories.
@@ -182,6 +183,12 @@ public sealed class TrixClient : IDisposable
     public KnowledgeResource Knowledge { get { ThrowIfDisposed(); return _knowledge; } }
 
     /// <summary>
+    /// Gets the GitHub resource for project analytics (ADR-152).
+    /// </summary>
+    /// <exception cref="ObjectDisposedException">If the client has been disposed.</exception>
+    public GitHubResource GitHub { get { ThrowIfDisposed(); return _gitHub; } }
+
+    /// <summary>
     /// Creates a new Trix client with the specified API key.
     /// </summary>
     /// <param name="apiKey">The API key for authentication.</param>
@@ -232,6 +239,7 @@ public sealed class TrixClient : IDisposable
         _hubRoles = new HubRolesResource(_pipeline);
         _calendar = new CalendarResource(_pipeline);
         _knowledge = new KnowledgeResource(_pipeline);
+        _gitHub = new GitHubResource(_pipeline);
 
         _logger.LogInformation("TrixClient initialized (SDK v{Version})", Version);
     }

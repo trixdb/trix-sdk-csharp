@@ -117,12 +117,18 @@ public class GitHubResource : BaseResource
         string state = "open",
         int? prNumber = null,
         int limit = 20,
+        int? minQualityScore = null,
+        int? maxQualityScore = null,
         CancellationToken cancellationToken = default)
     {
         ArgumentException.ThrowIfNullOrEmpty(projectId);
         var qs = $"state={Uri.EscapeDataString(state)}&limit={limit}";
         if (prNumber.HasValue)
             qs += $"&pr_number={prNumber.Value}";
+        if (minQualityScore.HasValue)
+            qs += $"&min_quality_score={minQualityScore.Value}";
+        if (maxQualityScore.HasValue)
+            qs += $"&max_quality_score={maxQualityScore.Value}";
         return await GetAsync<PRBriefsResponse>(
             $"/v1/projects/{Esc(projectId)}/github/pr-briefs?{qs}",
             cancellationToken: cancellationToken).ConfigureAwait(false);
