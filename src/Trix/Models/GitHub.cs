@@ -244,6 +244,14 @@ public class AgentAttributionResponse
 
     [JsonPropertyName("agent_ratio")]
     public double AgentRatio { get; set; }
+
+    /// <summary>Average PR quality score (0–100) per AI tool, keyed by agent name.</summary>
+    [JsonPropertyName("agent_quality_scores")]
+    public Dictionary<string, double?> AgentQualityScores { get; set; } = new();
+
+    /// <summary>Average PR quality score (0–100) for human-authored PRs, or null if no data.</summary>
+    [JsonPropertyName("human_avg_quality")]
+    public double? HumanAvgQuality { get; set; }
 }
 
 /// <summary>
