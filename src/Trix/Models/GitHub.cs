@@ -154,6 +154,10 @@ public class PRBrief
     [JsonPropertyName("qualityScore")]
     public double? QualityScore { get; set; }
 
+    /// <summary>AI assistant that authored this PR ('claude', 'copilot', 'cursor', 'gemini'), or null.</summary>
+    [JsonPropertyName("agent")]
+    public string? Agent { get; set; }
+
     [JsonPropertyName("isOpen")]
     public bool IsOpen { get; set; }
 
