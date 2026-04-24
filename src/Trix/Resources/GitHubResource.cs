@@ -402,4 +402,73 @@ public class GitHubResource : BaseResource
             new { connection_id = connectionId, branch_name = branchName, base_branch = baseBranch, commit_message = commitMessage, pr_title = prTitle, pr_body = prBody, changes },
             cancellationToken).ConfigureAwait(false);
     }
+
+    // ── Code Health Panels ────────────────────────────────────────────────────
+
+    /// <summary>High-level code health summary: LOC, complexity, maintainability, hotspot counts.</summary>
+    public virtual async Task<CodeSummaryResult> GetCodeSummaryAsync(
+        string projectId,
+        CancellationToken cancellationToken = default)
+    {
+        ArgumentException.ThrowIfNullOrEmpty(projectId);
+        return await GetAsync<CodeSummaryResult>(
+            $"/v1/projects/{Esc(projectId)}/github/code-summary",
+            cancellationToken: cancellationToken).ConfigureAwait(false);
+    }
+
+    /// <summary>Structural clone groups — functions duplicated across files.</summary>
+    public virtual async Task<CloneGroupsResult> GetCloneGroupsAsync(
+        string projectId,
+        CancellationToken cancellationToken = default)
+    {
+        ArgumentException.ThrowIfNullOrEmpty(projectId);
+        return await GetAsync<CloneGroupsResult>(
+            $"/v1/projects/{Esc(projectId)}/github/clone-groups",
+            cancellationToken: cancellationToken).ConfigureAwait(false);
+    }
+
+    /// <summary>Dead exports — exported symbols never imported elsewhere in the repo.</summary>
+    public virtual async Task<DeadExportsResult> GetDeadExportsAsync(
+        string projectId,
+        CancellationToken cancellationToken = default)
+    {
+        ArgumentException.ThrowIfNullOrEmpty(projectId);
+        return await GetAsync<DeadExportsResult>(
+            $"/v1/projects/{Esc(projectId)}/github/dead-exports",
+            cancellationToken: cancellationToken).ConfigureAwait(false);
+    }
+
+    /// <summary>Test coverage by naming convention — source files paired with test files.</summary>
+    public virtual async Task<TestCoverageResult> GetTestCoverageAsync(
+        string projectId,
+        CancellationToken cancellationToken = default)
+    {
+        ArgumentException.ThrowIfNullOrEmpty(projectId);
+        return await GetAsync<TestCoverageResult>(
+            $"/v1/projects/{Esc(projectId)}/github/test-coverage",
+            cancellationToken: cancellationToken).ConfigureAwait(false);
+    }
+
+    /// <summary>Load-bearing functions — functions called by many files; high blast radius.</summary>
+    public virtual async Task<LoadBearingResult> GetLoadBearingFunctionsAsync(
+        string projectId,
+        int minCallers = 3,
+        CancellationToken cancellationToken = default)
+    {
+        ArgumentException.ThrowIfNullOrEmpty(projectId);
+        return await GetAsync<LoadBearingResult>(
+            $"/v1/projects/{Esc(projectId)}/github/load-bearing?min_callers={minCallers}",
+            cancellationToken: cancellationToken).ConfigureAwait(false);
+    }
+
+    /// <summary>Bug density per file — open issues per thousand lines of code.</summary>
+    public virtual async Task<BugDensityResult> GetBugDensityAsync(
+        string projectId,
+        CancellationToken cancellationToken = default)
+    {
+        ArgumentException.ThrowIfNullOrEmpty(projectId);
+        return await GetAsync<BugDensityResult>(
+            $"/v1/projects/{Esc(projectId)}/github/bug-density",
+            cancellationToken: cancellationToken).ConfigureAwait(false);
+    }
 }

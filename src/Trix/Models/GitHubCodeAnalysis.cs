@@ -204,3 +204,227 @@ public class PrFileChange
     [JsonPropertyName("content")]
     public string Content { get; set; } = string.Empty;
 }
+
+// ── Code Health: Clone Groups, Dead Exports, Test Coverage, Load-bearing, Bug Density ──
+
+/// <summary>High-level code health summary across all scanned files.</summary>
+public class CodeSummaryResult
+{
+    [JsonPropertyName("totalFiles")]
+    public int TotalFiles { get; set; }
+
+    [JsonPropertyName("totalLoc")]
+    public int TotalLoc { get; set; }
+
+    [JsonPropertyName("avgComplexity")]
+    public double AvgComplexity { get; set; }
+
+    [JsonPropertyName("avgMaintainability")]
+    public double AvgMaintainability { get; set; }
+
+    [JsonPropertyName("highComplexityFiles")]
+    public int HighComplexityFiles { get; set; }
+
+    [JsonPropertyName("lowMaintainabilityFiles")]
+    public int LowMaintainabilityFiles { get; set; }
+
+    [JsonPropertyName("hotspotFiles")]
+    public int HotspotFiles { get; set; }
+
+    [JsonPropertyName("languages")]
+    public List<string> Languages { get; set; } = [];
+}
+
+/// <summary>One instance of a duplicated (cloned) function.</summary>
+public class CloneInstance
+{
+    [JsonPropertyName("filePath")]
+    public string FilePath { get; set; } = string.Empty;
+
+    [JsonPropertyName("repo")]
+    public string Repo { get; set; } = string.Empty;
+
+    [JsonPropertyName("fnName")]
+    public string FnName { get; set; } = string.Empty;
+
+    [JsonPropertyName("loc")]
+    public int Loc { get; set; }
+
+    [JsonPropertyName("url")]
+    public string? Url { get; set; }
+}
+
+/// <summary>A group of structurally identical (cloned) functions.</summary>
+public class CloneGroup
+{
+    [JsonPropertyName("cloneHash")]
+    public string CloneHash { get; set; } = string.Empty;
+
+    [JsonPropertyName("instanceCount")]
+    public int InstanceCount { get; set; }
+
+    [JsonPropertyName("maxLoc")]
+    public int MaxLoc { get; set; }
+
+    [JsonPropertyName("instances")]
+    public List<CloneInstance> Instances { get; set; } = [];
+}
+
+/// <summary>All clone groups found in the project.</summary>
+public class CloneGroupsResult
+{
+    [JsonPropertyName("groups")]
+    public List<CloneGroup> Groups { get; set; } = [];
+
+    [JsonPropertyName("totalGroups")]
+    public int TotalGroups { get; set; }
+
+    [JsonPropertyName("totalInstances")]
+    public int TotalInstances { get; set; }
+}
+
+/// <summary>A file containing unused (dead) exports.</summary>
+public class DeadExportFile
+{
+    [JsonPropertyName("filePath")]
+    public string FilePath { get; set; } = string.Empty;
+
+    [JsonPropertyName("repo")]
+    public string Repo { get; set; } = string.Empty;
+
+    [JsonPropertyName("language")]
+    public string Language { get; set; } = string.Empty;
+
+    [JsonPropertyName("deadCount")]
+    public int DeadCount { get; set; }
+
+    [JsonPropertyName("symbols")]
+    public List<string> Symbols { get; set; } = [];
+}
+
+/// <summary>All dead exports found across the project.</summary>
+public class DeadExportsResult
+{
+    [JsonPropertyName("files")]
+    public List<DeadExportFile> Files { get; set; } = [];
+
+    [JsonPropertyName("totalFiles")]
+    public int TotalFiles { get; set; }
+
+    [JsonPropertyName("totalDeadExports")]
+    public int TotalDeadExports { get; set; }
+}
+
+/// <summary>Test coverage status for a single source file.</summary>
+public class TestCoverageFile
+{
+    [JsonPropertyName("filePath")]
+    public string FilePath { get; set; } = string.Empty;
+
+    [JsonPropertyName("repo")]
+    public string Repo { get; set; } = string.Empty;
+
+    [JsonPropertyName("language")]
+    public string Language { get; set; } = string.Empty;
+
+    [JsonPropertyName("status")]
+    public string Status { get; set; } = string.Empty;
+
+    [JsonPropertyName("testFile")]
+    public string? TestFile { get; set; }
+
+    [JsonPropertyName("hotspotScore")]
+    public double HotspotScore { get; set; }
+
+    [JsonPropertyName("cyclomaticComplexity")]
+    public int? CyclomaticComplexity { get; set; }
+}
+
+/// <summary>Project-wide test coverage summary.</summary>
+public class TestCoverageResult
+{
+    [JsonPropertyName("coveredCount")]
+    public int CoveredCount { get; set; }
+
+    [JsonPropertyName("uncoveredCount")]
+    public int UncoveredCount { get; set; }
+
+    [JsonPropertyName("coverageRatio")]
+    public double CoverageRatio { get; set; }
+
+    [JsonPropertyName("uncoveredFiles")]
+    public List<TestCoverageFile> UncoveredFiles { get; set; } = [];
+}
+
+/// <summary>A function with many callers — high blast radius if changed.</summary>
+public class LoadBearingFunction
+{
+    [JsonPropertyName("filePath")]
+    public string FilePath { get; set; } = string.Empty;
+
+    [JsonPropertyName("repo")]
+    public string Repo { get; set; } = string.Empty;
+
+    [JsonPropertyName("fnName")]
+    public string FnName { get; set; } = string.Empty;
+
+    [JsonPropertyName("callerCount")]
+    public int CallerCount { get; set; }
+
+    [JsonPropertyName("loc")]
+    public int Loc { get; set; }
+
+    [JsonPropertyName("cyclomaticComplexity")]
+    public int? CyclomaticComplexity { get; set; }
+}
+
+/// <summary>All load-bearing functions above the caller threshold.</summary>
+public class LoadBearingResult
+{
+    [JsonPropertyName("functions")]
+    public List<LoadBearingFunction> Functions { get; set; } = [];
+
+    [JsonPropertyName("minCallers")]
+    public int MinCallers { get; set; }
+
+    [JsonPropertyName("total")]
+    public int Total { get; set; }
+}
+
+/// <summary>Bug density metric for a single file.</summary>
+public class BugDensityFile
+{
+    [JsonPropertyName("filePath")]
+    public string FilePath { get; set; } = string.Empty;
+
+    [JsonPropertyName("repo")]
+    public string Repo { get; set; } = string.Empty;
+
+    [JsonPropertyName("issueCount")]
+    public int IssueCount { get; set; }
+
+    [JsonPropertyName("loc")]
+    public int Loc { get; set; }
+
+    [JsonPropertyName("densityPerKloc")]
+    public double DensityPerKloc { get; set; }
+
+    [JsonPropertyName("language")]
+    public string Language { get; set; } = string.Empty;
+}
+
+/// <summary>Bug density report across all project files.</summary>
+public class BugDensityResult
+{
+    [JsonPropertyName("files")]
+    public List<BugDensityFile> Files { get; set; } = [];
+
+    [JsonPropertyName("totalIssues")]
+    public int TotalIssues { get; set; }
+
+    [JsonPropertyName("totalLoc")]
+    public int TotalLoc { get; set; }
+
+    [JsonPropertyName("overallDensity")]
+    public double OverallDensity { get; set; }
+}
