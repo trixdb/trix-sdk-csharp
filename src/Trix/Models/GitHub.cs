@@ -543,3 +543,79 @@ public class CreatedGitHubIssue
     public string Title { get; set; } = string.Empty;
 }
 
+
+/// <summary>One-call project health snapshot for agents.</summary>
+public class HealthSnapshotRisk
+{
+    [JsonPropertyName("type")]
+    public string Type { get; set; } = string.Empty;
+
+    [JsonPropertyName("label")]
+    public string Label { get; set; } = string.Empty;
+}
+
+public class HealthSnapshotQualityGate
+{
+    [JsonPropertyName("passed")]
+    public bool? Passed { get; set; }
+
+    [JsonPropertyName("avgMaintainabilityIndex")]
+    public int? AvgMaintainabilityIndex { get; set; }
+
+    [JsonPropertyName("totalFiles")]
+    public int TotalFiles { get; set; }
+
+    [JsonPropertyName("criticalFiles")]
+    public int CriticalFiles { get; set; }
+}
+
+public class HealthSnapshotSuggestions
+{
+    [JsonPropertyName("critical")]
+    public int Critical { get; set; }
+
+    [JsonPropertyName("high")]
+    public int High { get; set; }
+
+    [JsonPropertyName("total")]
+    public int Total { get; set; }
+}
+
+public class HealthSnapshotVelocity
+{
+    [JsonPropertyName("mergedLast7Days")]
+    public int MergedLast7Days { get; set; }
+
+    [JsonPropertyName("mergedLast30Days")]
+    public int MergedLast30Days { get; set; }
+}
+
+public class HealthSnapshotOpenPRs
+{
+    [JsonPropertyName("total")]
+    public int Total { get; set; }
+
+    [JsonPropertyName("risky")]
+    public int Risky { get; set; }
+
+    [JsonPropertyName("avgQualityScore")]
+    public double? AvgQualityScore { get; set; }
+}
+
+public class HealthSnapshotResponse
+{
+    [JsonPropertyName("qualityGate")]
+    public HealthSnapshotQualityGate QualityGate { get; set; } = new();
+
+    [JsonPropertyName("suggestions")]
+    public HealthSnapshotSuggestions Suggestions { get; set; } = new();
+
+    [JsonPropertyName("velocity")]
+    public HealthSnapshotVelocity Velocity { get; set; } = new();
+
+    [JsonPropertyName("openPRs")]
+    public HealthSnapshotOpenPRs OpenPRs { get; set; } = new();
+
+    [JsonPropertyName("topRisks")]
+    public List<HealthSnapshotRisk> TopRisks { get; set; } = new();
+}

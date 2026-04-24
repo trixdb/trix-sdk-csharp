@@ -96,6 +96,20 @@ public class GitHubResource : BaseResource
     }
 
     /// <summary>
+    /// Returns a one-call project health snapshot for agents.
+    /// Aggregates code quality gate, PR velocity, open PR risk count, and top issues.
+    /// </summary>
+    public virtual async Task<HealthSnapshotResponse> GetHealthSnapshotAsync(
+        string projectId,
+        CancellationToken cancellationToken = default)
+    {
+        ArgumentException.ThrowIfNullOrEmpty(projectId);
+        return await GetAsync<HealthSnapshotResponse>(
+            $"/v1/projects/{Esc(projectId)}/github/health-snapshot",
+            cancellationToken: cancellationToken).ConfigureAwait(false);
+    }
+
+    /// <summary>
     /// Returns PR pre-review briefs with quality scores and risk signals.
     /// </summary>
     public virtual async Task<PRBriefsResponse> GetPrBriefsAsync(
