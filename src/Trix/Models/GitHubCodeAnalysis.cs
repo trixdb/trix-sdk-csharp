@@ -110,6 +110,31 @@ public class SecurityFinding
     public string GeneratedBy { get; set; } = string.Empty;
 }
 
+/// <summary>Per-file metrics for a changed file in a PR review.</summary>
+public class PrFileMetric
+{
+    [JsonPropertyName("path")]
+    public string Path { get; set; } = string.Empty;
+
+    [JsonPropertyName("cc")]
+    public int? Cc { get; set; }
+
+    [JsonPropertyName("cogc")]
+    public int? Cogc { get; set; }
+
+    [JsonPropertyName("mi")]
+    public int? Mi { get; set; }
+
+    [JsonPropertyName("loc")]
+    public int? Loc { get; set; }
+
+    [JsonPropertyName("testCoverage")]
+    public Dictionary<string, object>? TestCoverage { get; set; }
+
+    [JsonPropertyName("unusedExports")]
+    public List<string> UnusedExports { get; set; } = [];
+}
+
 /// <summary>Full PR review result from the Trix agent reviewer.</summary>
 public class PrReviewResult
 {
@@ -127,6 +152,9 @@ public class PrReviewResult
 
     [JsonPropertyName("depVulns")]
     public List<DepVuln> DepVulns { get; set; } = [];
+
+    [JsonPropertyName("fileMetrics")]
+    public List<PrFileMetric> FileMetrics { get; set; } = [];
 
     [JsonPropertyName("inlineComments")]
     public int InlineComments { get; set; }
