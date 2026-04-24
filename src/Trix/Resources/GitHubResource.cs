@@ -1,0 +1,329 @@
+using Trix.Internal;
+using Trix.Models;
+
+namespace Trix.Resources;
+
+/// <summary>
+/// Resource for GitHub project analytics (ADR-152).
+/// Provides access to code intelligence, activity, and quality metrics for GitHub-connected projects.
+/// </summary>
+public class GitHubResource : BaseResource
+{
+    internal GitHubResource(HttpPipeline pipeline) : base(pipeline)
+    {
+    }
+
+    private static string Esc(string value) => Uri.EscapeDataString(value);
+
+    /// <summary>
+    /// Lists GitHub repositories connected to a project.
+    /// </summary>
+    public virtual async Task<GitHubConnectionsResponse> ListConnectionsAsync(
+        string projectId,
+        CancellationToken cancellationToken = default)
+    {
+        ArgumentException.ThrowIfNullOrEmpty(projectId);
+        return await GetAsync<GitHubConnectionsResponse>(
+            $"/v1/projects/{Esc(projectId)}/github",
+            cancellationToken: cancellationToken).ConfigureAwait(false);
+    }
+
+    /// <summary>
+    /// Returns recent GitHub activity memories for a project (commits, PRs, issues).
+    /// </summary>
+    public virtual async Task<GitHubActivityResponse> GetActivityAsync(
+        string projectId,
+        string? type = null,
+        int? limit = null,
+        int? offset = null,
+        CancellationToken cancellationToken = default)
+    {
+        ArgumentException.ThrowIfNullOrEmpty(projectId);
+        var queryParams = BuildQueryParams(
+            ("type", type),
+            ("limit", limit),
+            ("offset", offset));
+        return await GetAsync<GitHubActivityResponse>(
+            $"/v1/projects/{Esc(projectId)}/github/activity",
+            queryParams: queryParams,
+            cancellationToken: cancellationToken).ConfigureAwait(false);
+    }
+
+    /// <summary>
+    /// Returns cyclomatic and cognitive complexity metrics for tracked files, sorted by hotspot score.
+    /// Optionally filtered by a specific file path or repository.
+    /// </summary>
+    public virtual async Task<FileComplexityResponse> GetFileComplexityAsync(
+        string projectId,
+        string? filePath = null,
+        string? repo = null,
+        CancellationToken cancellationToken = default)
+    {
+        ArgumentException.ThrowIfNullOrEmpty(projectId);
+        var queryParams = BuildQueryParams(
+            ("file", filePath),
+            ("repo", repo));
+        return await GetAsync<FileComplexityResponse>(
+            $"/v1/projects/{Esc(projectId)}/github/complexity",
+            queryParams: queryParams,
+            cancellationToken: cancellationToken).ConfigureAwait(false);
+    }
+
+    /// <summary>
+    /// Returns PR merge velocity metrics for a project.
+    /// </summary>
+    public virtual async Task<PRVelocityResponse> GetVelocityAsync(
+        string projectId,
+        CancellationToken cancellationToken = default)
+    {
+        ArgumentException.ThrowIfNullOrEmpty(projectId);
+        return await GetAsync<PRVelocityResponse>(
+            $"/v1/projects/{Esc(projectId)}/github/velocity",
+            cancellationToken: cancellationToken).ConfigureAwait(false);
+    }
+
+    /// <summary>
+    /// Returns pull requests flagged with risk signals (scope creep, semantic drift, hotspots).
+    /// </summary>
+    public virtual async Task<FlaggedPRsResponse> GetFlaggedPRsAsync(
+        string projectId,
+        CancellationToken cancellationToken = default)
+    {
+        ArgumentException.ThrowIfNullOrEmpty(projectId);
+        return await GetAsync<FlaggedPRsResponse>(
+            $"/v1/projects/{Esc(projectId)}/github/flagged-prs",
+            cancellationToken: cancellationToken).ConfigureAwait(false);
+    }
+
+    /// <summary>
+    /// Returns issue cycle time trends for a project.
+    /// </summary>
+    public virtual async Task<CycleTimeResponse> GetCycleTimeAsync(
+        string projectId,
+        CancellationToken cancellationToken = default)
+    {
+        ArgumentException.ThrowIfNullOrEmpty(projectId);
+        return await GetAsync<CycleTimeResponse>(
+            $"/v1/projects/{Esc(projectId)}/github/cycle-time",
+            cancellationToken: cancellationToken).ConfigureAwait(false);
+    }
+
+    /// <summary>
+    /// Returns AI vs human commit and PR attribution for a project.
+    /// </summary>
+    public virtual async Task<AgentAttributionResponse> GetAgentAttributionAsync(
+        string projectId,
+        CancellationToken cancellationToken = default)
+    {
+        ArgumentException.ThrowIfNullOrEmpty(projectId);
+        return await GetAsync<AgentAttributionResponse>(
+            $"/v1/projects/{Esc(projectId)}/github/agent-attribution",
+            cancellationToken: cancellationToken).ConfigureAwait(false);
+    }
+
+    /// <summary>
+    /// Generates a delivery narrative from recent GitHub activity.
+    /// Returns a bullet-point summary of merged PRs, closed issues, and goal progress.
+    /// </summary>
+    public virtual async Task<GenerateNarrativeResponse> GenerateNarrativeAsync(
+        string projectId,
+        int windowDays = 7,
+        CancellationToken cancellationToken = default)
+    {
+        ArgumentException.ThrowIfNullOrEmpty(projectId);
+        return await PostAsync<GenerateNarrativeResponse>(
+            $"/v1/projects/{Esc(projectId)}/github/narrative",
+            new { window_days = windowDays },
+            cancellationToken).ConfigureAwait(false);
+    }
+
+    /// <summary>
+    /// Returns goal progress driven by GitHub issue completions.
+    /// Goals are updated automatically when linked issues are closed by merged PRs.
+    /// </summary>
+    public virtual async Task<GoalProgressResponse> GetGoalProgressAsync(
+        string projectId,
+        CancellationToken cancellationToken = default)
+    {
+        ArgumentException.ThrowIfNullOrEmpty(projectId);
+        return await GetAsync<GoalProgressResponse>(
+            $"/v1/projects/{Esc(projectId)}/github/goal-progress",
+            cancellationToken: cancellationToken).ConfigureAwait(false);
+    }
+
+    /// <summary>
+    /// Returns a 0–100 release readiness score from open PRs, blocking tasks,
+    /// goal completion, and scope-creep events.
+    /// </summary>
+    public virtual async Task<ReleaseReadinessResponse> GetReleaseReadinessAsync(
+        string projectId,
+        CancellationToken cancellationToken = default)
+    {
+        ArgumentException.ThrowIfNullOrEmpty(projectId);
+        return await GetAsync<ReleaseReadinessResponse>(
+            $"/v1/projects/{Esc(projectId)}/github/release-readiness",
+            cancellationToken: cancellationToken).ConfigureAwait(false);
+    }
+
+    /// <summary>
+    /// Fetches the most recently stored delivery narrative for a project.
+    /// Returns null if no narrative has been generated yet.
+    /// </summary>
+    public virtual async Task<LatestNarrativeResponse> GetLatestNarrativeAsync(
+        string projectId,
+        CancellationToken cancellationToken = default)
+    {
+        ArgumentException.ThrowIfNullOrEmpty(projectId);
+        return await GetAsync<LatestNarrativeResponse>(
+            $"/v1/projects/{Esc(projectId)}/github/narrative",
+            cancellationToken: cancellationToken).ConfigureAwait(false);
+    }
+
+    /// <summary>
+    /// Updates sync settings for a GitHub project connection.
+    /// </summary>
+    public virtual async Task<GitHubProjectConnection> UpdateConnectionAsync(
+        string projectId,
+        string connectionId,
+        UpdateGitHubConnectionRequest request,
+        CancellationToken cancellationToken = default)
+    {
+        ArgumentException.ThrowIfNullOrEmpty(projectId);
+        ArgumentException.ThrowIfNullOrEmpty(connectionId);
+        ArgumentNullException.ThrowIfNull(request);
+        return await PatchAsync<GitHubProjectConnection>(
+            $"/v1/projects/{Esc(projectId)}/github/{Esc(connectionId)}",
+            request,
+            cancellationToken).ConfigureAwait(false);
+    }
+
+    /// <summary>
+    /// Removes a GitHub repository connection from a project.
+    /// </summary>
+    public virtual async Task DeleteConnectionAsync(
+        string projectId,
+        string connectionId,
+        CancellationToken cancellationToken = default)
+    {
+        ArgumentException.ThrowIfNullOrEmpty(projectId);
+        ArgumentException.ThrowIfNullOrEmpty(connectionId);
+        await DeleteAsync(
+            $"/v1/projects/{Esc(projectId)}/github/{Esc(connectionId)}",
+            cancellationToken).ConfigureAwait(false);
+    }
+
+    /// <summary>
+    /// Triggers a full backfill scan of a linked GitHub repository.
+    /// Fetches recent commits, PRs, and issues from GitHub, stores them as memories,
+    /// runs complexity analysis, and generates PR pre-review briefs.
+    /// </summary>
+    public virtual async Task<ScanRepoResponse> ScanRepoAsync(
+        string projectId,
+        string connectionId,
+        CancellationToken cancellationToken = default)
+    {
+        ArgumentException.ThrowIfNullOrEmpty(projectId);
+        ArgumentException.ThrowIfNullOrEmpty(connectionId);
+        return await PostAsync<ScanRepoResponse>(
+            $"/v1/projects/{Esc(projectId)}/github/{Esc(connectionId)}/scan",
+            new { },
+            cancellationToken).ConfigureAwait(false);
+    }
+
+    // ── Phase 5: Code Quality Scanner + Repo Stats ────────────────────────
+
+    /// <summary>
+    /// Triggers a code quality scan using GitHub security APIs (Dependabot, code scanning,
+    /// secret scanning) plus an LLM enrichment pass over complexity and churn context.
+    /// </summary>
+    public virtual async Task<ImprovementGenerateResponse> GenerateCodeImprovementsAsync(
+        string projectId,
+        CancellationToken cancellationToken = default)
+    {
+        ArgumentException.ThrowIfNullOrEmpty(projectId);
+        return await PostAsync<ImprovementGenerateResponse>(
+            $"/v1/projects/{Esc(projectId)}/github/improvements/generate",
+            new { },
+            cancellationToken).ConfigureAwait(false);
+    }
+
+    /// <summary>
+    /// Lists code improvement suggestions with optional category, priority, and status filters.
+    /// </summary>
+    public virtual async Task<CodeImprovementsResponse> GetCodeImprovementsAsync(
+        string projectId,
+        string status = "open",
+        string? category = null,
+        string? priority = null,
+        CancellationToken cancellationToken = default)
+    {
+        ArgumentException.ThrowIfNullOrEmpty(projectId);
+        var queryParams = BuildQueryParams(
+            ("status", status),
+            ("category", category),
+            ("priority", priority));
+        return await GetAsync<CodeImprovementsResponse>(
+            $"/v1/projects/{Esc(projectId)}/github/improvements",
+            queryParams: queryParams,
+            cancellationToken: cancellationToken).ConfigureAwait(false);
+    }
+
+    /// <summary>
+    /// Updates the status of a code improvement suggestion.
+    /// </summary>
+    public virtual async Task<CodeImprovement> UpdateCodeImprovementStatusAsync(
+        string projectId,
+        string suggestionId,
+        string status,
+        CancellationToken cancellationToken = default)
+    {
+        ArgumentException.ThrowIfNullOrEmpty(projectId);
+        ArgumentException.ThrowIfNullOrEmpty(suggestionId);
+        var wrapper = await PatchAsync<ImprovementStatusWrapper>(
+            $"/v1/projects/{Esc(projectId)}/github/improvements/{Esc(suggestionId)}",
+            new { status },
+            cancellationToken).ConfigureAwait(false);
+        return wrapper.Suggestion;
+    }
+
+    /// <summary>
+    /// Returns priority/category summary counts for open code improvement suggestions.
+    /// </summary>
+    public virtual async Task<List<ImprovementSummaryRow>> GetImprovementsSummaryAsync(
+        string projectId,
+        CancellationToken cancellationToken = default)
+    {
+        ArgumentException.ThrowIfNullOrEmpty(projectId);
+        var wrapper = await GetAsync<ImprovementSummaryWrapper>(
+            $"/v1/projects/{Esc(projectId)}/github/improvements/summary",
+            cancellationToken: cancellationToken).ConfigureAwait(false);
+        return wrapper.Summary;
+    }
+
+    /// <summary>
+    /// Returns historical code quality metric snapshots for trend analysis.
+    /// </summary>
+    public virtual async Task<List<ImprovementsHistoryItem>> GetImprovementsHistoryAsync(
+        string projectId,
+        CancellationToken cancellationToken = default)
+    {
+        ArgumentException.ThrowIfNullOrEmpty(projectId);
+        var wrapper = await GetAsync<ImprovementsHistoryWrapper>(
+            $"/v1/projects/{Esc(projectId)}/github/improvements/history",
+            cancellationToken: cancellationToken).ConfigureAwait(false);
+        return wrapper.History;
+    }
+
+    /// <summary>
+    /// Fetches live repo stats: stars, languages, contributors, LOC, README preview.
+    /// </summary>
+    public virtual async Task<RepoStatsResponse> GetRepoStatsAsync(
+        string projectId,
+        CancellationToken cancellationToken = default)
+    {
+        ArgumentException.ThrowIfNullOrEmpty(projectId);
+        return await GetAsync<RepoStatsResponse>(
+            $"/v1/projects/{Esc(projectId)}/github/improvements/stats",
+            cancellationToken: cancellationToken).ConfigureAwait(false);
+    }
+}
