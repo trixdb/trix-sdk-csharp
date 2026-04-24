@@ -449,3 +449,27 @@ public class UpdateGitHubConnectionRequest
     [JsonPropertyName("pr_review_bot_enabled")]
     public bool? PrReviewBotEnabled { get; set; }
 }
+
+/// <summary>
+/// Response when creating a GitHub issue from a code improvement suggestion.
+/// </summary>
+public class CreateIssueFromSuggestionResponse
+{
+    [JsonPropertyName("issue")]
+    public CreatedGitHubIssue Issue { get; set; } = new();
+}
+
+/// <summary>
+/// Metadata for a newly created GitHub issue.
+/// </summary>
+public class CreatedGitHubIssue
+{
+    [JsonPropertyName("number")]
+    public int Number { get; set; }
+
+    [JsonPropertyName("url")]
+    public string Url { get; set; } = string.Empty;
+
+    [JsonPropertyName("title")]
+    public string Title { get; set; } = string.Empty;
+}

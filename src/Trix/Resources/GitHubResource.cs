@@ -255,16 +255,34 @@ public class GitHubResource : BaseResource
         string status = "open",
         string? category = null,
         string? priority = null,
+        string? filePath = null,
         CancellationToken cancellationToken = default)
     {
         ArgumentException.ThrowIfNullOrEmpty(projectId);
         var queryParams = BuildQueryParams(
             ("status", status),
             ("category", category),
-            ("priority", priority));
+            ("priority", priority),
+            ("file_path", filePath));
         return await GetAsync<CodeImprovementsResponse>(
             $"/v1/projects/{Esc(projectId)}/github/improvements",
             queryParams: queryParams,
+            cancellationToken: cancellationToken).ConfigureAwait(false);
+    }
+
+    /// <summary>
+    /// Pushes a code quality finding to GitHub Issues and marks it in_progress.
+    /// </summary>
+    public virtual async Task<CreateIssueFromSuggestionResponse> CreateIssueFromSuggestionAsync(
+        string projectId,
+        string suggestionId,
+        CancellationToken cancellationToken = default)
+    {
+        ArgumentException.ThrowIfNullOrEmpty(projectId);
+        ArgumentException.ThrowIfNullOrEmpty(suggestionId);
+        return await PostAsync<CreateIssueFromSuggestionResponse>(
+            $"/v1/projects/{Esc(projectId)}/github/improvements/{Esc(suggestionId)}/create-issue",
+            body: null,
             cancellationToken: cancellationToken).ConfigureAwait(false);
     }
 
