@@ -126,6 +126,72 @@ public class FlaggedPRsResponse
 }
 
 /// <summary>
+/// Pre-review brief for a pull request, including quality score and risk signals.
+/// </summary>
+public class PRBrief
+{
+    [JsonPropertyName("id")]
+    public string Id { get; set; } = string.Empty;
+
+    [JsonPropertyName("prNumber")]
+    public int? PrNumber { get; set; }
+
+    [JsonPropertyName("repo")]
+    public string? Repo { get; set; }
+
+    [JsonPropertyName("title")]
+    public string Title { get; set; } = string.Empty;
+
+    [JsonPropertyName("briefContent")]
+    public string BriefContent { get; set; } = string.Empty;
+
+    [JsonPropertyName("riskFlags")]
+    public List<string> RiskFlags { get; set; } = new();
+
+    [JsonPropertyName("qualityScore")]
+    public double? QualityScore { get; set; }
+
+    [JsonPropertyName("isOpen")]
+    public bool IsOpen { get; set; }
+
+    [JsonPropertyName("hasTests")]
+    public bool HasTests { get; set; }
+
+    [JsonPropertyName("touchesHotspots")]
+    public bool TouchesHotspots { get; set; }
+
+    [JsonPropertyName("touchesLoadBearing")]
+    public bool TouchesLoadBearing { get; set; }
+
+    [JsonPropertyName("touchesClones")]
+    public bool TouchesClones { get; set; }
+
+    [JsonPropertyName("scopeCreep")]
+    public bool ScopeCreep { get; set; }
+
+    [JsonPropertyName("semanticDrift")]
+    public bool SemanticDrift { get; set; }
+
+    [JsonPropertyName("createdAt")]
+    public string CreatedAt { get; set; } = string.Empty;
+}
+
+/// <summary>
+/// Response for PR briefs list.
+/// </summary>
+public class PRBriefsResponse
+{
+    [JsonPropertyName("briefs")]
+    public List<PRBrief> Briefs { get; set; } = new();
+
+    [JsonPropertyName("total")]
+    public int Total { get; set; }
+
+    [JsonPropertyName("state")]
+    public string State { get; set; } = "open";
+}
+
+/// <summary>
 /// Issue cycle time analytics for a project.
 /// </summary>
 public class CycleTimeResponse

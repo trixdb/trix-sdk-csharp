@@ -96,6 +96,25 @@ public class GitHubResource : BaseResource
     }
 
     /// <summary>
+    /// Returns PR pre-review briefs with quality scores and risk signals.
+    /// </summary>
+    public virtual async Task<PRBriefsResponse> GetPrBriefsAsync(
+        string projectId,
+        string state = "open",
+        int? prNumber = null,
+        int limit = 20,
+        CancellationToken cancellationToken = default)
+    {
+        ArgumentException.ThrowIfNullOrEmpty(projectId);
+        var qs = $"state={Uri.EscapeDataString(state)}&limit={limit}";
+        if (prNumber.HasValue)
+            qs += $"&pr_number={prNumber.Value}";
+        return await GetAsync<PRBriefsResponse>(
+            $"/v1/projects/{Esc(projectId)}/github/pr-briefs?{qs}",
+            cancellationToken: cancellationToken).ConfigureAwait(false);
+    }
+
+    /// <summary>
     /// Returns issue cycle time trends for a project.
     /// </summary>
     public virtual async Task<CycleTimeResponse> GetCycleTimeAsync(
