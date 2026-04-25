@@ -513,4 +513,18 @@ public class GitHubResource : BaseResource
             $"/v1/projects/{Esc(projectId)}/github/bug-density",
             cancellationToken: cancellationToken).ConfigureAwait(false);
     }
+
+    /// <summary>
+    /// Get the weekly PR quality score trend over the last 12 weeks.
+    /// Returns one data point per week that had at least one reviewed PR.
+    /// </summary>
+    public virtual async Task<List<PRQualityWeek>> GetPrQualityTrendAsync(
+        string projectId,
+        CancellationToken cancellationToken = default)
+    {
+        ArgumentException.ThrowIfNullOrEmpty(projectId);
+        return await GetAsync<List<PRQualityWeek>>(
+            $"/v1/projects/{Esc(projectId)}/github/pr-quality-trend",
+            cancellationToken: cancellationToken).ConfigureAwait(false);
+    }
 }

@@ -514,3 +514,19 @@ public class BugDensityResult
     [JsonPropertyName("overallDensity")]
     public double OverallDensity { get; set; }
 }
+
+/// <summary>One weekly data point in the 12-week PR quality score trend.</summary>
+public class PRQualityWeek
+{
+    /// <summary>ISO date (YYYY-MM-DD) for the Monday of the week.</summary>
+    [JsonPropertyName("week_start")]
+    public string WeekStart { get; set; } = "";
+
+    /// <summary>Average PR quality score (0-100) for reviewed PRs that week.</summary>
+    [JsonPropertyName("avg_quality")]
+    public int AvgQuality { get; set; }
+
+    /// <summary>Number of PRs with a quality score that week.</summary>
+    [JsonPropertyName("pr_count")]
+    public int PrCount { get; set; }
+}
