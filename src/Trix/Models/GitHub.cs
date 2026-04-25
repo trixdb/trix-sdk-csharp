@@ -1406,3 +1406,22 @@ public class IssueResolversResult
     [JsonPropertyName("totalClosed")] public int TotalClosed { get; set; }
     [JsonPropertyName("lookbackDays")] public int LookbackDays { get; set; }
 }
+
+// ── Cycle Time Trend (Phase 4: Estimation Accuracy Tracker) ──────────────────
+
+/// <summary>One week of cycle time data.</summary>
+public class CycleTimeTrendWeek
+{
+    [JsonPropertyName("weekStart")] public string WeekStart { get; set; } = "";
+    [JsonPropertyName("avgDays")] public double? AvgDays { get; set; }
+    [JsonPropertyName("issueCount")] public int IssueCount { get; set; }
+}
+
+/// <summary>Weekly average issue cycle time trend.</summary>
+public class CycleTimeTrendResult
+{
+    [JsonPropertyName("weeks")] public List<CycleTimeTrendWeek> Weeks { get; set; } = new();
+    [JsonPropertyName("trend")] public string Trend { get; set; } = "stable";
+    [JsonPropertyName("overallAvgDays")] public double? OverallAvgDays { get; set; }
+    [JsonPropertyName("lookbackWeeks")] public int LookbackWeeks { get; set; }
+}

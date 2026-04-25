@@ -762,4 +762,8 @@ public class GitHubResource : BaseResource
     /// <summary>Get issue resolver leaderboard — top contributors by closed issue count.</summary>
     public async Task<IssueResolversResult> GetIssueResolversAsync(string projectId, int days = 30, CancellationToken ct = default)
         => await GetAsync<IssueResolversResult>($"/v1/projects/{projectId}/github/issue-resolvers?days={days}", ct);
+
+    /// <summary>Get weekly average issue cycle time trend — are we getting faster or slower?</summary>
+    public async Task<CycleTimeTrendResult> GetCycleTimeTrendAsync(string projectId, int weeks = 8, CancellationToken ct = default)
+        => await GetAsync<CycleTimeTrendResult>($"/v1/projects/{projectId}/github/cycle-time-trend?weeks={weeks}", ct);
 }
