@@ -784,4 +784,8 @@ public class GitHubResource : BaseResource
 
     public async Task<PRTaskAlignmentResult> GetPRTaskAlignmentAsync(string projectId, int days = 90, CancellationToken ct = default)
         => await GetAsync<PRTaskAlignmentResult>($"/v1/projects/{projectId}/github/pr-task-alignment?days={days}", ct);
+
+    /// <summary>PRs without test coverage — summary, top gaps, by-author, weekly trend.</summary>
+    public async Task<TestGapResult> GetTestGapAsync(string projectId, int days = 90, CancellationToken ct = default)
+        => await GetAsync<TestGapResult>($"/v1/projects/{projectId}/github/test-gap?days={days}", ct);
 }

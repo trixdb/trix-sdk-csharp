@@ -1646,6 +1646,28 @@ public class AssigneeCycleTimeResult
     [JsonPropertyName("lookbackDays")] public int                   LookbackDays { get; set; }
 }
 
+// ── Test Coverage Gap (ADR-152 Phase 4) ──────────────────────────────────────
+
+public record TestGapPR(
+    string PrNumber, string Title, string Url,
+    string Author, string Repo, string? Agent, string CreatedAt);
+
+public record TestGapAuthor(
+    string Author, int TotalPRs, int NoTestsCount, int HasTestsCount, int NoTestsPct);
+
+public record TestGapWeek(
+    string Week, int Total, int NoTestsCount, int NoTestsPct);
+
+public record TestGapSummary(
+    int TotalBriefs, int NoTestsCount, int HasTestsCount, int NoTestsPct);
+
+public record TestGapResult(
+    TestGapSummary Summary,
+    List<TestGapPR> TopGaps,
+    List<TestGapAuthor> ByAuthor,
+    List<TestGapWeek> WeeklyTrend,
+    int LookbackDays);
+
 /// <summary>
 /// A single PR–issue alignment entry.
 /// </summary>
