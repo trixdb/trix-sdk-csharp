@@ -769,3 +769,33 @@ public class PrAgingResult
     [JsonPropertyName("staleDays")]
     public int StaleDays { get; set; }
 }
+
+public class PRSizeBucket
+{
+    [JsonPropertyName("size")]
+    public string Size { get; set; } = string.Empty;
+
+    [JsonPropertyName("key")]
+    public string Key { get; set; } = string.Empty;
+
+    [JsonPropertyName("count")]
+    public int Count { get; set; }
+
+    [JsonPropertyName("pct")]
+    public int Pct { get; set; }
+
+    [JsonPropertyName("avgQuality")]
+    public double? AvgQuality { get; set; }
+
+    [JsonPropertyName("testCoveragePct")]
+    public int TestCoveragePct { get; set; }
+}
+
+public class PrSizeDistributionResult
+{
+    [JsonPropertyName("distribution")]
+    public List<PRSizeBucket> Distribution { get; set; } = new();
+
+    [JsonPropertyName("total")]
+    public int Total { get; set; }
+}

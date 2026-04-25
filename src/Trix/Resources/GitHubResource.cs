@@ -582,4 +582,14 @@ public class GitHubResource : BaseResource
             $"/v1/projects/{Esc(projectId)}/github/pr-aging",
             cancellationToken: cancellationToken).ConfigureAwait(false);
     }
+
+    public virtual async Task<PrSizeDistributionResult> GetPrSizeDistributionAsync(
+        string projectId,
+        CancellationToken cancellationToken = default)
+    {
+        ArgumentException.ThrowIfNullOrEmpty(projectId);
+        return await GetAsync<PrSizeDistributionResult>(
+            $"/v1/projects/{Esc(projectId)}/github/pr-size-distribution",
+            cancellationToken: cancellationToken).ConfigureAwait(false);
+    }
 }
