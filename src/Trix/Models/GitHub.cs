@@ -691,3 +691,33 @@ public class ActiveBranchesResult
     [JsonPropertyName("count")]
     public int Count { get; set; }
 }
+
+public class ContributorQualityStat
+{
+    [JsonPropertyName("author")]
+    public string Author { get; set; } = string.Empty;
+
+    [JsonPropertyName("pr_count")]
+    public int PrCount { get; set; }
+
+    [JsonPropertyName("avg_quality")]
+    public double? AvgQuality { get; set; }
+
+    [JsonPropertyName("with_tests_count")]
+    public int WithTestsCount { get; set; }
+
+    [JsonPropertyName("test_coverage_pct")]
+    public int TestCoveragePct { get; set; }
+
+    [JsonPropertyName("last_active_at")]
+    public string? LastActiveAt { get; set; }
+}
+
+public class ContributorQualityResult
+{
+    [JsonPropertyName("contributors")]
+    public List<ContributorQualityStat> Contributors { get; set; } = new();
+
+    [JsonPropertyName("count")]
+    public int Count { get; set; }
+}

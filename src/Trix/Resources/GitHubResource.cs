@@ -556,4 +556,17 @@ public class GitHubResource : BaseResource
             $"/v1/projects/{Esc(projectId)}/github/branches",
             cancellationToken: cancellationToken).ConfigureAwait(false);
     }
+
+    /// <summary>
+    /// Per-contributor PR quality stats — avg score, test coverage %, PR count, last-active date.
+    /// </summary>
+    public virtual async Task<ContributorQualityResult> GetContributorQualityAsync(
+        string projectId,
+        CancellationToken cancellationToken = default)
+    {
+        ArgumentException.ThrowIfNullOrEmpty(projectId);
+        return await GetAsync<ContributorQualityResult>(
+            $"/v1/projects/{Esc(projectId)}/github/contributor-quality",
+            cancellationToken: cancellationToken).ConfigureAwait(false);
+    }
 }
