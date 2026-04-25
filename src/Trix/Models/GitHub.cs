@@ -654,6 +654,45 @@ public class HealthSnapshotResponse
 
     [JsonPropertyName("topRisks")]
     public List<HealthSnapshotRisk> TopRisks { get; set; } = new();
+
+    [JsonPropertyName("prQualityTrend")]
+    public HealthSnapshotPRQualityTrend? PrQualityTrend { get; set; }
+
+    [JsonPropertyName("reviewTurnaround")]
+    public HealthSnapshotReviewTurnaround? ReviewTurnaround { get; set; }
+
+    [JsonPropertyName("urgentItems")]
+    public HealthSnapshotUrgentItems? UrgentItems { get; set; }
+}
+
+public class HealthSnapshotPRQualityTrend
+{
+    [JsonPropertyName("direction")]
+    public string Direction { get; set; } = "stable";
+
+    [JsonPropertyName("currentAvg")]
+    public double? CurrentAvg { get; set; }
+
+    [JsonPropertyName("weekDelta")]
+    public double? WeekDelta { get; set; }
+}
+
+public class HealthSnapshotReviewTurnaround
+{
+    [JsonPropertyName("avgHours")]
+    public int? AvgHours { get; set; }
+
+    [JsonPropertyName("unreviewedCount")]
+    public int UnreviewedCount { get; set; }
+}
+
+public class HealthSnapshotUrgentItems
+{
+    [JsonPropertyName("critical")]
+    public int Critical { get; set; }
+
+    [JsonPropertyName("urgentTotal")]
+    public int UrgentTotal { get; set; }
 }
 
 public class BranchInfo
@@ -714,6 +753,12 @@ public class ContributorQualityStat
 
     [JsonPropertyName("last_active_at")]
     public string? LastActiveAt { get; set; }
+
+    [JsonPropertyName("reviewsGiven")]
+    public int ReviewsGiven { get; set; }
+
+    [JsonPropertyName("approvals")]
+    public int Approvals { get; set; }
 }
 
 public class ContributorQualityResult
@@ -756,6 +801,12 @@ public class OpenPRAging
 
     [JsonPropertyName("isStale")]
     public bool IsStale { get; set; }
+
+    [JsonPropertyName("requestedReviewers")]
+    public List<string> RequestedReviewers { get; set; } = new();
+
+    [JsonPropertyName("hasReview")]
+    public bool HasReview { get; set; }
 }
 
 public class PrAgingResult
