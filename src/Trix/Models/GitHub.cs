@@ -1350,3 +1350,21 @@ public class IssueFlowResult
     [JsonPropertyName("lookbackDays")]
     public int LookbackDays { get; set; }
 }
+
+/// <summary>Cycle time stats for a single GitHub label.</summary>
+public class CycleTimeByLabel
+{
+    [JsonPropertyName("label")] public string Label { get; set; } = "";
+    [JsonPropertyName("issueCount")] public int IssueCount { get; set; }
+    [JsonPropertyName("avgDays")] public double AvgDays { get; set; }
+    [JsonPropertyName("medianDays")] public double MedianDays { get; set; }
+    [JsonPropertyName("minDays")] public double MinDays { get; set; }
+    [JsonPropertyName("maxDays")] public double MaxDays { get; set; }
+}
+
+/// <summary>Issue cycle time by label — average/median days from open to close.</summary>
+public class IssueCycleTimeResult
+{
+    [JsonPropertyName("byLabel")] public List<CycleTimeByLabel> ByLabel { get; set; } = new();
+    [JsonPropertyName("lookbackDays")] public int LookbackDays { get; set; }
+}

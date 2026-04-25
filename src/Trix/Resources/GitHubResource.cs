@@ -742,4 +742,16 @@ public class GitHubResource : BaseResource
             $"/v1/projects/{Esc(projectId)}/github/issue-flow?days={days}",
             cancellationToken: cancellationToken).ConfigureAwait(false);
     }
+
+    /// <summary>Get issue cycle time by label (avg/median days from open to close).</summary>
+    public virtual async Task<IssueCycleTimeResult> GetIssueCycleTimeAsync(
+        string projectId,
+        int days = 90,
+        CancellationToken cancellationToken = default)
+    {
+        ArgumentException.ThrowIfNullOrEmpty(projectId);
+        return await GetAsync<IssueCycleTimeResult>(
+            $"/v1/projects/{Esc(projectId)}/github/issue-cycle-time?days={days}",
+            cancellationToken: cancellationToken).ConfigureAwait(false);
+    }
 }
