@@ -766,4 +766,7 @@ public class GitHubResource : BaseResource
     /// <summary>Get weekly average issue cycle time trend — are we getting faster or slower?</summary>
     public async Task<CycleTimeTrendResult> GetCycleTimeTrendAsync(string projectId, int weeks = 8, CancellationToken ct = default)
         => await GetAsync<CycleTimeTrendResult>($"/v1/projects/{projectId}/github/cycle-time-trend?weeks={weeks}", ct);
+
+    public async Task<PrMergeTimeResult> GetPrMergeTimeAsync(string projectId, int days = 90, CancellationToken ct = default)
+        => await GetAsync<PrMergeTimeResult>($"/v1/projects/{projectId}/github/pr-merge-time?days={days}", ct);
 }

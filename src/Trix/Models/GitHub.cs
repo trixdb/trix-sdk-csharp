@@ -1449,3 +1449,31 @@ public class CycleTimeTrendResult
     [JsonPropertyName("overallAvgDays")] public double? OverallAvgDays { get; set; }
     [JsonPropertyName("lookbackWeeks")] public int LookbackWeeks { get; set; }
 }
+
+public class MergeTimeBucket
+{
+    [JsonPropertyName("label")] public string Label { get; set; } = string.Empty;
+    [JsonPropertyName("key")] public string Key { get; set; } = string.Empty;
+    [JsonPropertyName("count")] public int Count { get; set; }
+}
+
+public class MergeTimeAuthor
+{
+    [JsonPropertyName("author")] public string Author { get; set; } = string.Empty;
+    [JsonPropertyName("prCount")] public int PrCount { get; set; }
+    [JsonPropertyName("avgHours")] public double? AvgHours { get; set; }
+}
+
+/// <summary>PR open→merge cycle time distribution.</summary>
+public class PrMergeTimeResult
+{
+    [JsonPropertyName("p25")] public double? P25 { get; set; }
+    [JsonPropertyName("p50")] public double? P50 { get; set; }
+    [JsonPropertyName("p75")] public double? P75 { get; set; }
+    [JsonPropertyName("p95")] public double? P95 { get; set; }
+    [JsonPropertyName("avgHours")] public double? AvgHours { get; set; }
+    [JsonPropertyName("totalMerged")] public int TotalMerged { get; set; }
+    [JsonPropertyName("lookbackDays")] public int LookbackDays { get; set; }
+    [JsonPropertyName("distribution")] public List<MergeTimeBucket> Distribution { get; set; } = new();
+    [JsonPropertyName("authorStats")] public List<MergeTimeAuthor> AuthorStats { get; set; } = new();
+}
