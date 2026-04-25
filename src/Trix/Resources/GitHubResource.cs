@@ -727,4 +727,19 @@ public class GitHubResource : BaseResource
             $"/v1/projects/{Esc(projectId)}/github/issue-triage?days={days}",
             cancellationToken: cancellationToken).ConfigureAwait(false);
     }
+
+    /// <summary>
+    /// Get daily issue open/close flow — backlog burn-down visibility.
+    /// </summary>
+    /// <param name="days">Lookback window in days (default 30; range: 7-90)</param>
+    public virtual async Task<IssueFlowResult> GetIssueFlowAsync(
+        string projectId,
+        int days = 30,
+        CancellationToken cancellationToken = default)
+    {
+        ArgumentException.ThrowIfNullOrEmpty(projectId);
+        return await GetAsync<IssueFlowResult>(
+            $"/v1/projects/{Esc(projectId)}/github/issue-flow?days={days}",
+            cancellationToken: cancellationToken).ConfigureAwait(false);
+    }
 }

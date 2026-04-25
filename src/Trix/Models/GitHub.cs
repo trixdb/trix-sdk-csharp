@@ -1302,3 +1302,36 @@ public class IssueTriageResult
     [JsonPropertyName("lookbackDays")]
     public int LookbackDays { get; set; }
 }
+
+public class IssueFlowDay
+{
+    [JsonPropertyName("day")]
+    public string Day { get; set; } = "";
+
+    [JsonPropertyName("opened")]
+    public int Opened { get; set; }
+
+    [JsonPropertyName("closed")]
+    public int Closed { get; set; }
+
+    [JsonPropertyName("net")]
+    public int Net { get; set; }
+}
+
+public class IssueFlowResult
+{
+    [JsonPropertyName("data")]
+    public List<IssueFlowDay> Data { get; set; } = new();
+
+    [JsonPropertyName("totalOpened")]
+    public int TotalOpened { get; set; }
+
+    [JsonPropertyName("totalClosed")]
+    public int TotalClosed { get; set; }
+
+    [JsonPropertyName("netFlow")]
+    public int NetFlow { get; set; }
+
+    [JsonPropertyName("lookbackDays")]
+    public int LookbackDays { get; set; }
+}
