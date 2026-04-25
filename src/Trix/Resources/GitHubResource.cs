@@ -793,4 +793,9 @@ public class GitHubResource : BaseResource
     public Task<DORAResult> GetDORAMetricsAsync(
         string projectId, int days = 90, CancellationToken ct = default) =>
         GetAsync<DORAResult>($"/v1/projects/{projectId}/github/dora-metrics?days={days}", cancellationToken: ct);
+
+    /// <summary>Compare PR quality scores between AI-authored and human-authored pull requests.</summary>
+    public Task<AIvsHumanResult> GetAIvsHumanQualityAsync(
+        string projectId, int days = 90, CancellationToken ct = default) =>
+        GetAsync<AIvsHumanResult>($"/v1/projects/{projectId}/github/ai-vs-human-quality?days={days}", cancellationToken: ct);
 }

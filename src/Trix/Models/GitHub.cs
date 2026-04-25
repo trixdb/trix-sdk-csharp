@@ -1717,3 +1717,24 @@ public record DORALeadTimeWeek(string Week, int? AvgHours);
 public record DORAcfrWeek(string Week, int Total, int Failures, int Pct);
 public record DORAWeeklyTrend(List<DORADeployFreqWeek> DeployFreq, List<DORALeadTimeWeek> LeadTime, List<DORAcfrWeek> ChangeFailureRate);
 public record DORAResult(DORADeployFrequency DeploymentFrequency, DORALeadTime LeadTime, DORAChangeFailureRate ChangeFailureRate, DORAMttr Mttr, DORAWeeklyTrend WeeklyTrend, int LookbackDays);
+
+// ── AI vs Human Code Quality (ADR-152 Phase 4 Extension) ──────────────────────
+
+public record AIvsHumanByAgent(string Agent, double AvgScore, int PrCount, double TopScore);
+
+public record AIvsHumanWeek(string Week, double? AiAvg, double? HumanAvg, int AiCount, int HumanCount);
+
+public record AIvsHumanTopPR(
+    string PrNumber, string Title, string Url,
+    string Author, string Agent, double QualityScore, string CreatedAt);
+
+public record AIvsHumanSummary(
+    double? AiAvgScore, double? HumanAvgScore, double? ScoreDelta,
+    int AiPrCount, int HumanPrCount);
+
+public record AIvsHumanResult(
+    AIvsHumanSummary Summary,
+    List<AIvsHumanByAgent> ByAgent,
+    List<AIvsHumanWeek> WeeklyTrend,
+    List<AIvsHumanTopPR> TopAIPRs,
+    int LookbackDays);
