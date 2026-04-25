@@ -672,6 +672,12 @@ public class HealthSnapshotResponse
 
     [JsonPropertyName("issueFlow")]
     public HealthSnapshotIssueFlow? IssueFlow { get; set; }
+
+    [JsonPropertyName("issueThroughput")]
+    public HealthSnapshotIssueThroughput? IssueThroughput { get; set; }
+
+    [JsonPropertyName("slowestCycleLabel")]
+    public HealthSnapshotSlowestCycleLabel? SlowestCycleLabel { get; set; }
 }
 
 public class HealthSnapshotIssueFlow
@@ -684,6 +690,24 @@ public class HealthSnapshotIssueFlow
 
     [JsonPropertyName("netFlow7d")]
     public int NetFlow7d { get; set; }
+}
+
+public class HealthSnapshotIssueThroughput
+{
+    [JsonPropertyName("avgPerWeek")]
+    public double AvgPerWeek { get; set; }
+
+    [JsonPropertyName("trend")]
+    public string Trend { get; set; } = "stable"; // improving | stable | declining
+}
+
+public class HealthSnapshotSlowestCycleLabel
+{
+    [JsonPropertyName("label")]
+    public string Label { get; set; } = string.Empty;
+
+    [JsonPropertyName("avgDays")]
+    public double AvgDays { get; set; }
 }
 
 public class HealthSnapshotIssueBacklog
