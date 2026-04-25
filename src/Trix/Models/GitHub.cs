@@ -709,6 +709,9 @@ public class ContributorQualityStat
     [JsonPropertyName("test_coverage_pct")]
     public int TestCoveragePct { get; set; }
 
+    [JsonPropertyName("avg_merge_days")]
+    public double? AvgMergeDays { get; set; }
+
     [JsonPropertyName("last_active_at")]
     public string? LastActiveAt { get; set; }
 }
