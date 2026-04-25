@@ -652,4 +652,15 @@ public class GitHubResource : BaseResource
             $"/v1/projects/{Esc(projectId)}/github/review-coverage",
             cancellationToken: cancellationToken).ConfigureAwait(false);
     }
+
+    /// <summary>Milestone progress — open/closed issue counts per GitHub milestone, least-complete first.</summary>
+    public virtual async Task<MilestonesResult> GetMilestonesAsync(
+        string projectId,
+        CancellationToken cancellationToken = default)
+    {
+        ArgumentException.ThrowIfNullOrEmpty(projectId);
+        return await GetAsync<MilestonesResult>(
+            $"/v1/projects/{Esc(projectId)}/github/milestones",
+            cancellationToken: cancellationToken).ConfigureAwait(false);
+    }
 }

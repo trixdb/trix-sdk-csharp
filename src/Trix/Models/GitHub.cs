@@ -1123,3 +1123,32 @@ public class ReviewCoverageResult
     [JsonPropertyName("byAuthor")]
     public List<AuthorReviewCoverage> ByAuthor { get; set; } = new();
 }
+
+// ── Milestone Progress ───────────────────────────────────────────────────────
+
+public class MilestoneStat
+{
+    [JsonPropertyName("name")]
+    public string Name { get; set; } = string.Empty;
+
+    [JsonPropertyName("openCount")]
+    public int OpenCount { get; set; }
+
+    [JsonPropertyName("closedCount")]
+    public int ClosedCount { get; set; }
+
+    [JsonPropertyName("totalCount")]
+    public int TotalCount { get; set; }
+
+    [JsonPropertyName("progressPct")]
+    public int ProgressPct { get; set; }
+}
+
+public class MilestonesResult
+{
+    [JsonPropertyName("milestones")]
+    public List<MilestoneStat> Milestones { get; set; } = new();
+
+    [JsonPropertyName("totalMilestones")]
+    public int TotalMilestones { get; set; }
+}
