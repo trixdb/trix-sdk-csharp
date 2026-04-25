@@ -997,3 +997,63 @@ public class ApprovedPRsResult
     [JsonPropertyName("count")]
     public int Count { get; set; }
 }
+
+public class IssueLabelCount
+{
+    [JsonPropertyName("label")]
+    public string Label { get; set; } = "";
+
+    [JsonPropertyName("count")]
+    public int Count { get; set; }
+}
+
+public class BacklogIssue
+{
+    [JsonPropertyName("issueNumber")]
+    public int? IssueNumber { get; set; }
+
+    [JsonPropertyName("title")]
+    public string Title { get; set; } = "";
+
+    [JsonPropertyName("author")]
+    public string? Author { get; set; }
+
+    [JsonPropertyName("url")]
+    public string? Url { get; set; }
+
+    [JsonPropertyName("assignees")]
+    public List<string> Assignees { get; set; } = new();
+
+    [JsonPropertyName("labels")]
+    public List<string> Labels { get; set; } = new();
+
+    [JsonPropertyName("milestone")]
+    public string? Milestone { get; set; }
+
+    [JsonPropertyName("ageDays")]
+    public int AgeDays { get; set; }
+}
+
+public class IssueBacklogResult
+{
+    [JsonPropertyName("totalOpen")]
+    public int TotalOpen { get; set; }
+
+    [JsonPropertyName("unassignedCount")]
+    public int UnassignedCount { get; set; }
+
+    [JsonPropertyName("unlabeledCount")]
+    public int UnlabeledCount { get; set; }
+
+    [JsonPropertyName("oldestAgeDays")]
+    public int OldestAgeDays { get; set; }
+
+    [JsonPropertyName("avgAgeDays")]
+    public int AvgAgeDays { get; set; }
+
+    [JsonPropertyName("labelDistribution")]
+    public List<IssueLabelCount> LabelDistribution { get; set; } = new();
+
+    [JsonPropertyName("oldestIssues")]
+    public List<BacklogIssue> OldestIssues { get; set; } = new();
+}

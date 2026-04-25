@@ -632,4 +632,14 @@ public class GitHubResource : BaseResource
             $"/v1/projects/{Esc(projectId)}/github/approved-prs",
             cancellationToken: cancellationToken).ConfigureAwait(false);
     }
+
+    public virtual async Task<IssueBacklogResult> GetIssueBacklogAsync(
+        string projectId,
+        CancellationToken cancellationToken = default)
+    {
+        ArgumentException.ThrowIfNullOrEmpty(projectId);
+        return await GetAsync<IssueBacklogResult>(
+            $"/v1/projects/{Esc(projectId)}/github/issue-backlog",
+            cancellationToken: cancellationToken).ConfigureAwait(false);
+    }
 }
