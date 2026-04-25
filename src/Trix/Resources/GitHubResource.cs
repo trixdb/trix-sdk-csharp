@@ -653,6 +653,18 @@ public class GitHubResource : BaseResource
             cancellationToken: cancellationToken).ConfigureAwait(false);
     }
 
+    /// <summary>Commit leaders — top contributors by commit count over the last N days (7/30/90).</summary>
+    public virtual async Task<CommitLeadersResult> GetCommitLeadersAsync(
+        string projectId,
+        int days = 30,
+        CancellationToken cancellationToken = default)
+    {
+        ArgumentException.ThrowIfNullOrEmpty(projectId);
+        return await GetAsync<CommitLeadersResult>(
+            $"/v1/projects/{Esc(projectId)}/github/commit-leaders?days={days}",
+            cancellationToken: cancellationToken).ConfigureAwait(false);
+    }
+
     /// <summary>Issue assignee workload — open issue counts per contributor, most overloaded first.</summary>
     public virtual async Task<IssueAssigneesResult> GetIssueAssigneesAsync(
         string projectId,

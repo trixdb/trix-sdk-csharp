@@ -1124,6 +1124,35 @@ public class ReviewCoverageResult
     public List<AuthorReviewCoverage> ByAuthor { get; set; } = new();
 }
 
+// ── Commit Leaders ───────────────────────────────────────────────────────────
+
+public class CommitLeader
+{
+    [JsonPropertyName("author")]
+    public string Author { get; set; } = string.Empty;
+
+    [JsonPropertyName("commitCount")]
+    public int CommitCount { get; set; }
+
+    [JsonPropertyName("activeDays")]
+    public int ActiveDays { get; set; }
+
+    [JsonPropertyName("repos")]
+    public int Repos { get; set; }
+}
+
+public class CommitLeadersResult
+{
+    [JsonPropertyName("leaders")]
+    public List<CommitLeader> Leaders { get; set; } = new();
+
+    [JsonPropertyName("totalCommits")]
+    public int TotalCommits { get; set; }
+
+    [JsonPropertyName("lookbackDays")]
+    public int LookbackDays { get; set; } = 30;
+}
+
 // ── Issue Assignee Workload ──────────────────────────────────────────────────
 
 public class AssigneeStat
