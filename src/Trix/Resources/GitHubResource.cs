@@ -542,4 +542,18 @@ public class GitHubResource : BaseResource
             $"/v1/projects/{Esc(projectId)}/github/pr-quality-trend",
             cancellationToken: cancellationToken).ConfigureAwait(false);
     }
+
+    /// <summary>
+    /// Get active branches derived from commit memories with staleness detection.
+    /// Branches with no commits in 14+ days are flagged as stale.
+    /// </summary>
+    public virtual async Task<ActiveBranchesResult> GetActiveBranchesAsync(
+        string projectId,
+        CancellationToken cancellationToken = default)
+    {
+        ArgumentException.ThrowIfNullOrEmpty(projectId);
+        return await GetAsync<ActiveBranchesResult>(
+            $"/v1/projects/{Esc(projectId)}/github/branches",
+            cancellationToken: cancellationToken).ConfigureAwait(false);
+    }
 }

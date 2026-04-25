@@ -655,3 +655,39 @@ public class HealthSnapshotResponse
     [JsonPropertyName("topRisks")]
     public List<HealthSnapshotRisk> TopRisks { get; set; } = new();
 }
+
+public class BranchInfo
+{
+    [JsonPropertyName("name")]
+    public string Name { get; set; } = string.Empty;
+
+    [JsonPropertyName("repoFullName")]
+    public string? RepoFullName { get; set; }
+
+    [JsonPropertyName("lastCommitAt")]
+    public string? LastCommitAt { get; set; }
+
+    [JsonPropertyName("commitCount")]
+    public int CommitCount { get; set; }
+
+    [JsonPropertyName("openPrNumber")]
+    public int? OpenPrNumber { get; set; }
+
+    [JsonPropertyName("openPrUrl")]
+    public string? OpenPrUrl { get; set; }
+
+    [JsonPropertyName("isDefault")]
+    public bool IsDefault { get; set; }
+
+    [JsonPropertyName("isStale")]
+    public bool IsStale { get; set; }
+}
+
+public class ActiveBranchesResult
+{
+    [JsonPropertyName("branches")]
+    public List<BranchInfo> Branches { get; set; } = new();
+
+    [JsonPropertyName("count")]
+    public int Count { get; set; }
+}
