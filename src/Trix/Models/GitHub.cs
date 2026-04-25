@@ -1705,3 +1705,15 @@ public class PRTaskAlignmentResult
     [JsonPropertyName("partial")]      public List<AlignmentEntry>   Partial      { get; set; } = new();
     [JsonPropertyName("lookbackDays")] public int                    LookbackDays { get; set; }
 }
+
+// ── DORA Metrics (ADR-152 Phase 4 extension) ──────────────────────────────────
+
+public record DORADeployFrequency(double PerDay, double PerWeek, int TotalMerges, string Rating);
+public record DORALeadTime(int? MedianHours, int? AvgHours, int SampleSize, string? Rating);
+public record DORAChangeFailureRate(int Pct, int FailureMerges, int TotalMerges, string Rating);
+public record DORAMttr(int? MedianHours, int SampleSize, string? Rating);
+public record DORADeployFreqWeek(string Week, int Merges);
+public record DORALeadTimeWeek(string Week, int? AvgHours);
+public record DORAcfrWeek(string Week, int Total, int Failures, int Pct);
+public record DORAWeeklyTrend(List<DORADeployFreqWeek> DeployFreq, List<DORALeadTimeWeek> LeadTime, List<DORAcfrWeek> ChangeFailureRate);
+public record DORAResult(DORADeployFrequency DeploymentFrequency, DORALeadTime LeadTime, DORAChangeFailureRate ChangeFailureRate, DORAMttr Mttr, DORAWeeklyTrend WeeklyTrend, int LookbackDays);

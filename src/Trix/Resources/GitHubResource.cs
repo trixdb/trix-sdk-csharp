@@ -788,4 +788,9 @@ public class GitHubResource : BaseResource
     /// <summary>PRs without test coverage — summary, top gaps, by-author, weekly trend.</summary>
     public async Task<TestGapResult> GetTestGapAsync(string projectId, int days = 90, CancellationToken ct = default)
         => await GetAsync<TestGapResult>($"/v1/projects/{projectId}/github/test-gap?days={days}", ct);
+
+    /// <summary>DORA engineering excellence metrics — deploy frequency, lead time, CFR, MTTR.</summary>
+    public Task<DORAResult> GetDORAMetricsAsync(
+        string projectId, int days = 90, CancellationToken ct = default) =>
+        GetAsync<DORAResult>($"/v1/projects/{projectId}/github/dora-metrics?days={days}", cancellationToken: ct);
 }
