@@ -663,6 +663,33 @@ public class HealthSnapshotResponse
 
     [JsonPropertyName("urgentItems")]
     public HealthSnapshotUrgentItems? UrgentItems { get; set; }
+
+    [JsonPropertyName("issueBacklog")]
+    public HealthSnapshotIssueBacklog? IssueBacklog { get; set; }
+
+    [JsonPropertyName("reviewCoverage")]
+    public HealthSnapshotReviewCoverage? ReviewCoverage { get; set; }
+}
+
+public class HealthSnapshotIssueBacklog
+{
+    [JsonPropertyName("totalOpen")]
+    public int TotalOpen { get; set; }
+
+    [JsonPropertyName("unassignedCount")]
+    public int UnassignedCount { get; set; }
+}
+
+public class HealthSnapshotReviewCoverage
+{
+    [JsonPropertyName("totalMerged")]
+    public int TotalMerged { get; set; }
+
+    [JsonPropertyName("coveragePct")]
+    public int? CoveragePct { get; set; }
+
+    [JsonPropertyName("lookbackDays")]
+    public int LookbackDays { get; set; } = 30;
 }
 
 public class HealthSnapshotPRQualityTrend
