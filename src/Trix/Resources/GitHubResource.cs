@@ -698,4 +698,18 @@ public class GitHubResource : BaseResource
             $"/v1/projects/{Esc(projectId)}/github/milestones",
             cancellationToken: cancellationToken).ConfigureAwait(false);
     }
+
+    /// <summary>
+    /// Get week-over-week velocity comparison — PRs merged, issues closed, and commits
+    /// in the current 7-day window vs the previous 7-day window.
+    /// </summary>
+    public virtual async Task<WeekOverWeekResult> GetWeekOverWeekAsync(
+        string projectId,
+        CancellationToken cancellationToken = default)
+    {
+        ArgumentException.ThrowIfNullOrEmpty(projectId);
+        return await GetAsync<WeekOverWeekResult>(
+            $"/v1/projects/{Esc(projectId)}/github/week-over-week",
+            cancellationToken: cancellationToken).ConfigureAwait(false);
+    }
 }

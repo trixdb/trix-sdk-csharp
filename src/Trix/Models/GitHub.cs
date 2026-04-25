@@ -1236,3 +1236,33 @@ public class MilestonesResult
     [JsonPropertyName("totalMilestones")]
     public int TotalMilestones { get; set; }
 }
+
+public class WeekStat
+{
+    [JsonPropertyName("label")]
+    public string Label { get; set; } = "";
+
+    [JsonPropertyName("thisWeek")]
+    public int ThisWeek { get; set; }
+
+    [JsonPropertyName("lastWeek")]
+    public int LastWeek { get; set; }
+
+    [JsonPropertyName("delta")]
+    public int Delta { get; set; }
+
+    [JsonPropertyName("trend")]
+    public string Trend { get; set; } = "flat";
+}
+
+public class WeekOverWeekResult
+{
+    [JsonPropertyName("prs")]
+    public WeekStat Prs { get; set; } = new();
+
+    [JsonPropertyName("issues")]
+    public WeekStat Issues { get; set; } = new();
+
+    [JsonPropertyName("commits")]
+    public WeekStat Commits { get; set; } = new();
+}
