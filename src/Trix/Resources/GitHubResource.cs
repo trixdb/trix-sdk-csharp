@@ -712,4 +712,19 @@ public class GitHubResource : BaseResource
             $"/v1/projects/{Esc(projectId)}/github/week-over-week",
             cancellationToken: cancellationToken).ConfigureAwait(false);
     }
+
+    /// <summary>
+    /// Get issue triage — recently-opened issues missing labels, assignee, or milestone.
+    /// </summary>
+    /// <param name="days">Lookback window in days (default 7; options: 7, 14, 30)</param>
+    public virtual async Task<IssueTriageResult> GetIssueTriageAsync(
+        string projectId,
+        int days = 7,
+        CancellationToken cancellationToken = default)
+    {
+        ArgumentException.ThrowIfNullOrEmpty(projectId);
+        return await GetAsync<IssueTriageResult>(
+            $"/v1/projects/{Esc(projectId)}/github/issue-triage?days={days}",
+            cancellationToken: cancellationToken).ConfigureAwait(false);
+    }
 }

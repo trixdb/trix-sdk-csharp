@@ -1266,3 +1266,39 @@ public class WeekOverWeekResult
     [JsonPropertyName("commits")]
     public WeekStat Commits { get; set; } = new();
 }
+
+public class TriageIssue
+{
+    [JsonPropertyName("issueNumber")]
+    public string IssueNumber { get; set; } = "";
+
+    [JsonPropertyName("title")]
+    public string Title { get; set; } = "";
+
+    [JsonPropertyName("url")]
+    public string? Url { get; set; }
+
+    [JsonPropertyName("repo")]
+    public string? Repo { get; set; }
+
+    [JsonPropertyName("author")]
+    public string? Author { get; set; }
+
+    [JsonPropertyName("ageHours")]
+    public int AgeHours { get; set; }
+
+    [JsonPropertyName("missing")]
+    public List<string> Missing { get; set; } = new();
+}
+
+public class IssueTriageResult
+{
+    [JsonPropertyName("issues")]
+    public List<TriageIssue> Issues { get; set; } = new();
+
+    [JsonPropertyName("count")]
+    public int Count { get; set; }
+
+    [JsonPropertyName("lookbackDays")]
+    public int LookbackDays { get; set; }
+}
