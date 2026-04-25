@@ -1645,3 +1645,41 @@ public class AssigneeCycleTimeResult
     [JsonPropertyName("teamAvgDays")] public double?                TeamAvgDays { get; set; }
     [JsonPropertyName("lookbackDays")] public int                   LookbackDays { get; set; }
 }
+
+/// <summary>
+/// A single PR–issue alignment entry.
+/// </summary>
+public class AlignmentEntry
+{
+    [JsonPropertyName("prNumber")]    public string PrNumber    { get; set; } = "";
+    [JsonPropertyName("prTitle")]     public string PrTitle     { get; set; } = "";
+    [JsonPropertyName("prUrl")]       public string PrUrl       { get; set; } = "";
+    [JsonPropertyName("author")]      public string Author      { get; set; } = "";
+    [JsonPropertyName("issueNumber")] public string IssueNumber { get; set; } = "";
+    [JsonPropertyName("issueTitle")]  public string IssueTitle  { get; set; } = "";
+    [JsonPropertyName("similarity")]  public double Similarity  { get; set; }
+    [JsonPropertyName("signal")]      public string Signal      { get; set; } = "";
+}
+
+/// <summary>
+/// Summary counts for PR–task alignment analysis.
+/// </summary>
+public class PRTaskAlignmentSummary
+{
+    [JsonPropertyName("analyzed")]       public int Analyzed       { get; set; }
+    [JsonPropertyName("alignedCount")]   public int AlignedCount   { get; set; }
+    [JsonPropertyName("partialCount")]   public int PartialCount   { get; set; }
+    [JsonPropertyName("driftedCount")]   public int DriftedCount   { get; set; }
+    [JsonPropertyName("uncheckedCount")] public int UncheckedCount { get; set; }
+}
+
+/// <summary>
+/// PR–task alignment result.
+/// </summary>
+public class PRTaskAlignmentResult
+{
+    [JsonPropertyName("summary")]      public PRTaskAlignmentSummary Summary      { get; set; } = new();
+    [JsonPropertyName("drifted")]      public List<AlignmentEntry>   Drifted      { get; set; } = new();
+    [JsonPropertyName("partial")]      public List<AlignmentEntry>   Partial      { get; set; } = new();
+    [JsonPropertyName("lookbackDays")] public int                    LookbackDays { get; set; }
+}

@@ -781,4 +781,7 @@ public class GitHubResource : BaseResource
 
     public async Task<AssigneeCycleTimeResult> GetAssigneeCycleTimeAsync(string projectId, int days = 90, CancellationToken ct = default)
         => await GetAsync<AssigneeCycleTimeResult>($"/v1/projects/{projectId}/github/assignee-cycle-time?days={days}", ct);
+
+    public async Task<PRTaskAlignmentResult> GetPRTaskAlignmentAsync(string projectId, int days = 90, CancellationToken ct = default)
+        => await GetAsync<PRTaskAlignmentResult>($"/v1/projects/{projectId}/github/pr-task-alignment?days={days}", ct);
 }
