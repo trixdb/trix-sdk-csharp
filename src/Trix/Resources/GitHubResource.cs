@@ -569,4 +569,17 @@ public class GitHubResource : BaseResource
             $"/v1/projects/{Esc(projectId)}/github/contributor-quality",
             cancellationToken: cancellationToken).ConfigureAwait(false);
     }
+
+    /// <summary>
+    /// Open PRs sorted oldest-first with ageDays and isStale flag (>7 days without update).
+    /// </summary>
+    public virtual async Task<PrAgingResult> GetPrAgingAsync(
+        string projectId,
+        CancellationToken cancellationToken = default)
+    {
+        ArgumentException.ThrowIfNullOrEmpty(projectId);
+        return await GetAsync<PrAgingResult>(
+            $"/v1/projects/{Esc(projectId)}/github/pr-aging",
+            cancellationToken: cancellationToken).ConfigureAwait(false);
+    }
 }

@@ -724,3 +724,48 @@ public class ContributorQualityResult
     [JsonPropertyName("count")]
     public int Count { get; set; }
 }
+
+public class OpenPRAging
+{
+    [JsonPropertyName("prNumber")]
+    public int? PrNumber { get; set; }
+
+    [JsonPropertyName("title")]
+    public string? Title { get; set; }
+
+    [JsonPropertyName("author")]
+    public string? Author { get; set; }
+
+    [JsonPropertyName("url")]
+    public string? Url { get; set; }
+
+    [JsonPropertyName("repo")]
+    public string? Repo { get; set; }
+
+    [JsonPropertyName("headBranch")]
+    public string? HeadBranch { get; set; }
+
+    [JsonPropertyName("openedAt")]
+    public string? OpenedAt { get; set; }
+
+    [JsonPropertyName("lastUpdatedAt")]
+    public string? LastUpdatedAt { get; set; }
+
+    [JsonPropertyName("ageDays")]
+    public int AgeDays { get; set; }
+
+    [JsonPropertyName("isStale")]
+    public bool IsStale { get; set; }
+}
+
+public class PrAgingResult
+{
+    [JsonPropertyName("prs")]
+    public List<OpenPRAging> Prs { get; set; } = new();
+
+    [JsonPropertyName("count")]
+    public int Count { get; set; }
+
+    [JsonPropertyName("staleDays")]
+    public int StaleDays { get; set; }
+}
