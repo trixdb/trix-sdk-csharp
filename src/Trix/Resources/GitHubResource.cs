@@ -592,4 +592,14 @@ public class GitHubResource : BaseResource
             $"/v1/projects/{Esc(projectId)}/github/pr-size-distribution",
             cancellationToken: cancellationToken).ConfigureAwait(false);
     }
+
+    public virtual async Task<ReviewTurnaroundResult> GetReviewTurnaroundAsync(
+        string projectId,
+        CancellationToken cancellationToken = default)
+    {
+        ArgumentException.ThrowIfNullOrEmpty(projectId);
+        return await GetAsync<ReviewTurnaroundResult>(
+            $"/v1/projects/{Esc(projectId)}/github/review-turnaround",
+            cancellationToken: cancellationToken).ConfigureAwait(false);
+    }
 }

@@ -799,3 +799,39 @@ public class PrSizeDistributionResult
     [JsonPropertyName("total")]
     public int Total { get; set; }
 }
+
+public class ReviewAuthorStat
+{
+    [JsonPropertyName("author")]
+    public string Author { get; set; } = string.Empty;
+
+    [JsonPropertyName("reviewedCount")]
+    public int ReviewedCount { get; set; }
+
+    [JsonPropertyName("avgHours")]
+    public double? AvgHours { get; set; }
+
+    [JsonPropertyName("within24hCount")]
+    public int Within24hCount { get; set; }
+
+    [JsonPropertyName("within24hPct")]
+    public int Within24hPct { get; set; }
+}
+
+public class ReviewTurnaroundResult
+{
+    [JsonPropertyName("avgHours")]
+    public double? AvgHours { get; set; }
+
+    [JsonPropertyName("reviewedWithin24hPct")]
+    public int ReviewedWithin24hPct { get; set; }
+
+    [JsonPropertyName("totalReviewed")]
+    public int TotalReviewed { get; set; }
+
+    [JsonPropertyName("unreviewedCount")]
+    public int UnreviewedCount { get; set; }
+
+    [JsonPropertyName("authorStats")]
+    public List<ReviewAuthorStat> AuthorStats { get; set; } = new();
+}
