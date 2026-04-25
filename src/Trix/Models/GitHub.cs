@@ -1567,3 +1567,20 @@ public class ScopeCreepResult
     [JsonPropertyName("byAuthor")]     public List<ScopeCreepAuthor>    ByAuthor    { get; set; } = new();
     [JsonPropertyName("weeklyTrend")]  public List<ScopeCreepWeek>      WeeklyTrend { get; set; } = new();
 }
+
+public class AssigneeStatItem
+{
+    [JsonPropertyName("assignee")]     public string  Assignee    { get; set; } = "";
+    [JsonPropertyName("closedCount")] public int     ClosedCount { get; set; }
+    [JsonPropertyName("avgDays")]     public double? AvgDays     { get; set; }
+    [JsonPropertyName("prevAvgDays")] public double? PrevAvgDays { get; set; }
+    [JsonPropertyName("trend")]       public string  Trend       { get; set; } = "";
+    [JsonPropertyName("pctChange")]   public int?    PctChange   { get; set; }
+}
+
+public class AssigneeCycleTimeResult
+{
+    [JsonPropertyName("assignees")]   public List<AssigneeStatItem> Assignees   { get; set; } = new();
+    [JsonPropertyName("teamAvgDays")] public double?                TeamAvgDays { get; set; }
+    [JsonPropertyName("lookbackDays")] public int                   LookbackDays { get; set; }
+}

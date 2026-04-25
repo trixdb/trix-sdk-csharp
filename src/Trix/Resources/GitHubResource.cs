@@ -778,4 +778,7 @@ public class GitHubResource : BaseResource
 
     public async Task<ScopeCreepResult> GetScopeCreepAsync(string projectId, int days = 90, CancellationToken ct = default)
         => await GetAsync<ScopeCreepResult>($"/v1/projects/{projectId}/github/scope-creep?days={days}", ct);
+
+    public async Task<AssigneeCycleTimeResult> GetAssigneeCycleTimeAsync(string projectId, int days = 90, CancellationToken ct = default)
+        => await GetAsync<AssigneeCycleTimeResult>($"/v1/projects/{projectId}/github/assignee-cycle-time?days={days}", ct);
 }
