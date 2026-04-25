@@ -642,4 +642,14 @@ public class GitHubResource : BaseResource
             $"/v1/projects/{Esc(projectId)}/github/issue-backlog",
             cancellationToken: cancellationToken).ConfigureAwait(false);
     }
+
+    public virtual async Task<ReviewCoverageResult> GetReviewCoverageAsync(
+        string projectId,
+        CancellationToken cancellationToken = default)
+    {
+        ArgumentException.ThrowIfNullOrEmpty(projectId);
+        return await GetAsync<ReviewCoverageResult>(
+            $"/v1/projects/{Esc(projectId)}/github/review-coverage",
+            cancellationToken: cancellationToken).ConfigureAwait(false);
+    }
 }

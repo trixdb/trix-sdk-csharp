@@ -1057,3 +1057,42 @@ public class IssueBacklogResult
     [JsonPropertyName("oldestIssues")]
     public List<BacklogIssue> OldestIssues { get; set; } = new();
 }
+
+public class AuthorReviewCoverage
+{
+    [JsonPropertyName("author")]
+    public string Author { get; set; } = "";
+
+    [JsonPropertyName("mergedCount")]
+    public int MergedCount { get; set; }
+
+    [JsonPropertyName("reviewedCount")]
+    public int ReviewedCount { get; set; }
+
+    [JsonPropertyName("unreviewedCount")]
+    public int UnreviewedCount { get; set; }
+
+    [JsonPropertyName("coveragePct")]
+    public int CoveragePct { get; set; }
+}
+
+public class ReviewCoverageResult
+{
+    [JsonPropertyName("totalMerged")]
+    public int TotalMerged { get; set; }
+
+    [JsonPropertyName("reviewedCount")]
+    public int ReviewedCount { get; set; }
+
+    [JsonPropertyName("unreviewedCount")]
+    public int UnreviewedCount { get; set; }
+
+    [JsonPropertyName("coveragePct")]
+    public int? CoveragePct { get; set; }
+
+    [JsonPropertyName("lookbackDays")]
+    public int LookbackDays { get; set; } = 90;
+
+    [JsonPropertyName("byAuthor")]
+    public List<AuthorReviewCoverage> ByAuthor { get; set; } = new();
+}
