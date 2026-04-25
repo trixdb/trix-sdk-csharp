@@ -835,3 +835,30 @@ public class ReviewTurnaroundResult
     [JsonPropertyName("authorStats")]
     public List<ReviewAuthorStat> AuthorStats { get; set; } = new();
 }
+
+public class WorkQueueItem
+{
+    [JsonPropertyName("type")]
+    public string Type { get; set; } = string.Empty;
+
+    [JsonPropertyName("priority")]
+    public string Priority { get; set; } = string.Empty;
+
+    [JsonPropertyName("title")]
+    public string Title { get; set; } = string.Empty;
+
+    [JsonPropertyName("detail")]
+    public string Detail { get; set; } = string.Empty;
+
+    [JsonPropertyName("url")]
+    public string? Url { get; set; }
+}
+
+public class WorkQueueResult
+{
+    [JsonPropertyName("items")]
+    public List<WorkQueueItem> Items { get; set; } = new();
+
+    [JsonPropertyName("count")]
+    public int Count { get; set; }
+}

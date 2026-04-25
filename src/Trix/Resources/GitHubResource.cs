@@ -602,4 +602,14 @@ public class GitHubResource : BaseResource
             $"/v1/projects/{Esc(projectId)}/github/review-turnaround",
             cancellationToken: cancellationToken).ConfigureAwait(false);
     }
+
+    public virtual async Task<WorkQueueResult> GetWorkQueueAsync(
+        string projectId,
+        CancellationToken cancellationToken = default)
+    {
+        ArgumentException.ThrowIfNullOrEmpty(projectId);
+        return await GetAsync<WorkQueueResult>(
+            $"/v1/projects/{Esc(projectId)}/github/work-queue",
+            cancellationToken: cancellationToken).ConfigureAwait(false);
+    }
 }
