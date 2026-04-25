@@ -754,4 +754,8 @@ public class GitHubResource : BaseResource
             $"/v1/projects/{Esc(projectId)}/github/issue-cycle-time?days={days}",
             cancellationToken: cancellationToken).ConfigureAwait(false);
     }
+
+    /// <summary>Get weekly closed issue count trend.</summary>
+    public async Task<IssueThroughputResult> GetIssueThroughputAsync(string projectId, int weeks = 8, CancellationToken ct = default)
+        => await GetAsync<IssueThroughputResult>($"/v1/projects/{projectId}/github/issue-throughput?weeks={weeks}", ct);
 }

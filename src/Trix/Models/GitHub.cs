@@ -1368,3 +1368,20 @@ public class IssueCycleTimeResult
     [JsonPropertyName("byLabel")] public List<CycleTimeByLabel> ByLabel { get; set; } = new();
     [JsonPropertyName("lookbackDays")] public int LookbackDays { get; set; }
 }
+
+/// <summary>One week of issue throughput data.</summary>
+public class IssueThroughputWeek
+{
+    [JsonPropertyName("weekStart")] public string WeekStart { get; set; } = "";
+    [JsonPropertyName("closedCount")] public int ClosedCount { get; set; }
+    [JsonPropertyName("openedCount")] public int OpenedCount { get; set; }
+}
+
+/// <summary>Weekly issue throughput trend.</summary>
+public class IssueThroughputResult
+{
+    [JsonPropertyName("weeks")] public List<IssueThroughputWeek> Weeks { get; set; } = new();
+    [JsonPropertyName("avgClosedPerWeek")] public double AvgClosedPerWeek { get; set; }
+    [JsonPropertyName("trend")] public string Trend { get; set; } = "stable";
+    [JsonPropertyName("lookbackWeeks")] public int LookbackWeeks { get; set; }
+}
