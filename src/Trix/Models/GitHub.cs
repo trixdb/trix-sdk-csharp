@@ -347,24 +347,85 @@ public class GoalProgressHistoryResponse
 }
 
 /// <summary>
-/// Per-signal breakdown for release readiness.
+/// Blocker issue in release readiness report.
 /// </summary>
-public class ReleaseReadinessSignals
+public class ReleaseReadinessBlocker
 {
-    [JsonPropertyName("open_prs")] public int OpenPRs { get; set; }
-    [JsonPropertyName("blocking_tasks")] public int BlockingTasks { get; set; }
-    [JsonPropertyName("goal_completion_pct")] public int GoalCompletionPct { get; set; }
-    [JsonPropertyName("scope_creep_prs")] public int ScopeCreepPRs { get; set; }
+    [JsonPropertyName("issueNumber")] public string IssueNumber { get; set; } = "";
+    [JsonPropertyName("title")] public string Title { get; set; } = "";
+    [JsonPropertyName("url")] public string Url { get; set; } = "";
+    [JsonPropertyName("author")] public string Author { get; set; } = "";
+    [JsonPropertyName("labels")] public List<string> Labels { get; set; } = new();
+    [JsonPropertyName("ageDays")] public int AgeDays { get; set; }
 }
 
 /// <summary>
-/// Release readiness score and detail lists.
+/// Unreviewed PR in release readiness report.
+/// </summary>
+public class ReleaseReadinessUnreviewedPR
+{
+    [JsonPropertyName("prNumber")] public string PrNumber { get; set; } = "";
+    [JsonPropertyName("title")] public string Title { get; set; } = "";
+    [JsonPropertyName("url")] public string Url { get; set; } = "";
+    [JsonPropertyName("author")] public string Author { get; set; } = "";
+    [JsonPropertyName("ageDays")] public int AgeDays { get; set; }
+    [JsonPropertyName("requestedReviewers")] public List<string> RequestedReviewers { get; set; } = new();
+}
+
+/// <summary>
+/// Stale PR in release readiness report.
+/// </summary>
+public class ReleaseReadinessStalePR
+{
+    [JsonPropertyName("prNumber")] public string PrNumber { get; set; } = "";
+    [JsonPropertyName("title")] public string Title { get; set; } = "";
+    [JsonPropertyName("url")] public string Url { get; set; } = "";
+    [JsonPropertyName("author")] public string Author { get; set; } = "";
+    [JsonPropertyName("ageDays")] public int AgeDays { get; set; }
+}
+
+/// <summary>
+/// Hotspot file in release readiness report.
+/// </summary>
+public class ReleaseReadinessHotspot
+{
+    [JsonPropertyName("filePath")] public string FilePath { get; set; } = "";
+    [JsonPropertyName("repo")] public string Repo { get; set; } = "";
+    [JsonPropertyName("hotspotScore")] public double HotspotScore { get; set; }
+}
+
+/// <summary>
+/// Release readiness composite score and blocking signals.
 /// </summary>
 public class ReleaseReadinessResponse
 {
-    [JsonPropertyName("score")] public int Score { get; set; }
-    [JsonPropertyName("ready")] public bool Ready { get; set; }
-    [JsonPropertyName("signals")] public ReleaseReadinessSignals Signals { get; set; } = new();
+    [JsonPropertyName("readinessScore")] public int ReadinessScore { get; set; }
+    [JsonPropertyName("openIssues")] public ReleaseReadinessOpenIssues OpenIssues { get; set; } = new();
+    [JsonPropertyName("openPRs")] public ReleaseReadinessOpenPRs OpenPRs { get; set; } = new();
+    [JsonPropertyName("recentMerges")] public Dictionary<string, object> RecentMerges { get; set; } = new();
+    [JsonPropertyName("topHotspots")] public List<ReleaseReadinessHotspot> TopHotspots { get; set; } = new();
+}
+
+/// <summary>
+/// Open issues section of release readiness report.
+/// </summary>
+public class ReleaseReadinessOpenIssues
+{
+    [JsonPropertyName("count")] public int Count { get; set; }
+    [JsonPropertyName("blockerCount")] public int BlockerCount { get; set; }
+    [JsonPropertyName("blockers")] public List<ReleaseReadinessBlocker> Blockers { get; set; } = new();
+}
+
+/// <summary>
+/// Open PRs section of release readiness report.
+/// </summary>
+public class ReleaseReadinessOpenPRs
+{
+    [JsonPropertyName("count")] public int Count { get; set; }
+    [JsonPropertyName("unreviewedCount")] public int UnreviewedCount { get; set; }
+    [JsonPropertyName("staleCount")] public int StaleCount { get; set; }
+    [JsonPropertyName("unreviewed")] public List<ReleaseReadinessUnreviewedPR> Unreviewed { get; set; } = new();
+    [JsonPropertyName("stalePRs")] public List<ReleaseReadinessStalePR> StalePRs { get; set; } = new();
 }
 
 /// <summary>
