@@ -622,4 +622,14 @@ public class GitHubResource : BaseResource
             $"/v1/projects/{Esc(projectId)}/github/reviewer-workload",
             cancellationToken: cancellationToken).ConfigureAwait(false);
     }
+
+    public virtual async Task<ApprovedPRsResult> GetApprovedPRsAsync(
+        string projectId,
+        CancellationToken cancellationToken = default)
+    {
+        ArgumentException.ThrowIfNullOrEmpty(projectId);
+        return await GetAsync<ApprovedPRsResult>(
+            $"/v1/projects/{Esc(projectId)}/github/approved-prs",
+            cancellationToken: cancellationToken).ConfigureAwait(false);
+    }
 }

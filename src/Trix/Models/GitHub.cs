@@ -958,3 +958,42 @@ public class ReviewerWorkloadResult
     [JsonPropertyName("count")]
     public int Count { get; set; }
 }
+
+public class ApprovedPR
+{
+    [JsonPropertyName("prNumber")]
+    public int? PrNumber { get; set; }
+
+    [JsonPropertyName("title")]
+    public string? Title { get; set; }
+
+    [JsonPropertyName("author")]
+    public string? Author { get; set; }
+
+    [JsonPropertyName("url")]
+    public string? Url { get; set; }
+
+    [JsonPropertyName("repo")]
+    public string? Repo { get; set; }
+
+    [JsonPropertyName("ageDays")]
+    public int AgeDays { get; set; }
+
+    [JsonPropertyName("approvalCount")]
+    public int ApprovalCount { get; set; }
+
+    [JsonPropertyName("approvers")]
+    public List<string> Approvers { get; set; } = new();
+
+    [JsonPropertyName("hasChangesRequested")]
+    public bool HasChangesRequested { get; set; }
+}
+
+public class ApprovedPRsResult
+{
+    [JsonPropertyName("prs")]
+    public List<ApprovedPR> Prs { get; set; } = new();
+
+    [JsonPropertyName("count")]
+    public int Count { get; set; }
+}
