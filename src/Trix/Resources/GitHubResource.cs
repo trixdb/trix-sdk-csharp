@@ -803,4 +803,8 @@ public class GitHubResource : BaseResource
     public Task<BusFactorResult> GetBusFactorAsync(
         string projectId, int days = 90, CancellationToken ct = default) =>
         GetAsync<BusFactorResult>($"/v1/projects/{projectId}/github/bus-factor?days={days}", cancellationToken: ct);
+
+    public Task<ReviewNetworkResult> GetReviewNetworkAsync(
+        string projectId, int days = 90, CancellationToken ct = default) =>
+        GetAsync<ReviewNetworkResult>($"/v1/projects/{projectId}/github/review-network?days={days}", cancellationToken: ct);
 }

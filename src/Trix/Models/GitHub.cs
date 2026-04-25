@@ -1759,3 +1759,20 @@ public record BusFactorResult(
     List<BusFactorAtRiskFile> AtRisk,
     List<BusFactorContributor> ByContributor,
     int LookbackDays);
+
+public record ReviewEdge(
+    string Reviewer,
+    string Author,
+    int ReviewCount);
+
+public record ReviewContributor(
+    string Name,
+    int ReviewsGiven,
+    int ReviewsReceived,
+    int UniqueAuthors,
+    int UniqueReviewers);
+
+public record ReviewNetworkResult(
+    List<ReviewEdge> Edges,
+    List<ReviewContributor> Contributors,
+    int LookbackDays);
