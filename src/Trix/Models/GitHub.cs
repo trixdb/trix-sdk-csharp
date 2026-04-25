@@ -1477,3 +1477,19 @@ public class PrMergeTimeResult
     [JsonPropertyName("distribution")] public List<MergeTimeBucket> Distribution { get; set; } = new();
     [JsonPropertyName("authorStats")] public List<MergeTimeAuthor> AuthorStats { get; set; } = new();
 }
+
+public class ContributorMomentum
+{
+    [JsonPropertyName("author")] public string Author { get; set; } = string.Empty;
+    [JsonPropertyName("recentCommits")] public int RecentCommits { get; set; }
+    [JsonPropertyName("previousCommits")] public int PreviousCommits { get; set; }
+    [JsonPropertyName("pctChange")] public int? PctChange { get; set; }
+    [JsonPropertyName("trend")] public string Trend { get; set; } = "stable";
+}
+
+/// <summary>Contributor commit momentum vs prior period.</summary>
+public class ContributorMomentumResult
+{
+    [JsonPropertyName("contributors")] public List<ContributorMomentum> Contributors { get; set; } = new();
+    [JsonPropertyName("periodDays")] public int PeriodDays { get; set; }
+}

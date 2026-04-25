@@ -769,4 +769,7 @@ public class GitHubResource : BaseResource
 
     public async Task<PrMergeTimeResult> GetPrMergeTimeAsync(string projectId, int days = 90, CancellationToken ct = default)
         => await GetAsync<PrMergeTimeResult>($"/v1/projects/{projectId}/github/pr-merge-time?days={days}", ct);
+
+    public async Task<ContributorMomentumResult> GetContributorMomentumAsync(string projectId, int days = 28, CancellationToken ct = default)
+        => await GetAsync<ContributorMomentumResult>($"/v1/projects/{projectId}/github/contributor-momentum?days={days}", ct);
 }
