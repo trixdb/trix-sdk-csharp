@@ -612,4 +612,14 @@ public class GitHubResource : BaseResource
             $"/v1/projects/{Esc(projectId)}/github/work-queue",
             cancellationToken: cancellationToken).ConfigureAwait(false);
     }
+
+    public virtual async Task<ReviewerWorkloadResult> GetReviewerWorkloadAsync(
+        string projectId,
+        CancellationToken cancellationToken = default)
+    {
+        ArgumentException.ThrowIfNullOrEmpty(projectId);
+        return await GetAsync<ReviewerWorkloadResult>(
+            $"/v1/projects/{Esc(projectId)}/github/reviewer-workload",
+            cancellationToken: cancellationToken).ConfigureAwait(false);
+    }
 }

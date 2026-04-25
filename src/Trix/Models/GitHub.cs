@@ -913,3 +913,48 @@ public class WorkQueueResult
     [JsonPropertyName("count")]
     public int Count { get; set; }
 }
+
+public class ReviewerPendingPR
+{
+    [JsonPropertyName("prNumber")]
+    public int? PrNumber { get; set; }
+
+    [JsonPropertyName("title")]
+    public string? Title { get; set; }
+
+    [JsonPropertyName("url")]
+    public string? Url { get; set; }
+}
+
+public class ReviewerWorkloadStat
+{
+    [JsonPropertyName("reviewer")]
+    public string Reviewer { get; set; } = string.Empty;
+
+    [JsonPropertyName("pendingCount")]
+    public int PendingCount { get; set; }
+
+    [JsonPropertyName("avgPendingAgeHours")]
+    public int? AvgPendingAgeHours { get; set; }
+
+    [JsonPropertyName("pendingPrs")]
+    public List<ReviewerPendingPR> PendingPrs { get; set; } = new();
+
+    [JsonPropertyName("totalReviews")]
+    public int TotalReviews { get; set; }
+
+    [JsonPropertyName("approvals")]
+    public int Approvals { get; set; }
+
+    [JsonPropertyName("avgResponseHours")]
+    public double? AvgResponseHours { get; set; }
+}
+
+public class ReviewerWorkloadResult
+{
+    [JsonPropertyName("reviewers")]
+    public List<ReviewerWorkloadStat> Reviewers { get; set; } = new();
+
+    [JsonPropertyName("count")]
+    public int Count { get; set; }
+}
