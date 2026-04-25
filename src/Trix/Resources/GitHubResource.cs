@@ -807,4 +807,8 @@ public class GitHubResource : BaseResource
     public Task<ReviewNetworkResult> GetReviewNetworkAsync(
         string projectId, int days = 90, CancellationToken ct = default) =>
         GetAsync<ReviewNetworkResult>($"/v1/projects/{projectId}/github/review-network?days={days}", cancellationToken: ct);
+
+    public Task<ReviewDepthResult> GetReviewDepthAsync(
+        string projectId, int days = 90, CancellationToken ct = default) =>
+        GetAsync<ReviewDepthResult>($"/v1/projects/{projectId}/github/review-depth?days={days}", cancellationToken: ct);
 }

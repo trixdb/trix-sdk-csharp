@@ -1776,3 +1776,24 @@ public record ReviewNetworkResult(
     List<ReviewEdge> Edges,
     List<ReviewContributor> Contributors,
     int LookbackDays);
+
+public record ReviewDepthSummary(
+    int TotalReviews,
+    int TotalReviewers,
+    int AvgScrutinyRate,
+    int RubberstampCount,
+    int RigorousCount);
+
+public record ReviewerDepthStat(
+    string Reviewer,
+    int TotalReviews,
+    int Approvals,
+    int ChangesRequested,
+    int CommentsOnly,
+    int ScrutinyRate,
+    int UniquePrs);
+
+public record ReviewDepthResult(
+    ReviewDepthSummary Summary,
+    List<ReviewerDepthStat> Reviewers,
+    int LookbackDays);
