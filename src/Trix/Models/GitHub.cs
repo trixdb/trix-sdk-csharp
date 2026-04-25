@@ -669,6 +669,21 @@ public class HealthSnapshotResponse
 
     [JsonPropertyName("reviewCoverage")]
     public HealthSnapshotReviewCoverage? ReviewCoverage { get; set; }
+
+    [JsonPropertyName("issueFlow")]
+    public HealthSnapshotIssueFlow? IssueFlow { get; set; }
+}
+
+public class HealthSnapshotIssueFlow
+{
+    [JsonPropertyName("openedLast7d")]
+    public int OpenedLast7d { get; set; }
+
+    [JsonPropertyName("closedLast7d")]
+    public int ClosedLast7d { get; set; }
+
+    [JsonPropertyName("netFlow7d")]
+    public int NetFlow7d { get; set; }
 }
 
 public class HealthSnapshotIssueBacklog
