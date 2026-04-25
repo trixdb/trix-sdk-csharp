@@ -758,4 +758,8 @@ public class GitHubResource : BaseResource
     /// <summary>Get weekly closed issue count trend.</summary>
     public async Task<IssueThroughputResult> GetIssueThroughputAsync(string projectId, int weeks = 8, CancellationToken ct = default)
         => await GetAsync<IssueThroughputResult>($"/v1/projects/{projectId}/github/issue-throughput?weeks={weeks}", ct);
+
+    /// <summary>Get issue resolver leaderboard — top contributors by closed issue count.</summary>
+    public async Task<IssueResolversResult> GetIssueResolversAsync(string projectId, int days = 30, CancellationToken ct = default)
+        => await GetAsync<IssueResolversResult>($"/v1/projects/{projectId}/github/issue-resolvers?days={days}", ct);
 }

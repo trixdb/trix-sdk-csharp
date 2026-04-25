@@ -1241,6 +1241,9 @@ public class MilestoneStat
 
     [JsonPropertyName("progressPct")]
     public int ProgressPct { get; set; }
+
+    [JsonPropertyName("predictedDate")]
+    public string? PredictedDate { get; set; }
 }
 
 public class MilestonesResult
@@ -1384,4 +1387,22 @@ public class IssueThroughputResult
     [JsonPropertyName("avgClosedPerWeek")] public double AvgClosedPerWeek { get; set; }
     [JsonPropertyName("trend")] public string Trend { get; set; } = "stable";
     [JsonPropertyName("lookbackWeeks")] public int LookbackWeeks { get; set; }
+}
+
+// ── Issue Resolver Leaderboard (Phase 4) ─────────────────────────────────────
+
+/// <summary>One entry in the issue resolver leaderboard.</summary>
+public class IssueResolver
+{
+    [JsonPropertyName("login")] public string Login { get; set; } = "";
+    [JsonPropertyName("closedCount")] public int ClosedCount { get; set; }
+    [JsonPropertyName("pct")] public double Pct { get; set; }
+}
+
+/// <summary>Issue resolver leaderboard — top contributors by closed issue count.</summary>
+public class IssueResolversResult
+{
+    [JsonPropertyName("resolvers")] public List<IssueResolver> Resolvers { get; set; } = new();
+    [JsonPropertyName("totalClosed")] public int TotalClosed { get; set; }
+    [JsonPropertyName("lookbackDays")] public int LookbackDays { get; set; }
 }
