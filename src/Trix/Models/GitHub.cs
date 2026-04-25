@@ -1124,6 +1124,32 @@ public class ReviewCoverageResult
     public List<AuthorReviewCoverage> ByAuthor { get; set; } = new();
 }
 
+// ── Issue Assignee Workload ──────────────────────────────────────────────────
+
+public class AssigneeStat
+{
+    [JsonPropertyName("assignee")]
+    public string Assignee { get; set; } = string.Empty;
+
+    [JsonPropertyName("openCount")]
+    public int OpenCount { get; set; }
+
+    [JsonPropertyName("oldestDays")]
+    public int OldestDays { get; set; }
+
+    [JsonPropertyName("avgDays")]
+    public int AvgDays { get; set; }
+}
+
+public class IssueAssigneesResult
+{
+    [JsonPropertyName("assignees")]
+    public List<AssigneeStat> Assignees { get; set; } = new();
+
+    [JsonPropertyName("totalAssignees")]
+    public int TotalAssignees { get; set; }
+}
+
 // ── Milestone Progress ───────────────────────────────────────────────────────
 
 public class MilestoneStat

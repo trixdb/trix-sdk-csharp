@@ -653,6 +653,17 @@ public class GitHubResource : BaseResource
             cancellationToken: cancellationToken).ConfigureAwait(false);
     }
 
+    /// <summary>Issue assignee workload — open issue counts per contributor, most overloaded first.</summary>
+    public virtual async Task<IssueAssigneesResult> GetIssueAssigneesAsync(
+        string projectId,
+        CancellationToken cancellationToken = default)
+    {
+        ArgumentException.ThrowIfNullOrEmpty(projectId);
+        return await GetAsync<IssueAssigneesResult>(
+            $"/v1/projects/{Esc(projectId)}/github/issue-assignees",
+            cancellationToken: cancellationToken).ConfigureAwait(false);
+    }
+
     /// <summary>Milestone progress — open/closed issue counts per GitHub milestone, least-complete first.</summary>
     public virtual async Task<MilestonesResult> GetMilestonesAsync(
         string projectId,
