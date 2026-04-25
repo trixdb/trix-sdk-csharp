@@ -1738,3 +1738,24 @@ public record AIvsHumanResult(
     List<AIvsHumanWeek> WeeklyTrend,
     List<AIvsHumanTopPR> TopAIPRs,
     int LookbackDays);
+
+// ── Bus Factor / Knowledge Concentration Risk (ADR-152) ──────────────────────
+
+public record BusFactorAtRiskFile(
+    string FilePath, string Repo, string Owner,
+    double OwnerPct, int TotalCommits, int UniqueAuthors,
+    double HotspotScore, int Loc);
+
+public record BusFactorContributor(
+    string Contributor, List<string> DominatedRepos,
+    double AvgDominancePct, int TotalCommits);
+
+public record BusFactorSummary(
+    int TotalRepos, int AtRiskRepos, int SingleAuthorRepos,
+    double AvgAuthorsPerRepo, int Threshold);
+
+public record BusFactorResult(
+    BusFactorSummary Summary,
+    List<BusFactorAtRiskFile> AtRisk,
+    List<BusFactorContributor> ByContributor,
+    int LookbackDays);

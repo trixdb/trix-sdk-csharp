@@ -798,4 +798,9 @@ public class GitHubResource : BaseResource
     public Task<AIvsHumanResult> GetAIvsHumanQualityAsync(
         string projectId, int days = 90, CancellationToken ct = default) =>
         GetAsync<AIvsHumanResult>($"/v1/projects/{projectId}/github/ai-vs-human-quality?days={days}", cancellationToken: ct);
+
+    /// <summary>Identify knowledge concentration risk — repos and files dominated by a single contributor.</summary>
+    public Task<BusFactorResult> GetBusFactorAsync(
+        string projectId, int days = 90, CancellationToken ct = default) =>
+        GetAsync<BusFactorResult>($"/v1/projects/{projectId}/github/bus-factor?days={days}", cancellationToken: ct);
 }
