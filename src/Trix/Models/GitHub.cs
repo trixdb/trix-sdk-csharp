@@ -1493,3 +1493,30 @@ public class ContributorMomentumResult
     [JsonPropertyName("contributors")] public List<ContributorMomentum> Contributors { get; set; } = new();
     [JsonPropertyName("periodDays")] public int PeriodDays { get; set; }
 }
+
+public class AgentBreakdown
+{
+    [JsonPropertyName("agent")]  public string Agent  { get; set; } = "";
+    [JsonPropertyName("tag")]    public string Tag    { get; set; } = "";
+    [JsonPropertyName("label")]  public string Label  { get; set; } = "";
+    [JsonPropertyName("count")]  public int    Count  { get; set; }
+    [JsonPropertyName("pct")]    public int    Pct    { get; set; }
+}
+
+public class AgentWeeklyTrend
+{
+    [JsonPropertyName("week")]       public string Week       { get; set; } = "";
+    [JsonPropertyName("total")]      public int    Total      { get; set; }
+    [JsonPropertyName("agentCount")] public int    AgentCount { get; set; }
+    [JsonPropertyName("agentPct")]   public int    AgentPct   { get; set; }
+}
+
+public class AgentAuditResult
+{
+    [JsonPropertyName("totalPrs")]     public int                  TotalPrs     { get; set; }
+    [JsonPropertyName("agentPrs")]     public int                  AgentPrs     { get; set; }
+    [JsonPropertyName("agentPct")]     public int                  AgentPct     { get; set; }
+    [JsonPropertyName("lookbackDays")] public int                  LookbackDays { get; set; }
+    [JsonPropertyName("byAgent")]      public List<AgentBreakdown> ByAgent      { get; set; } = new();
+    [JsonPropertyName("weeklyTrend")]  public List<AgentWeeklyTrend> WeeklyTrend { get; set; } = new();
+}
