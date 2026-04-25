@@ -323,6 +323,30 @@ public class GoalProgressResponse
 }
 
 /// <summary>
+/// A single GitHub-driven goal progress event (PR merge → issue close → goal bump).
+/// </summary>
+public class GoalProgressEvent
+{
+    [JsonPropertyName("id")] public string Id { get; set; } = string.Empty;
+    [JsonPropertyName("goal_id")] public string GoalId { get; set; } = string.Empty;
+    [JsonPropertyName("goal_title")] public string GoalTitle { get; set; } = string.Empty;
+    [JsonPropertyName("goal_status")] public string GoalStatus { get; set; } = string.Empty;
+    [JsonPropertyName("previous_progress")] public double PreviousProgress { get; set; }
+    [JsonPropertyName("new_progress")] public double NewProgress { get; set; }
+    [JsonPropertyName("note")] public string? Note { get; set; }
+    [JsonPropertyName("created_at")] public string CreatedAt { get; set; } = string.Empty;
+}
+
+/// <summary>
+/// Response for the goal progress history feed.
+/// </summary>
+public class GoalProgressHistoryResponse
+{
+    [JsonPropertyName("history")]
+    public List<GoalProgressEvent> History { get; set; } = new();
+}
+
+/// <summary>
 /// Per-signal breakdown for release readiness.
 /// </summary>
 public class ReleaseReadinessSignals

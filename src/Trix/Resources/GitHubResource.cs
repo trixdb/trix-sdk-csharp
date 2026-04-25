@@ -194,6 +194,21 @@ public class GitHubResource : BaseResource
     }
 
     /// <summary>
+    /// Returns a chronological feed of GitHub-driven goal progress events
+    /// (PR merges → issue closures → goal bumps).
+    /// </summary>
+    public virtual async Task<GoalProgressHistoryResponse> GetGoalProgressHistoryAsync(
+        string projectId,
+        int limit = 20,
+        CancellationToken cancellationToken = default)
+    {
+        ArgumentException.ThrowIfNullOrEmpty(projectId);
+        return await GetAsync<GoalProgressHistoryResponse>(
+            $"/v1/projects/{Esc(projectId)}/github/goal-progress-history?limit={limit}",
+            cancellationToken: cancellationToken).ConfigureAwait(false);
+    }
+
+    /// <summary>
     /// Returns a 0–100 release readiness score from open PRs, blocking tasks,
     /// goal completion, and scope-creep events.
     /// </summary>
