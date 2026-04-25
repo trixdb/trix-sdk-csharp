@@ -1520,3 +1520,50 @@ public class AgentAuditResult
     [JsonPropertyName("byAgent")]      public List<AgentBreakdown> ByAgent      { get; set; } = new();
     [JsonPropertyName("weeklyTrend")]  public List<AgentWeeklyTrend> WeeklyTrend { get; set; } = new();
 }
+
+public class ScopeCreepSummary
+{
+    [JsonPropertyName("totalPrs")]        public int TotalPrs        { get; set; }
+    [JsonPropertyName("scopeCreepCount")] public int ScopeCreepCount { get; set; }
+    [JsonPropertyName("largeCount")]      public int LargeCount      { get; set; }
+    [JsonPropertyName("flaggedCount")]    public int FlaggedCount    { get; set; }
+    [JsonPropertyName("flaggedPct")]      public int FlaggedPct      { get; set; }
+}
+
+public class ScopeCreepPR
+{
+    [JsonPropertyName("title")]        public string Title        { get; set; } = "";
+    [JsonPropertyName("author")]       public string Author       { get; set; } = "";
+    [JsonPropertyName("url")]          public string Url          { get; set; } = "";
+    [JsonPropertyName("repo")]         public string Repo         { get; set; } = "";
+    [JsonPropertyName("changedFiles")] public int    ChangedFiles { get; set; }
+    [JsonPropertyName("additions")]    public int    Additions    { get; set; }
+    [JsonPropertyName("deletions")]    public int    Deletions    { get; set; }
+    [JsonPropertyName("severity")]     public string Severity     { get; set; } = "";
+    [JsonPropertyName("createdAt")]    public string CreatedAt    { get; set; } = "";
+}
+
+public class ScopeCreepAuthor
+{
+    [JsonPropertyName("author")]          public string Author          { get; set; } = "";
+    [JsonPropertyName("totalPrs")]        public int    TotalPrs        { get; set; }
+    [JsonPropertyName("scopeCreepCount")] public int    ScopeCreepCount { get; set; }
+    [JsonPropertyName("largeCount")]      public int    LargeCount      { get; set; }
+    [JsonPropertyName("avgFiles")]        public int    AvgFiles        { get; set; }
+}
+
+public class ScopeCreepWeek
+{
+    [JsonPropertyName("week")]            public string Week            { get; set; } = "";
+    [JsonPropertyName("scopeCreepCount")] public int    ScopeCreepCount { get; set; }
+    [JsonPropertyName("largeCount")]      public int    LargeCount      { get; set; }
+}
+
+public class ScopeCreepResult
+{
+    [JsonPropertyName("summary")]      public ScopeCreepSummary         Summary     { get; set; } = new();
+    [JsonPropertyName("lookbackDays")] public int                       LookbackDays { get; set; }
+    [JsonPropertyName("topPrs")]       public List<ScopeCreepPR>        TopPrs      { get; set; } = new();
+    [JsonPropertyName("byAuthor")]     public List<ScopeCreepAuthor>    ByAuthor    { get; set; } = new();
+    [JsonPropertyName("weeklyTrend")]  public List<ScopeCreepWeek>      WeeklyTrend { get; set; } = new();
+}

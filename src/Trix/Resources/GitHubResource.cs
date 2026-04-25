@@ -775,4 +775,7 @@ public class GitHubResource : BaseResource
 
     public async Task<AgentAuditResult> GetAgentAuditTrailAsync(string projectId, int days = 90, CancellationToken ct = default)
         => await GetAsync<AgentAuditResult>($"/v1/projects/{projectId}/github/agent-audit?days={days}", ct);
+
+    public async Task<ScopeCreepResult> GetScopeCreepAsync(string projectId, int days = 90, CancellationToken ct = default)
+        => await GetAsync<ScopeCreepResult>($"/v1/projects/{projectId}/github/scope-creep?days={days}", ct);
 }
