@@ -653,6 +653,18 @@ public class GitHubResource : BaseResource
             cancellationToken: cancellationToken).ConfigureAwait(false);
     }
 
+    /// <summary>Issue label velocity — opened vs closed per label over last N days, worst-accumulating first.</summary>
+    public virtual async Task<LabelVelocityResult> GetLabelVelocityAsync(
+        string projectId,
+        int days = 30,
+        CancellationToken cancellationToken = default)
+    {
+        ArgumentException.ThrowIfNullOrEmpty(projectId);
+        return await GetAsync<LabelVelocityResult>(
+            $"/v1/projects/{Esc(projectId)}/github/label-velocity?days={days}",
+            cancellationToken: cancellationToken).ConfigureAwait(false);
+    }
+
     /// <summary>Commit leaders — top contributors by commit count over the last N days (7/30/90).</summary>
     public virtual async Task<CommitLeadersResult> GetCommitLeadersAsync(
         string projectId,

@@ -1124,6 +1124,35 @@ public class ReviewCoverageResult
     public List<AuthorReviewCoverage> ByAuthor { get; set; } = new();
 }
 
+// ── Label Velocity ───────────────────────────────────────────────────────────
+
+public class LabelVelocity
+{
+    [JsonPropertyName("label")]
+    public string Label { get; set; } = string.Empty;
+
+    [JsonPropertyName("openedCount")]
+    public int OpenedCount { get; set; }
+
+    [JsonPropertyName("closedCount")]
+    public int ClosedCount { get; set; }
+
+    [JsonPropertyName("totalCount")]
+    public int TotalCount { get; set; }
+
+    [JsonPropertyName("netFlow")]
+    public int NetFlow { get; set; }
+}
+
+public class LabelVelocityResult
+{
+    [JsonPropertyName("labels")]
+    public List<LabelVelocity> Labels { get; set; } = new();
+
+    [JsonPropertyName("lookbackDays")]
+    public int LookbackDays { get; set; } = 30;
+}
+
 // ── Commit Leaders ───────────────────────────────────────────────────────────
 
 public class CommitLeader
