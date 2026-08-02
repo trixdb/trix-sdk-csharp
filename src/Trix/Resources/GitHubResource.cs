@@ -757,37 +757,37 @@ public class GitHubResource : BaseResource
 
     /// <summary>Get weekly closed issue count trend.</summary>
     public async Task<IssueThroughputResult> GetIssueThroughputAsync(string projectId, int weeks = 8, CancellationToken ct = default)
-        => await GetAsync<IssueThroughputResult>($"/v1/projects/{projectId}/github/issue-throughput?weeks={weeks}", ct);
+        => await GetAsync<IssueThroughputResult>($"/v1/projects/{projectId}/github/issue-throughput?weeks={weeks}", cancellationToken: ct);
 
     /// <summary>Get issue resolver leaderboard — top contributors by closed issue count.</summary>
     public async Task<IssueResolversResult> GetIssueResolversAsync(string projectId, int days = 30, CancellationToken ct = default)
-        => await GetAsync<IssueResolversResult>($"/v1/projects/{projectId}/github/issue-resolvers?days={days}", ct);
+        => await GetAsync<IssueResolversResult>($"/v1/projects/{projectId}/github/issue-resolvers?days={days}", cancellationToken: ct);
 
     /// <summary>Get weekly average issue cycle time trend — are we getting faster or slower?</summary>
     public async Task<CycleTimeTrendResult> GetCycleTimeTrendAsync(string projectId, int weeks = 8, CancellationToken ct = default)
-        => await GetAsync<CycleTimeTrendResult>($"/v1/projects/{projectId}/github/cycle-time-trend?weeks={weeks}", ct);
+        => await GetAsync<CycleTimeTrendResult>($"/v1/projects/{projectId}/github/cycle-time-trend?weeks={weeks}", cancellationToken: ct);
 
     public async Task<PrMergeTimeResult> GetPrMergeTimeAsync(string projectId, int days = 90, CancellationToken ct = default)
-        => await GetAsync<PrMergeTimeResult>($"/v1/projects/{projectId}/github/pr-merge-time?days={days}", ct);
+        => await GetAsync<PrMergeTimeResult>($"/v1/projects/{projectId}/github/pr-merge-time?days={days}", cancellationToken: ct);
 
     public async Task<ContributorMomentumResult> GetContributorMomentumAsync(string projectId, int days = 28, CancellationToken ct = default)
-        => await GetAsync<ContributorMomentumResult>($"/v1/projects/{projectId}/github/contributor-momentum?days={days}", ct);
+        => await GetAsync<ContributorMomentumResult>($"/v1/projects/{projectId}/github/contributor-momentum?days={days}", cancellationToken: ct);
 
     public async Task<AgentAuditResult> GetAgentAuditTrailAsync(string projectId, int days = 90, CancellationToken ct = default)
-        => await GetAsync<AgentAuditResult>($"/v1/projects/{projectId}/github/agent-audit?days={days}", ct);
+        => await GetAsync<AgentAuditResult>($"/v1/projects/{projectId}/github/agent-audit?days={days}", cancellationToken: ct);
 
     public async Task<ScopeCreepResult> GetScopeCreepAsync(string projectId, int days = 90, CancellationToken ct = default)
-        => await GetAsync<ScopeCreepResult>($"/v1/projects/{projectId}/github/scope-creep?days={days}", ct);
+        => await GetAsync<ScopeCreepResult>($"/v1/projects/{projectId}/github/scope-creep?days={days}", cancellationToken: ct);
 
     public async Task<AssigneeCycleTimeResult> GetAssigneeCycleTimeAsync(string projectId, int days = 90, CancellationToken ct = default)
-        => await GetAsync<AssigneeCycleTimeResult>($"/v1/projects/{projectId}/github/assignee-cycle-time?days={days}", ct);
+        => await GetAsync<AssigneeCycleTimeResult>($"/v1/projects/{projectId}/github/assignee-cycle-time?days={days}", cancellationToken: ct);
 
     public async Task<PRTaskAlignmentResult> GetPRTaskAlignmentAsync(string projectId, int days = 90, CancellationToken ct = default)
-        => await GetAsync<PRTaskAlignmentResult>($"/v1/projects/{projectId}/github/pr-task-alignment?days={days}", ct);
+        => await GetAsync<PRTaskAlignmentResult>($"/v1/projects/{projectId}/github/pr-task-alignment?days={days}", cancellationToken: ct);
 
     /// <summary>PRs without test coverage — summary, top gaps, by-author, weekly trend.</summary>
     public async Task<TestGapResult> GetTestGapAsync(string projectId, int days = 90, CancellationToken ct = default)
-        => await GetAsync<TestGapResult>($"/v1/projects/{projectId}/github/test-gap?days={days}", ct);
+        => await GetAsync<TestGapResult>($"/v1/projects/{projectId}/github/test-gap?days={days}", cancellationToken: ct);
 
     /// <summary>DORA engineering excellence metrics — deploy frequency, lead time, CFR, MTTR.</summary>
     public Task<DORAResult> GetDORAMetricsAsync(
