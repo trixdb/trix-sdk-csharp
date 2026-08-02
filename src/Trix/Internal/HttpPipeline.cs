@@ -65,7 +65,10 @@ internal sealed class HttpPipeline : IDisposable
             MaxConnectionsPerServer = 20
         };
 
-        var client = new HttpClient(handler)
+        // Only dispose the handler if the SDK created it. A caller-supplied
+        // HttpHandler may be shared across clients, so disposing it here would
+        // break their other clients.
+        var client = new HttpClient(handler, disposeHandler: options.HttpHandler is null)
         {
             BaseAddress = new Uri(options.BaseUrl),
             Timeout = options.Timeout
