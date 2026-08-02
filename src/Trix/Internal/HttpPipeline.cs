@@ -114,6 +114,11 @@ internal sealed class HttpPipeline : IDisposable
         var attempt = 0;
         Exception? lastException = null;
 
+        // A single idempotency key for the whole retry sequence so a mutating
+        // request that commits server-side but then returns 5xx / times out is
+        // not duplicated when retried (issue #2). Non-mutating methods send none.
+        var idempotencyKey = IsMutatingMethod(method) ? Guid.NewGuid().ToString() : null;
+
         while (attempt <= _options.MaxRetries)
         {
             try
@@ -127,6 +132,11 @@ internal sealed class HttpPipeline : IDisposable
 
                 var correlationId = Guid.NewGuid().ToString("N")[..16];
                 request.Headers.TryAddWithoutValidation("X-Correlation-Id", correlationId);
+
+                if (idempotencyKey is not null)
+                {
+                    request.Headers.TryAddWithoutValidation("Idempotency-Key", idempotencyKey);
+                }
 
                 // Apply extra headers (e.g. If-Match for optimistic concurrency)
                 if (headers != null)
@@ -214,6 +224,11 @@ internal sealed class HttpPipeline : IDisposable
         var attempt = 0;
         Exception? lastException = null;
 
+        // Multipart uploads are always POST (mutating); reuse one idempotency
+        // key across retries so a committed-but-failed upload isn't duplicated
+        // (issue #2).
+        var idempotencyKey = Guid.NewGuid().ToString();
+
         while (attempt <= _options.MaxRetries)
         {
             try
@@ -242,6 +257,7 @@ internal sealed class HttpPipeline : IDisposable
                 {
                     Content = content
                 };
+                request.Headers.TryAddWithoutValidation("Idempotency-Key", idempotencyKey);
 
                 _logger.LogDebug("Multipart Request: POST {Path} (attempt {Attempt})", path, attempt + 1);
 
@@ -399,6 +415,17 @@ internal sealed class HttpPipeline : IDisposable
 
         return string.IsNullOrEmpty(queryString) ? path : $"{path}?{queryString}";
     }
+
+    /// <summary>
+    /// Whether the HTTP method mutates server state and therefore needs a
+    /// stable Idempotency-Key across retries. Matches the server's set of
+    /// mutating methods (POST/PUT/PATCH/DELETE).
+    /// </summary>
+    private static bool IsMutatingMethod(HttpMethod method) =>
+        method == HttpMethod.Post
+        || method == HttpMethod.Put
+        || method == HttpMethod.Patch
+        || method == HttpMethod.Delete;
 
     private static TimeSpan CalculateBackoff(int attempt)
     {
