@@ -436,18 +436,27 @@ public class GitHubResourceTests : IDisposable
     }
 
     [Fact]
-    public async Task GetReleaseReadinessAsync_ReturnsScore()
+    public async Task GetReleaseReadinessAsync_ReturnsReport()
     {
+        // Matches the current trix-api response shape (readinessScore / openIssues /
+        // openPRs / recentMerges / topHotspots) — see github-release-readiness.js.
         const string json = """
         {
-            "score": 72,
-            "ready": false,
-            "signals": {
-                "open_prs": 3,
-                "blocking_tasks": 1,
-                "goal_completion_pct": 80,
-                "scope_creep_prs": 0
-            }
+            "readinessScore": 72,
+            "openIssues": {
+                "count": 5,
+                "blockerCount": 1,
+                "blockers": [{ "number": 42, "title": "Fix auth" }]
+            },
+            "openPRs": {
+                "count": 3,
+                "unreviewedCount": 2,
+                "staleCount": 1,
+                "unreviewed": [],
+                "stalePRs": []
+            },
+            "recentMerges": { "last7Days": 4 },
+            "topHotspots": [{ "file": "src/app.ts", "changes": 12 }]
         }
         """;
 
@@ -456,12 +465,43 @@ public class GitHubResourceTests : IDisposable
 
         var result = await _client.GitHub.GetReleaseReadinessAsync("proj-1");
 
-        result.Score.Should().Be(72);
-        result.Ready.Should().BeFalse();
-        result.Signals.OpenPRs.Should().Be(3);
-        result.Signals.BlockingTasks.Should().Be(1);
-        result.Signals.GoalCompletionPct.Should().Be(80);
+        result.ReadinessScore.Should().Be(72);
+        result.OpenIssues.Count.Should().Be(5);
+        result.OpenIssues.BlockerCount.Should().Be(1);
+        result.OpenPRs.Count.Should().Be(3);
+        result.OpenPRs.UnreviewedCount.Should().Be(2);
+        result.OpenPRs.StaleCount.Should().Be(1);
+        result.TopHotspots.Should().HaveCount(1);
         captured!.RequestUri!.PathAndQuery.Should().Contain("/v1/projects/proj-1/github/release-readiness");
+    }
+
+    [Fact]
+    public async Task GitHubAnalyticsMethods_HitCorrectPaths_RegressionForCs1503()
+    {
+        // Regression guard for issue #1: these 10 methods passed CancellationToken
+        // positionally into the queryParams slot (CS1503) and had no tests. Exercising
+        // each here means a re-break fails the test build, and asserts each hits its route.
+        var cases = new (Func<Task> Call, string ExpectedPath)[]
+        {
+            (() => _client.GitHub.GetIssueThroughputAsync("proj-1", 8), "/v1/projects/proj-1/github/issue-throughput"),
+            (() => _client.GitHub.GetIssueResolversAsync("proj-1", 30), "/v1/projects/proj-1/github/issue-resolvers"),
+            (() => _client.GitHub.GetCycleTimeTrendAsync("proj-1", 8), "/v1/projects/proj-1/github/cycle-time-trend"),
+            (() => _client.GitHub.GetPrMergeTimeAsync("proj-1", 90), "/v1/projects/proj-1/github/pr-merge-time"),
+            (() => _client.GitHub.GetContributorMomentumAsync("proj-1", 28), "/v1/projects/proj-1/github/contributor-momentum"),
+            (() => _client.GitHub.GetAgentAuditTrailAsync("proj-1", 90), "/v1/projects/proj-1/github/agent-audit"),
+            (() => _client.GitHub.GetScopeCreepAsync("proj-1", 90), "/v1/projects/proj-1/github/scope-creep"),
+            (() => _client.GitHub.GetAssigneeCycleTimeAsync("proj-1", 90), "/v1/projects/proj-1/github/assignee-cycle-time"),
+            (() => _client.GitHub.GetPRTaskAlignmentAsync("proj-1", 90), "/v1/projects/proj-1/github/pr-task-alignment"),
+            (() => _client.GitHub.GetTestGapAsync("proj-1", 90), "/v1/projects/proj-1/github/test-gap"),
+        };
+
+        foreach (var (call, expectedPath) in cases)
+        {
+            HttpRequestMessage? captured = null;
+            SetupResponse(HttpStatusCode.OK, "{}", req => captured = req);
+            await call();
+            captured!.RequestUri!.PathAndQuery.Should().Contain(expectedPath);
+        }
     }
 
     [Fact]
