@@ -106,7 +106,8 @@ public class ClientTests
 
         // Assert
         version.Should().NotBeNullOrEmpty();
-        version.Should().Be("1.0.0");
+        // Single-sourced from the assembly version (csproj <Version>), not a literal.
+        version.Should().Be(typeof(TrixClient).Assembly.GetName().Version!.ToString(3));
     }
 
     [Fact]
