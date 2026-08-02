@@ -1557,93 +1557,93 @@ public class ContributorMomentumResult
 
 public class AgentBreakdown
 {
-    [JsonPropertyName("agent")]  public string Agent  { get; set; } = "";
-    [JsonPropertyName("tag")]    public string Tag    { get; set; } = "";
-    [JsonPropertyName("label")]  public string Label  { get; set; } = "";
-    [JsonPropertyName("count")]  public int    Count  { get; set; }
-    [JsonPropertyName("pct")]    public int    Pct    { get; set; }
+    [JsonPropertyName("agent")] public string Agent { get; set; } = "";
+    [JsonPropertyName("tag")] public string Tag { get; set; } = "";
+    [JsonPropertyName("label")] public string Label { get; set; } = "";
+    [JsonPropertyName("count")] public int Count { get; set; }
+    [JsonPropertyName("pct")] public int Pct { get; set; }
 }
 
 public class AgentWeeklyTrend
 {
-    [JsonPropertyName("week")]       public string Week       { get; set; } = "";
-    [JsonPropertyName("total")]      public int    Total      { get; set; }
-    [JsonPropertyName("agentCount")] public int    AgentCount { get; set; }
-    [JsonPropertyName("agentPct")]   public int    AgentPct   { get; set; }
+    [JsonPropertyName("week")] public string Week { get; set; } = "";
+    [JsonPropertyName("total")] public int Total { get; set; }
+    [JsonPropertyName("agentCount")] public int AgentCount { get; set; }
+    [JsonPropertyName("agentPct")] public int AgentPct { get; set; }
 }
 
 public class AgentAuditResult
 {
-    [JsonPropertyName("totalPrs")]     public int                  TotalPrs     { get; set; }
-    [JsonPropertyName("agentPrs")]     public int                  AgentPrs     { get; set; }
-    [JsonPropertyName("agentPct")]     public int                  AgentPct     { get; set; }
-    [JsonPropertyName("lookbackDays")] public int                  LookbackDays { get; set; }
-    [JsonPropertyName("byAgent")]      public List<AgentBreakdown> ByAgent      { get; set; } = new();
-    [JsonPropertyName("weeklyTrend")]  public List<AgentWeeklyTrend> WeeklyTrend { get; set; } = new();
+    [JsonPropertyName("totalPrs")] public int TotalPrs { get; set; }
+    [JsonPropertyName("agentPrs")] public int AgentPrs { get; set; }
+    [JsonPropertyName("agentPct")] public int AgentPct { get; set; }
+    [JsonPropertyName("lookbackDays")] public int LookbackDays { get; set; }
+    [JsonPropertyName("byAgent")] public List<AgentBreakdown> ByAgent { get; set; } = new();
+    [JsonPropertyName("weeklyTrend")] public List<AgentWeeklyTrend> WeeklyTrend { get; set; } = new();
 }
 
 public class ScopeCreepSummary
 {
-    [JsonPropertyName("totalPrs")]        public int TotalPrs        { get; set; }
+    [JsonPropertyName("totalPrs")] public int TotalPrs { get; set; }
     [JsonPropertyName("scopeCreepCount")] public int ScopeCreepCount { get; set; }
-    [JsonPropertyName("largeCount")]      public int LargeCount      { get; set; }
-    [JsonPropertyName("flaggedCount")]    public int FlaggedCount    { get; set; }
-    [JsonPropertyName("flaggedPct")]      public int FlaggedPct      { get; set; }
+    [JsonPropertyName("largeCount")] public int LargeCount { get; set; }
+    [JsonPropertyName("flaggedCount")] public int FlaggedCount { get; set; }
+    [JsonPropertyName("flaggedPct")] public int FlaggedPct { get; set; }
 }
 
 public class ScopeCreepPR
 {
-    [JsonPropertyName("title")]        public string Title        { get; set; } = "";
-    [JsonPropertyName("author")]       public string Author       { get; set; } = "";
-    [JsonPropertyName("url")]          public string Url          { get; set; } = "";
-    [JsonPropertyName("repo")]         public string Repo         { get; set; } = "";
-    [JsonPropertyName("changedFiles")] public int    ChangedFiles { get; set; }
-    [JsonPropertyName("additions")]    public int    Additions    { get; set; }
-    [JsonPropertyName("deletions")]    public int    Deletions    { get; set; }
-    [JsonPropertyName("severity")]     public string Severity     { get; set; } = "";
-    [JsonPropertyName("createdAt")]    public string CreatedAt    { get; set; } = "";
+    [JsonPropertyName("title")] public string Title { get; set; } = "";
+    [JsonPropertyName("author")] public string Author { get; set; } = "";
+    [JsonPropertyName("url")] public string Url { get; set; } = "";
+    [JsonPropertyName("repo")] public string Repo { get; set; } = "";
+    [JsonPropertyName("changedFiles")] public int ChangedFiles { get; set; }
+    [JsonPropertyName("additions")] public int Additions { get; set; }
+    [JsonPropertyName("deletions")] public int Deletions { get; set; }
+    [JsonPropertyName("severity")] public string Severity { get; set; } = "";
+    [JsonPropertyName("createdAt")] public string CreatedAt { get; set; } = "";
 }
 
 public class ScopeCreepAuthor
 {
-    [JsonPropertyName("author")]          public string Author          { get; set; } = "";
-    [JsonPropertyName("totalPrs")]        public int    TotalPrs        { get; set; }
-    [JsonPropertyName("scopeCreepCount")] public int    ScopeCreepCount { get; set; }
-    [JsonPropertyName("largeCount")]      public int    LargeCount      { get; set; }
-    [JsonPropertyName("avgFiles")]        public int    AvgFiles        { get; set; }
+    [JsonPropertyName("author")] public string Author { get; set; } = "";
+    [JsonPropertyName("totalPrs")] public int TotalPrs { get; set; }
+    [JsonPropertyName("scopeCreepCount")] public int ScopeCreepCount { get; set; }
+    [JsonPropertyName("largeCount")] public int LargeCount { get; set; }
+    [JsonPropertyName("avgFiles")] public int AvgFiles { get; set; }
 }
 
 public class ScopeCreepWeek
 {
-    [JsonPropertyName("week")]            public string Week            { get; set; } = "";
-    [JsonPropertyName("scopeCreepCount")] public int    ScopeCreepCount { get; set; }
-    [JsonPropertyName("largeCount")]      public int    LargeCount      { get; set; }
+    [JsonPropertyName("week")] public string Week { get; set; } = "";
+    [JsonPropertyName("scopeCreepCount")] public int ScopeCreepCount { get; set; }
+    [JsonPropertyName("largeCount")] public int LargeCount { get; set; }
 }
 
 public class ScopeCreepResult
 {
-    [JsonPropertyName("summary")]      public ScopeCreepSummary         Summary     { get; set; } = new();
-    [JsonPropertyName("lookbackDays")] public int                       LookbackDays { get; set; }
-    [JsonPropertyName("topPrs")]       public List<ScopeCreepPR>        TopPrs      { get; set; } = new();
-    [JsonPropertyName("byAuthor")]     public List<ScopeCreepAuthor>    ByAuthor    { get; set; } = new();
-    [JsonPropertyName("weeklyTrend")]  public List<ScopeCreepWeek>      WeeklyTrend { get; set; } = new();
+    [JsonPropertyName("summary")] public ScopeCreepSummary Summary { get; set; } = new();
+    [JsonPropertyName("lookbackDays")] public int LookbackDays { get; set; }
+    [JsonPropertyName("topPrs")] public List<ScopeCreepPR> TopPrs { get; set; } = new();
+    [JsonPropertyName("byAuthor")] public List<ScopeCreepAuthor> ByAuthor { get; set; } = new();
+    [JsonPropertyName("weeklyTrend")] public List<ScopeCreepWeek> WeeklyTrend { get; set; } = new();
 }
 
 public class AssigneeStatItem
 {
-    [JsonPropertyName("assignee")]     public string  Assignee    { get; set; } = "";
-    [JsonPropertyName("closedCount")] public int     ClosedCount { get; set; }
-    [JsonPropertyName("avgDays")]     public double? AvgDays     { get; set; }
+    [JsonPropertyName("assignee")] public string Assignee { get; set; } = "";
+    [JsonPropertyName("closedCount")] public int ClosedCount { get; set; }
+    [JsonPropertyName("avgDays")] public double? AvgDays { get; set; }
     [JsonPropertyName("prevAvgDays")] public double? PrevAvgDays { get; set; }
-    [JsonPropertyName("trend")]       public string  Trend       { get; set; } = "";
-    [JsonPropertyName("pctChange")]   public int?    PctChange   { get; set; }
+    [JsonPropertyName("trend")] public string Trend { get; set; } = "";
+    [JsonPropertyName("pctChange")] public int? PctChange { get; set; }
 }
 
 public class AssigneeCycleTimeResult
 {
-    [JsonPropertyName("assignees")]   public List<AssigneeStatItem> Assignees   { get; set; } = new();
-    [JsonPropertyName("teamAvgDays")] public double?                TeamAvgDays { get; set; }
-    [JsonPropertyName("lookbackDays")] public int                   LookbackDays { get; set; }
+    [JsonPropertyName("assignees")] public List<AssigneeStatItem> Assignees { get; set; } = new();
+    [JsonPropertyName("teamAvgDays")] public double? TeamAvgDays { get; set; }
+    [JsonPropertyName("lookbackDays")] public int LookbackDays { get; set; }
 }
 
 // ── Test Coverage Gap (ADR-152 Phase 4) ──────────────────────────────────────
@@ -1673,14 +1673,14 @@ public record TestGapResult(
 /// </summary>
 public class AlignmentEntry
 {
-    [JsonPropertyName("prNumber")]    public string PrNumber    { get; set; } = "";
-    [JsonPropertyName("prTitle")]     public string PrTitle     { get; set; } = "";
-    [JsonPropertyName("prUrl")]       public string PrUrl       { get; set; } = "";
-    [JsonPropertyName("author")]      public string Author      { get; set; } = "";
+    [JsonPropertyName("prNumber")] public string PrNumber { get; set; } = "";
+    [JsonPropertyName("prTitle")] public string PrTitle { get; set; } = "";
+    [JsonPropertyName("prUrl")] public string PrUrl { get; set; } = "";
+    [JsonPropertyName("author")] public string Author { get; set; } = "";
     [JsonPropertyName("issueNumber")] public string IssueNumber { get; set; } = "";
-    [JsonPropertyName("issueTitle")]  public string IssueTitle  { get; set; } = "";
-    [JsonPropertyName("similarity")]  public double Similarity  { get; set; }
-    [JsonPropertyName("signal")]      public string Signal      { get; set; } = "";
+    [JsonPropertyName("issueTitle")] public string IssueTitle { get; set; } = "";
+    [JsonPropertyName("similarity")] public double Similarity { get; set; }
+    [JsonPropertyName("signal")] public string Signal { get; set; } = "";
 }
 
 /// <summary>
@@ -1688,10 +1688,10 @@ public class AlignmentEntry
 /// </summary>
 public class PRTaskAlignmentSummary
 {
-    [JsonPropertyName("analyzed")]       public int Analyzed       { get; set; }
-    [JsonPropertyName("alignedCount")]   public int AlignedCount   { get; set; }
-    [JsonPropertyName("partialCount")]   public int PartialCount   { get; set; }
-    [JsonPropertyName("driftedCount")]   public int DriftedCount   { get; set; }
+    [JsonPropertyName("analyzed")] public int Analyzed { get; set; }
+    [JsonPropertyName("alignedCount")] public int AlignedCount { get; set; }
+    [JsonPropertyName("partialCount")] public int PartialCount { get; set; }
+    [JsonPropertyName("driftedCount")] public int DriftedCount { get; set; }
     [JsonPropertyName("uncheckedCount")] public int UncheckedCount { get; set; }
 }
 
@@ -1700,10 +1700,10 @@ public class PRTaskAlignmentSummary
 /// </summary>
 public class PRTaskAlignmentResult
 {
-    [JsonPropertyName("summary")]      public PRTaskAlignmentSummary Summary      { get; set; } = new();
-    [JsonPropertyName("drifted")]      public List<AlignmentEntry>   Drifted      { get; set; } = new();
-    [JsonPropertyName("partial")]      public List<AlignmentEntry>   Partial      { get; set; } = new();
-    [JsonPropertyName("lookbackDays")] public int                    LookbackDays { get; set; }
+    [JsonPropertyName("summary")] public PRTaskAlignmentSummary Summary { get; set; } = new();
+    [JsonPropertyName("drifted")] public List<AlignmentEntry> Drifted { get; set; } = new();
+    [JsonPropertyName("partial")] public List<AlignmentEntry> Partial { get; set; } = new();
+    [JsonPropertyName("lookbackDays")] public int LookbackDays { get; set; }
 }
 
 // ── DORA Metrics (ADR-152 Phase 4 extension) ──────────────────────────────────
