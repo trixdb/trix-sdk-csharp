@@ -27,9 +27,11 @@ internal sealed class HttpPipeline : IDisposable
     };
 
     /// <summary>
-    /// SDK version for user agent.
+    /// SDK version for the user agent, single-sourced from the assembly version
+    /// (set by the csproj &lt;Version&gt;) so it can't drift from the published package.
     /// </summary>
-    public const string SdkVersion = "1.0.0";
+    public static readonly string SdkVersion =
+        typeof(HttpPipeline).Assembly.GetName().Version?.ToString(3) ?? "0.0.0";
 
     /// <summary>
     /// API version.
