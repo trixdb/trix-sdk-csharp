@@ -471,6 +471,34 @@ public class HttpPipelineTests : IDisposable
 
     #endregion
 
+    #region Response Disposal Tests
+
+    [Fact]
+    public async Task SendAsync_ErrorResponse_DisposesResponse()
+    {
+        // Arrange — a 500 with no retries so the pipeline throws immediately.
+        var content = new DisposeTrackingContent("{\"message\":\"boom\"}");
+        _mockHandler.Protected()
+            .Setup<Task<HttpResponseMessage>>(
+                "SendAsync",
+                ItExpr.IsAny<HttpRequestMessage>(),
+                ItExpr.IsAny<CancellationToken>())
+            .ReturnsAsync(new HttpResponseMessage(HttpStatusCode.InternalServerError) { Content = content });
+
+        _options.MaxRetries = 0;
+        using var pipeline = CreatePipeline();
+
+        // Act
+        var act = () => pipeline.SendAsync(HttpMethod.Get, "/test");
+
+        // Assert — the error response (and its pooled connection) must be released,
+        // not leaked until finalization.
+        await act.Should().ThrowAsync<ServerException>();
+        content.Disposed.Should().BeTrue();
+    }
+
+    #endregion
+
     #region Helper Methods
 
     private HttpPipeline CreatePipeline()
@@ -537,6 +565,38 @@ public class HttpPipelineTests : IDisposable
         protected override void Dispose(bool disposing)
         {
             if (disposing) _inner.Dispose();
+            base.Dispose(disposing);
+        }
+    }
+
+    /// <summary>
+    /// An HttpContent that records when it has been disposed, used to prove the
+    /// pipeline disposes error responses instead of leaking them.
+    /// </summary>
+    private sealed class DisposeTrackingContent : HttpContent
+    {
+        private readonly byte[] _bytes;
+
+        public bool Disposed { get; private set; }
+
+        public DisposeTrackingContent(string json)
+        {
+            _bytes = Encoding.UTF8.GetBytes(json);
+            Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue("application/json");
+        }
+
+        protected override Task SerializeToStreamAsync(Stream stream, TransportContext? context)
+            => stream.WriteAsync(_bytes, 0, _bytes.Length);
+
+        protected override bool TryComputeLength(out long length)
+        {
+            length = _bytes.Length;
+            return true;
+        }
+
+        protected override void Dispose(bool disposing)
+        {
+            Disposed = true;
             base.Dispose(disposing);
         }
     }
