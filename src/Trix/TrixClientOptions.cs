@@ -1,3 +1,5 @@
+using System.Net;
+using System.Net.Sockets;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 
@@ -155,6 +157,14 @@ public class TrixClientOptions
                 "BaseUrl must use HTTPS. Set AllowInsecure to true for development.");
         }
 
+        // Block internal/private hosts to reduce SSRF exposure — e.g. cloud
+        // metadata endpoints (169.254.169.254), loopback, and RFC 1918 ranges.
+        // AllowInsecure is the escape hatch for local development.
+        if (!AllowInsecure)
+        {
+            ValidateHostIsPublic(uri);
+        }
+
         // Validate timeout is positive and within bounds
         if (Timeout <= TimeSpan.Zero)
         {
@@ -202,5 +212,67 @@ public class TrixClientOptions
                     "This header is managed by the SDK for security reasons.");
             }
         }
+    }
+
+    /// <summary>
+    /// Rejects BaseUrl hosts that point at internal infrastructure (loopback,
+    /// link-local, or private address space, and the localhost family of names).
+    /// This is defense-in-depth against SSRF, most importantly the cloud metadata
+    /// service at 169.254.169.254. Only literal hosts are inspected — no DNS
+    /// resolution is performed, so this never makes a network call during validation.
+    /// </summary>
+    private static void ValidateHostIsPublic(Uri uri)
+    {
+        var host = uri.Host;
+
+        if (host.Equals("localhost", StringComparison.OrdinalIgnoreCase)
+            || host.EndsWith(".localhost", StringComparison.OrdinalIgnoreCase)
+            || host.EndsWith(".local", StringComparison.OrdinalIgnoreCase))
+        {
+            throw new ArgumentException(
+                $"BaseUrl host '{host}' is a local/internal name. " +
+                "Set AllowInsecure to true to target local development endpoints.");
+        }
+
+        if (IPAddress.TryParse(host, out var ip) && IsPrivateOrLoopback(ip))
+        {
+            throw new ArgumentException(
+                $"BaseUrl host '{host}' is a private, loopback, or link-local address. " +
+                "Set AllowInsecure to true to target internal endpoints.");
+        }
+    }
+
+    /// <summary>
+    /// Returns true if the address is loopback, link-local, or in private
+    /// (RFC 1918 / RFC 4193) address space, including IPv4-mapped IPv6 forms.
+    /// </summary>
+    private static bool IsPrivateOrLoopback(IPAddress ip)
+    {
+        if (IPAddress.IsLoopback(ip))
+        {
+            return true;
+        }
+
+        if (ip.AddressFamily == AddressFamily.InterNetwork)
+        {
+            var b = ip.GetAddressBytes();
+            return b[0] == 10                                // 10.0.0.0/8
+                || (b[0] == 172 && b[1] >= 16 && b[1] <= 31) // 172.16.0.0/12
+                || (b[0] == 192 && b[1] == 168)              // 192.168.0.0/16
+                || (b[0] == 169 && b[1] == 254)              // 169.254.0.0/16 (cloud metadata)
+                || b[0] == 0;                                // 0.0.0.0/8
+        }
+
+        if (ip.AddressFamily == AddressFamily.InterNetworkV6)
+        {
+            if (ip.IsIPv4MappedToIPv6)
+            {
+                return IsPrivateOrLoopback(ip.MapToIPv4());
+            }
+
+            return ip.IsIPv6LinkLocal || ip.IsIPv6SiteLocal || ip.IsIPv6UniqueLocal;
+        }
+
+        return false;
     }
 }
