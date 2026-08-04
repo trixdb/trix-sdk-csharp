@@ -45,4 +45,4 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Requirements
 
-- .NET 10.0 or later
+- .NET 8.0 or later (the package multi-targets `net8.0` and `net10.0`)
