@@ -202,6 +202,45 @@ var memory = await client.Memories.CreateAsync(new CreateMemoryRequest
 });
 ```
 
+### Tasks
+
+```csharp
+// Create a task
+var task = await client.Tasks.CreateAsync(new CreateTaskRequest
+{
+    Title = "Ship the C# SDK",
+    SpaceId = space.Id,
+    Priority = 1,                      // 1 = highest .. 5 = lowest
+    DueAt = DateTimeOffset.UtcNow.AddDays(7)
+});
+
+// List (requires SpaceId or AssigneeId)
+var page = await client.Tasks.ListAsync(new ListTasksRequest
+{
+    SpaceId = space.Id,
+    Status = TaskStatuses.Todo
+});
+Console.WriteLine($"{page.Tasks.Count} of {page.Total} (more: {page.HasMore})");
+
+// Iterate every matching task across pages
+await foreach (var t in client.Tasks.ListAllAsync(new ListTasksRequest { SpaceId = space.Id }))
+{
+    Console.WriteLine(t.Title);
+}
+
+// Update with optimistic concurrency, then complete
+await client.Tasks.UpdateAsync(task.Id, new UpdateTaskRequest
+{
+    Description = "Publish to NuGet",
+    Version = task.Version
+});
+await client.Tasks.CompleteAsync(task.Id);   // sets status = done
+
+// Subtasks
+var sub = await client.Tasks.CreateSubtaskAsync(task.Id, new CreateSubtaskRequest { Title = "Write README" });
+var subtasks = await client.Tasks.GetSubtasksAsync(task.Id);
+```
+
 ## Error Handling
 
 The SDK throws specific exceptions for different error types:
