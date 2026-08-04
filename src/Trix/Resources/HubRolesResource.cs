@@ -60,7 +60,7 @@ public class HubRolesResource : BaseResource
     /// <summary>
     /// Deletes a role from a hub.
     /// </summary>
-    public virtual new async Task DeleteAsync(
+    public virtual async Task DeleteAsync(
         string hubId,
         string roleId,
         CancellationToken cancellationToken = default)
