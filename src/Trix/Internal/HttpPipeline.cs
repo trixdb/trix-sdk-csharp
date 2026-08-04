@@ -165,7 +165,19 @@ internal sealed class HttpPipeline : IDisposable
                 if (stopwatch.Elapsed.TotalSeconds > 5)
                     _logger.LogWarning("Slow request: {Method} {Url} took {ElapsedMs}ms (corr:{CorrelationId})", method, url, stopwatch.ElapsedMilliseconds, correlationId);
 
-                await HandleResponseAsync(response, cancellationToken).ConfigureAwait(false);
+                // On a non-success status HandleResponseAsync throws. Dispose the
+                // response on that path so a retried (5xx/429) or failed request
+                // does not leak its HttpResponseMessage / pooled connection. The
+                // success path returns it undisposed for the caller's `using`.
+                try
+                {
+                    await HandleResponseAsync(response, cancellationToken).ConfigureAwait(false);
+                }
+                catch
+                {
+                    response.Dispose();
+                    throw;
+                }
 
                 return response;
             }
@@ -270,7 +282,17 @@ internal sealed class HttpPipeline : IDisposable
 
                 _logger.LogDebug("Response: {StatusCode} from {Path}", (int)response.StatusCode, path);
 
-                await HandleResponseAsync(response, cancellationToken).ConfigureAwait(false);
+                // Dispose the response when HandleResponseAsync throws so a retried
+                // or failed upload doesn't leak its HttpResponseMessage (see SendAsync).
+                try
+                {
+                    await HandleResponseAsync(response, cancellationToken).ConfigureAwait(false);
+                }
+                catch
+                {
+                    response.Dispose();
+                    throw;
+                }
 
                 return response;
             }
