@@ -3,7 +3,7 @@
 The official .NET SDK for [Trix](https://trixdb.com) - a memory and knowledge management API.
 
 [![NuGet](https://img.shields.io/nuget/v/Trix.svg)](https://www.nuget.org/packages/Trix)
-[![.NET](https://img.shields.io/badge/.NET-10.0-blue.svg)](https://dotnet.microsoft.com/)
+[![.NET](https://img.shields.io/badge/.NET-8.0%20%7C%2010.0-blue.svg)](https://dotnet.microsoft.com/)
 [![License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
 
 ## Installation
@@ -154,7 +154,7 @@ var relationship = await client.Relationships.CreateAsync(
     sourceId: "mem_1",
     targetId: "mem_2",
     relationshipType: RelationshipTypes.RelatedTo,
-    strength: 0.8
+    weight: 0.8
 );
 
 // Reinforce a relationship
@@ -316,12 +316,12 @@ using var client = new TrixClient(options);
 
 ## Requirements
 
-- .NET 10.0 or later
+- .NET 8.0 or later — the package multi-targets `net8.0` and `net10.0`.
 
 ## Related SDKs
 
-- [Python SDK](https://github.com/trix/trix-sdk-python)
-- [TypeScript SDK](https://github.com/trix/trix-sdk-typescript)
+- [Python SDK](https://github.com/trixdb/trix-sdk-python)
+- [TypeScript SDK](https://github.com/trixdb/trix-sdk-typescript)
 
 ## License
 
