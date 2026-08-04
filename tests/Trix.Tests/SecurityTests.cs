@@ -293,4 +293,63 @@ public class SecurityTests
     }
 
     #endregion
+
+    #region SSRF / Internal Host Blocking Tests
+
+    [Theory]
+    [InlineData("https://169.254.169.254")]        // AWS/GCP/Azure metadata endpoint
+    [InlineData("https://[fd00::1]")]               // IPv6 unique-local
+    [InlineData("https://[fe80::1]")]               // IPv6 link-local
+    [InlineData("https://10.0.0.5")]                // RFC 1918
+    [InlineData("https://172.16.4.4")]              // RFC 1918
+    [InlineData("https://192.168.1.1")]             // RFC 1918
+    [InlineData("https://127.0.0.1")]               // IPv4 loopback
+    [InlineData("https://[::1]")]                   // IPv6 loopback
+    [InlineData("https://0.0.0.0")]                 // "this host"
+    [InlineData("https://localhost")]               // loopback name
+    [InlineData("https://db.internal.local")]       // internal mDNS name
+    public void Validate_InternalBaseUrl_ThrowsArgumentException(string baseUrl)
+    {
+        // Arrange
+        var options = new TrixClientOptions { ApiKey = "test_key", BaseUrl = baseUrl };
+
+        // Act & Assert
+        var act = () => options.Validate();
+        act.Should().Throw<ArgumentException>();
+    }
+
+    [Theory]
+    [InlineData("https://169.254.169.254")]
+    [InlineData("http://127.0.0.1:3737")]
+    [InlineData("http://localhost:8080")]
+    public void Validate_InternalBaseUrlWithAllowInsecure_Succeeds(string baseUrl)
+    {
+        // Arrange — AllowInsecure is the documented escape hatch for local/dev.
+        var options = new TrixClientOptions
+        {
+            ApiKey = "test_key",
+            BaseUrl = baseUrl,
+            AllowInsecure = true
+        };
+
+        // Act & Assert
+        var act = () => options.Validate();
+        act.Should().NotThrow();
+    }
+
+    [Theory]
+    [InlineData("https://api.trixdb.com")]
+    [InlineData("https://8.8.8.8")]                 // public IP literal is fine
+    [InlineData("https://api.example.com/v1")]
+    public void Validate_PublicBaseUrl_Succeeds(string baseUrl)
+    {
+        // Arrange
+        var options = new TrixClientOptions { ApiKey = "test_key", BaseUrl = baseUrl };
+
+        // Act & Assert
+        var act = () => options.Validate();
+        act.Should().NotThrow();
+    }
+
+    #endregion
 }
