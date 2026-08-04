@@ -25,6 +25,9 @@
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
     <NoWarn>$(NoWarn);CS1591</NoWarn>
+    <!-- Guard against regressing XML-doc completeness (CS1573) and stray member
+         hiding (CS0109) so the public API stays clean without downstream workarounds. -->
+    <WarningsAsErrors>$(WarningsAsErrors);CS1573;CS0109</WarningsAsErrors>
 
     <!-- Assembly Info -->
     <AssemblyName>Trix</AssemblyName>

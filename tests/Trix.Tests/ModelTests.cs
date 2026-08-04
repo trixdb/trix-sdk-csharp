@@ -572,7 +572,7 @@ public class ModelTests
         result.ContentSafetyLabels[0].Severity.Should().Be("low");
         result.ContentSafetyLabels[0].Timestamp.Should().NotBeNull();
         result.ContentSafetyLabels[0].Timestamp!.Start.Should().Be(1.5);
-        result.ContentSafetyLabels[0].Timestamp.End.Should().Be(2.0);
+        result.ContentSafetyLabels[0].Timestamp!.End.Should().Be(2.0);
 
         // Assert - Provider metadata
         result.ProviderMetadata.Should().NotBeNull();

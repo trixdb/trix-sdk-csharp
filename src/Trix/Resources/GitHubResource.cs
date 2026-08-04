@@ -716,7 +716,9 @@ public class GitHubResource : BaseResource
     /// <summary>
     /// Get issue triage — recently-opened issues missing labels, assignee, or milestone.
     /// </summary>
+    /// <param name="projectId">The project identifier.</param>
     /// <param name="days">Lookback window in days (default 7; options: 7, 14, 30)</param>
+    /// <param name="cancellationToken">Cancellation token.</param>
     public virtual async Task<IssueTriageResult> GetIssueTriageAsync(
         string projectId,
         int days = 7,
@@ -731,7 +733,9 @@ public class GitHubResource : BaseResource
     /// <summary>
     /// Get daily issue open/close flow — backlog burn-down visibility.
     /// </summary>
+    /// <param name="projectId">The project identifier.</param>
     /// <param name="days">Lookback window in days (default 30; range: 7-90)</param>
+    /// <param name="cancellationToken">Cancellation token.</param>
     public virtual async Task<IssueFlowResult> GetIssueFlowAsync(
         string projectId,
         int days = 30,
