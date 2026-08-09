@@ -109,6 +109,34 @@ public class MemoriesResource : BaseResource
     }
 
     /// <summary>
+    /// Queries memories with MQL (Memory Query Language) — one expressive string
+    /// (boolean logic, ranges, in/between, wildcards, content:, entity:/related:,
+    /// near:/bbox:, order by, and group by … count avg …) compiled to
+    /// parameterised SQL server-side.
+    /// </summary>
+    /// <param name="mql">The MQL query string.</param>
+    /// <param name="limit">Maximum rows to return (ignored for aggregations).</param>
+    /// <param name="offset">Rows to skip (pagination).</param>
+    /// <param name="cancellationToken">Cancellation token.</param>
+    /// <returns>
+    /// An <see cref="MqlResult"/>: <c>Data</c>/<c>Pagination</c> for a normal query,
+    /// or <c>Aggregate</c>/<c>GroupBy</c>/<c>Metrics</c> for a <c>group by</c> query
+    /// (see <see cref="MqlResult.IsAggregate"/>).
+    /// </returns>
+    public virtual async Task<MqlResult> QueryAsync(
+        string mql,
+        int? limit = null,
+        int? offset = null,
+        CancellationToken cancellationToken = default)
+    {
+        var queryParams = new Dictionary<string, string?> { ["mql"] = mql };
+        if (limit != null) queryParams["limit"] = limit.ToString();
+        if (offset != null) queryParams["offset"] = offset.ToString();
+
+        return await GetAsync<MqlResult>(BasePath, queryParams, cancellationToken).ConfigureAwait(false);
+    }
+
+    /// <summary>
     /// Creates multiple memories in bulk.
     /// </summary>
     /// <param name="requests">The memory creation requests.</param>
