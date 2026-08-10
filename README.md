@@ -4,7 +4,7 @@ The official .NET SDK for [Trix](https://trixdb.com) - a memory and knowledge ma
 
 [![NuGet](https://img.shields.io/nuget/v/Trix.svg)](https://www.nuget.org/packages/Trix)
 [![.NET](https://img.shields.io/badge/.NET-8.0%20%7C%2010.0-blue.svg)](https://dotnet.microsoft.com/)
-[![License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
+[![License](https://img.shields.io/badge/license-Apache_2.0-blue.svg)](LICENSE)
 
 ## Installation
 
@@ -325,4 +325,4 @@ using var client = new TrixClient(options);
 
 ## License
 
-MIT License - see [LICENSE](LICENSE) for details.
+Apache License 2.0 - see [LICENSE](LICENSE) for details.
