@@ -17,7 +17,7 @@
     <PackageProjectUrl>https://github.com/trixdb/trix-sdk-csharp</PackageProjectUrl>
     <RepositoryUrl>https://github.com/trixdb/trix-sdk-csharp</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
-    <PackageLicenseFile>LICENSE</PackageLicenseFile>
+    <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
     <PackageReadmeFile>README.md</PackageReadmeFile>
     <Copyright>Copyright (c) Trix 2025</Copyright>
 
