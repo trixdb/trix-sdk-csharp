@@ -3,8 +3,24 @@
 The official .NET SDK for [Trix](https://trixdb.com) - a memory and knowledge management API.
 
 [![NuGet](https://img.shields.io/nuget/v/Trix.svg)](https://www.nuget.org/packages/Trix)
+[![Version](https://img.shields.io/badge/version-0.6.0-blue.svg)](https://www.nuget.org/packages/Trix/0.6.0)
 [![.NET](https://img.shields.io/badge/.NET-8.0%20%7C%2010.0-blue.svg)](https://dotnet.microsoft.com/)
 [![License](https://img.shields.io/badge/license-Apache_2.0-blue.svg)](LICENSE)
+
+## Features
+
+- **Typed & async** - strongly typed request/response models; every call is `async`/`await` and accepts a `CancellationToken`.
+- **Broad coverage** - 22 resource namespaces including Memories, Relationships, Clusters, Spaces, Facts, Entities, Graph, Search, Tasks, Webhooks, Jobs, and Highlights.
+- **Automatic pagination** - `ListAllAsync(...)` returns `IAsyncEnumerable<T>` and walks pages transparently.
+- **Automatic retries** - exponential backoff with jitter; honors `Retry-After` on HTTP 429.
+- **Idempotency** - mutating requests carry a stable `Idempotency-Key` reused across retries, so a committed-but-failed write is never duplicated.
+- **Webhooks** - full management API plus inbound **signature verification** (HMAC-SHA256, constant-time, replay-protected).
+- **File uploads** - multipart image upload and binary download.
+- **Typed errors** - a `TrixException` hierarchy carrying `StatusCode`, `ErrorCode`, and `RequestId`.
+- **Secure by default** - HTTPS enforced and an SSRF guard blocks private/loopback/link-local base URLs.
+- **DI-friendly** - thread-safe client usable as a singleton, with a pluggable `HttpMessageHandler` and `ILoggerFactory`.
+
+> **Not yet available:** token streaming (SSE) and a shipped mock/test double are on the roadmap. For a streaming-first client today, see the [Go SDK](https://github.com/trixdb/trix-sdk-go).
 
 ## Installation
 
@@ -56,32 +72,46 @@ foreach (var m in results.Data)
 }
 ```
 
-## Features
+## Authentication
 
-- **Memories**: Create, read, update, delete, and search memories
-- **Relationships**: Connect memories with typed relationships
-- **Clusters**: Group related memories into clusters
-- **Spaces**: Organize memories into workspaces
-- **Facts & Entities**: Knowledge graph with facts and named entities
-- **Async/Await**: Full async support with cancellation tokens
-- **Resilience**: Built-in retry with exponential backoff
-- **Type Safety**: Strongly typed request/response models
+```csharp
+// 1. API key via constructor
+using var client = new TrixClient("your_api_key");
+
+// 2. From environment - reads TRIX_API_KEY and optionally TRIX_BASE_URL
+using var client = TrixClient.FromEnvironment();
+
+// 3. Explicit options - supply an API key or a JWT token
+using var client = new TrixClient(new TrixClientOptions
+{
+    ApiKey = "your_api_key"   // or: JwtToken = "eyJ..."
+});
+```
+
+The credential is attached to every request by the SDK. `Authorization` is a restricted header and cannot be overridden through `CustomHeaders`.
 
 ## Configuration
-
-### Basic Configuration
 
 ```csharp
 var options = new TrixClientOptions
 {
     ApiKey = "your_api_key",
-    BaseUrl = "https://api.trixdb.com",  // Default
-    Timeout = TimeSpan.FromSeconds(30),   // Default
-    MaxRetries = 3                         // Default
+    BaseUrl = "https://api.trixdb.com",       // default
+    Timeout = TimeSpan.FromSeconds(30),        // default (max 1 hour)
+    MaxRetries = 3,                            // default (max 10)
+    CustomHeaders = new Dictionary<string, string>
+    {
+        ["X-Tenant"] = "acme"
+    },
+    HttpHandler = new SocketsHttpHandler()     // bring your own handler (proxy, pooling, mTLS)
 };
 
 using var client = new TrixClient(options);
 ```
+
+- **`BaseUrl`** must use HTTPS. Private, loopback, and link-local hosts are rejected by the SSRF guard; set `AllowInsecure = true` only for local development.
+- **`CustomHeaders`** are attached to every request; security-sensitive headers (`Authorization`, `Host`, `Content-Length`, ...) cannot be set here.
+- **`HttpHandler`** supplies a custom `HttpMessageHandler`; a handler you own is left for you to dispose.
 
 ### Environment Variables
 
@@ -94,17 +124,15 @@ using var client = TrixClient.FromEnvironment();
 
 ```csharp
 // In Startup.cs or Program.cs
-services.AddSingleton(sp =>
+services.AddSingleton(sp => new TrixClient(new TrixClientOptions
 {
-    var options = new TrixClientOptions
-    {
-        ApiKey = configuration["Trix:ApiKey"]
-    };
-    return new TrixClient(options);
-});
+    ApiKey = configuration["Trix:ApiKey"]
+}));
 ```
 
 ## Resources
+
+The client exposes resource namespaces including `Memories`, `Relationships`, `Clusters`, `Spaces`, `Facts`, `Entities`, `Graph`, `Search`, `Tasks`, and `Webhooks`.
 
 ### Memories
 
@@ -138,12 +166,6 @@ var memories = await client.Memories.ListAsync(new ListMemoriesRequest
     Tags = new List<string> { "tag1" },
     Limit = 20
 });
-
-// Iterate all matching memories
-await foreach (var memory in client.Memories.ListAllAsync())
-{
-    Console.WriteLine(memory.Content);
-}
 ```
 
 ### Relationships
@@ -241,9 +263,116 @@ var sub = await client.Tasks.CreateSubtaskAsync(task.Id, new CreateSubtaskReques
 var subtasks = await client.Tasks.GetSubtasksAsync(task.Id);
 ```
 
+## Pagination
+
+List endpoints return a `PaginatedResponse<T>` - the `Data` items plus a `Pagination` block (`Total`, `Page`, `Limit`, `HasMore`):
+
+```csharp
+var page = await client.Memories.ListAsync(new ListMemoriesRequest { Limit = 50 });
+Console.WriteLine($"{page.Data.Count} of {page.Pagination?.Total} (more: {page.Pagination?.HasMore})");
+```
+
+To iterate every matching item without managing page numbers, use `ListAllAsync`, which returns an `IAsyncEnumerable<T>` and fetches each page on demand:
+
+```csharp
+await foreach (var memory in client.Memories.ListAllAsync(new ListMemoriesRequest { Q = "trix" }))
+{
+    Console.WriteLine(memory.Content);
+}
+```
+
+`ListAllAsync` is available on Memories, Facts, Entities, Highlights, Jobs, Clusters, Tasks, and Webhooks. It observes the `CancellationToken` and stops as soon as `HasMore` is false.
+
+## File Uploads
+
+Create image memories with a multipart upload (from a `Stream` or `byte[]`), then download the stored image back as a stream or bytes:
+
+```csharp
+// Upload from a file stream
+using var imageStream = File.OpenRead("photo.jpg");
+var memory = await client.Memories.CreateFromImageAsync(
+    imageStream,
+    "photo.jpg",
+    "image/jpeg",
+    new CreateImageMemoryRequest { AutoTag = true });
+
+// Download the original image bytes
+byte[] bytes = await client.Memories.GetImageBytesAsync(memory.Id);
+await File.WriteAllBytesAsync("downloaded.jpg", bytes);
+```
+
+Supported formats: jpg, jpeg, png, gif, webp, bmp, tiff. `GetImageAsync` returns a `Stream` if you prefer to copy directly, and `GetThumbnailAsync` fetches a generated thumbnail.
+
+## Idempotency
+
+Every mutating request (POST/PUT/PATCH/DELETE, including multipart uploads) automatically carries an `Idempotency-Key`. The SDK generates one key per logical request and reuses it across the whole retry sequence, so a write that commits server-side but then times out or returns 5xx is retried safely without creating a duplicate. Read requests send no key. This is automatic - there is nothing to configure.
+
+## Webhooks
+
+Manage webhook endpoints through `client.Webhooks`:
+
+```csharp
+var hook = await client.Webhooks.CreateAsync(new CreateWebhookRequest
+{
+    Url = "https://example.com/hooks/trix",
+    Events = new List<string> { "memory.created" }
+});
+
+// Send a test event, then list every endpoint across pages
+await client.Webhooks.TestAsync(hook.Id);
+await foreach (var w in client.Webhooks.ListAllAsync())
+{
+    Console.WriteLine($"{w.Id} -> {w.Url}");
+}
+```
+
+### Verifying inbound webhooks
+
+`VerifySignature` and `Unwrap<T>` are **static** helpers on `WebhooksResource`, so a receiver can verify a request without constructing a client. They recompute an HMAC-SHA256 over `{timestamp}.{payload}` keyed by the endpoint's signing secret, compare it against the `X-Webhook-Signature` header (`t=...,v1=...`) in constant time via `CryptographicOperations.FixedTimeEquals`, and reject anything older than the tolerance (default **300s**) to stop replays. Always pass the **raw** request body - re-serializing it changes the bytes and fails verification.
+
+```csharp
+using Trix.Resources;
+using Trix.Exceptions;
+
+// ASP.NET Core Minimal API endpoint
+app.MapPost("/hooks/trix", async (HttpRequest req) =>
+{
+    var raw = await new StreamReader(req.Body).ReadToEndAsync();
+    var signature = req.Headers["X-Webhook-Signature"].ToString();
+
+    // Boolean check - fails closed: returns false for a missing, malformed,
+    // expired, or tampered signature (never throws for a bad signature).
+    if (!WebhooksResource.VerifySignature(raw, signature, mySigningSecret))
+        return Results.Unauthorized();
+
+    return Results.Ok();
+});
+```
+
+Prefer `Unwrap<T>` when you want the verified event typed in one step - it verifies, then deserializes, and throws `TrixWebhookVerificationException` on any failure (bad signature, replay, or a body that will not deserialize):
+
+```csharp
+using System.Text.Json;
+using Trix.Resources;
+using Trix.Exceptions;
+
+try
+{
+    // T is your own event shape; JsonElement works when you want the raw tree.
+    var evt = WebhooksResource.Unwrap<JsonElement>(raw, signature, mySigningSecret);
+    Console.WriteLine(evt.GetProperty("event").GetString());
+}
+catch (TrixWebhookVerificationException)
+{
+    // Treat as untrusted - respond 400/401 and do not process.
+}
+```
+
+A non-default replay window is available through the `toleranceSeconds` parameter on `VerifySignature`.
+
 ## Error Handling
 
-The SDK throws specific exceptions for different error types:
+The SDK throws specific exceptions for different error types. All derive from `TrixException`, which carries `StatusCode`, `ErrorCode`, and `RequestId`:
 
 ```csharp
 try
@@ -278,9 +407,35 @@ catch (TrixException ex)
 }
 ```
 
+| Exception | Raised for |
+|-----------|-----------|
+| `AuthenticationException` | 401 - missing or invalid credentials |
+| `PermissionException` | 403 - authenticated but not allowed |
+| `NotFoundException` | 404 - resource does not exist |
+| `ValidationException` | Invalid request; per-field detail in `Errors` |
+| `RateLimitException` | 429 - includes `RetryAfterSeconds` |
+| `ServerException` | 5xx - server-side failure |
+| `NetworkException` | Transport/connection failure |
+| `TrixTimeoutException` | Request exceeded the configured timeout |
+| `TrixWebhookVerificationException` | Inbound webhook failed signature verification |
+
+## Automatic Retries
+
+The client retries transient failures automatically: network errors, timeouts, HTTP 429, and 5xx responses. Other 4xx client errors are never retried. Backoff is exponential (1s base, capped at 30s) with 0-30% jitter; on a 429 the `Retry-After` value is honored before backing off. Tune the attempt count with `MaxRetries` (default 3, max 10):
+
+```csharp
+using var client = new TrixClient(new TrixClientOptions
+{
+    ApiKey = "your_api_key",
+    MaxRetries = 5
+});
+```
+
+Because retries reuse a single `Idempotency-Key` per request (see [Idempotency](#idempotency)), a retried write is safe against duplication.
+
 ## Cancellation
 
-All async methods support cancellation tokens:
+All async methods accept a cancellation token:
 
 ```csharp
 using var cts = new CancellationTokenSource(TimeSpan.FromSeconds(5));
@@ -316,12 +471,15 @@ using var client = new TrixClient(options);
 
 ## Requirements
 
-- .NET 8.0 or later — the package multi-targets `net8.0` and `net10.0`.
+- .NET 8.0 or later - the package multi-targets `net8.0` and `net10.0`.
+- Nullable reference types are enabled throughout the public surface.
 
 ## Related SDKs
 
 - [Python SDK](https://github.com/trixdb/trix-sdk-python)
 - [TypeScript SDK](https://github.com/trixdb/trix-sdk-typescript)
+- [Go SDK](https://github.com/trixdb/trix-sdk-go) - streaming-focused client
+- .NET SDK (this repository)
 
 ## License
 
