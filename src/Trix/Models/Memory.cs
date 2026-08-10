@@ -5,7 +5,7 @@ namespace Trix.Models;
 /// <summary>
 /// Represents the type of memory content.
 /// </summary>
-[JsonConverter(typeof(JsonStringEnumConverter))]
+[JsonConverter(typeof(JsonStringEnumMemberConverter))]
 public enum MemoryType
 {
     /// <summary>Plain text content.</summary>
@@ -27,7 +27,7 @@ public enum MemoryType
 /// <summary>
 /// Represents the protection level for a memory.
 /// </summary>
-[JsonConverter(typeof(JsonStringEnumConverter))]
+[JsonConverter(typeof(JsonStringEnumMemberConverter))]
 public enum ProtectionLevel
 {
     /// <summary>No protection - memory can be modified or deleted freely.</summary>
@@ -43,7 +43,7 @@ public enum ProtectionLevel
 /// <summary>
 /// Represents the transcript status of audio memories.
 /// </summary>
-[JsonConverter(typeof(JsonStringEnumConverter))]
+[JsonConverter(typeof(JsonStringEnumMemberConverter))]
 public enum TranscriptStatus
 {
     /// <summary>Transcription is pending.</summary>
@@ -62,7 +62,7 @@ public enum TranscriptStatus
 /// <summary>
 /// Origin types for memory context classification (life domain context).
 /// </summary>
-[JsonConverter(typeof(JsonStringEnumConverter))]
+[JsonConverter(typeof(JsonStringEnumMemberConverter))]
 public enum OriginType
 {
     /// <summary>Work-related context.</summary>
@@ -81,7 +81,7 @@ public enum OriginType
 /// <summary>
 /// Source types for memory provenance tracking (how/where memory was captured).
 /// </summary>
-[JsonConverter(typeof(JsonStringEnumConverter))]
+[JsonConverter(typeof(JsonStringEnumMemberConverter))]
 public enum SourceType
 {
     /// <summary>Email source.</summary>
@@ -398,7 +398,7 @@ public class ListMemoriesRequest
 /// <summary>
 /// Search mode for memory queries.
 /// </summary>
-[JsonConverter(typeof(JsonStringEnumConverter))]
+[JsonConverter(typeof(JsonStringEnumMemberConverter))]
 public enum SearchMode
 {
     /// <summary>Semantic search using embeddings.</summary>

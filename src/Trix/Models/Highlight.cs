@@ -5,7 +5,7 @@ namespace Trix.Models;
 /// <summary>
 /// Highlight extraction method.
 /// </summary>
-[JsonConverter(typeof(JsonStringEnumConverter<ExtractionMethod>))]
+[JsonConverter(typeof(JsonStringEnumMemberConverter))]
 public enum ExtractionMethod
 {
     [JsonPropertyName("ai")]

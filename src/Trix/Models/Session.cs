@@ -5,7 +5,7 @@ namespace Trix.Models;
 /// <summary>
 /// Represents the type of a session.
 /// </summary>
-[JsonConverter(typeof(JsonStringEnumConverter))]
+[JsonConverter(typeof(JsonStringEnumMemberConverter))]
 public enum SessionType
 {
     /// <summary>Conversation session.</summary>
@@ -24,7 +24,7 @@ public enum SessionType
 /// <summary>
 /// Represents the status of a session.
 /// </summary>
-[JsonConverter(typeof(JsonStringEnumConverter))]
+[JsonConverter(typeof(JsonStringEnumMemberConverter))]
 public enum SessionStatus
 {
     /// <summary>Session is active.</summary>
@@ -43,17 +43,17 @@ public enum SessionStatus
 /// <summary>
 /// Represents the retention policy for a session.
 /// </summary>
-[JsonConverter(typeof(JsonStringEnumConverter))]
+[JsonConverter(typeof(JsonStringEnumMemberConverter))]
 public enum RetentionPolicy
 {
     /// <summary>Session is kept permanently.</summary>
     [JsonPropertyName("permanent")] Permanent,
 
     /// <summary>Session is auto-deleted after retention period.</summary>
-    [JsonPropertyName("autoDelete")] AutoDelete,
+    [JsonPropertyName("auto_delete")] AutoDelete,
 
     /// <summary>Session is deleted on completion.</summary>
-    [JsonPropertyName("onCompletion")] OnCompletion,
+    [JsonPropertyName("on_completion")] OnCompletion,
 
     /// <summary>Temporary session.</summary>
     [JsonPropertyName("temporary")] Temporary

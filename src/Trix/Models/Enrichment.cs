@@ -5,7 +5,7 @@ namespace Trix.Models;
 /// <summary>
 /// Enrichment type.
 /// </summary>
-[JsonConverter(typeof(JsonStringEnumConverter<EnrichmentType>))]
+[JsonConverter(typeof(JsonStringEnumMemberConverter))]
 public enum EnrichmentType
 {
     [JsonPropertyName("entities")]
@@ -25,7 +25,7 @@ public enum EnrichmentType
 /// <summary>
 /// Enrichment processing status.
 /// </summary>
-[JsonConverter(typeof(JsonStringEnumConverter<EnrichmentStatus>))]
+[JsonConverter(typeof(JsonStringEnumMemberConverter))]
 public enum EnrichmentStatus
 {
     [JsonPropertyName("pending")]

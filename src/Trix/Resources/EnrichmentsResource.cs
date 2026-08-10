@@ -44,7 +44,7 @@ public class EnrichmentsResource : BaseResource
     {
         ArgumentException.ThrowIfNullOrEmpty(memoryId);
 
-        var typeName = enrichmentType.ToString().ToLowerInvariant();
+        var typeName = enrichmentType.ToWireValue();
         return await GetAsync<Enrichment>($"/v1/memories/{Uri.EscapeDataString(memoryId)}/enrichments/{Uri.EscapeDataString(typeName)}", cancellationToken: cancellationToken)
             .ConfigureAwait(false);
     }
@@ -80,7 +80,7 @@ public class EnrichmentsResource : BaseResource
     {
         ArgumentException.ThrowIfNullOrEmpty(memoryId);
 
-        var typeName = enrichmentType.ToString().ToLowerInvariant();
+        var typeName = enrichmentType.ToWireValue();
         return await PostAsync<TriggerEnrichmentResult>($"/v1/memories/{Uri.EscapeDataString(memoryId)}/enrichments/{Uri.EscapeDataString(typeName)}/retry", null, cancellationToken)
             .ConfigureAwait(false);
     }

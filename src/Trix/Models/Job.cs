@@ -5,7 +5,7 @@ namespace Trix.Models;
 /// <summary>
 /// Job status.
 /// </summary>
-[JsonConverter(typeof(JsonStringEnumConverter<JobStatus>))]
+[JsonConverter(typeof(JsonStringEnumMemberConverter))]
 public enum JobStatus
 {
     [JsonPropertyName("waiting")]

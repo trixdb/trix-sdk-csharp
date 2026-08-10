@@ -5,7 +5,7 @@ namespace Trix.Models;
 /// <summary>
 /// Feedback type.
 /// </summary>
-[JsonConverter(typeof(JsonStringEnumConverter<FeedbackType>))]
+[JsonConverter(typeof(JsonStringEnumMemberConverter))]
 public enum FeedbackType
 {
     [JsonPropertyName("positive")]
@@ -19,7 +19,7 @@ public enum FeedbackType
 /// <summary>
 /// Quick feedback type.
 /// </summary>
-[JsonConverter(typeof(JsonStringEnumConverter<QuickFeedbackType>))]
+[JsonConverter(typeof(JsonStringEnumMemberConverter))]
 public enum QuickFeedbackType
 {
     [JsonPropertyName("thumbs_up")]

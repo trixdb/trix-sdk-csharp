@@ -83,7 +83,7 @@ public class UpdateResourceRequest
 /// <summary>
 /// Relationship types for memory-resource associations.
 /// </summary>
-[JsonConverter(typeof(JsonStringEnumConverter))]
+[JsonConverter(typeof(JsonStringEnumMemberConverter))]
 public enum ResourceRelationshipType
 {
     /// <summary>Primary resource relationship.</summary>

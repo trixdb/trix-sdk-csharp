@@ -62,10 +62,10 @@ public class SessionsResource : BaseResource
         if (parameters != null)
         {
             if (parameters.Status.HasValue)
-                queryParams["status"] = parameters.Status.Value.ToString().ToLowerInvariant();
+                queryParams["status"] = parameters.Status.Value.ToWireValue();
 
             if (parameters.Type.HasValue)
-                queryParams["type"] = parameters.Type.Value.ToString().ToLowerInvariant();
+                queryParams["type"] = parameters.Type.Value.ToWireValue();
 
             if (!string.IsNullOrEmpty(parameters.SpaceId))
                 queryParams["spaceId"] = parameters.SpaceId;

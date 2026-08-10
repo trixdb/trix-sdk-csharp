@@ -5,7 +5,7 @@ namespace Trix.Models;
 /// <summary>
 /// Represents the scale/granularity of a cluster.
 /// </summary>
-[JsonConverter(typeof(JsonStringEnumConverter))]
+[JsonConverter(typeof(JsonStringEnumMemberConverter))]
 public enum ClusterScale
 {
     /// <summary>Fine-grained clusters with tightly related memories.</summary>

@@ -5,7 +5,7 @@ namespace Trix.Models;
 /// <summary>
 /// Direction for graph traversal.
 /// </summary>
-[JsonConverter(typeof(JsonStringEnumConverter<TraversalDirection>))]
+[JsonConverter(typeof(JsonStringEnumMemberConverter))]
 public enum TraversalDirection
 {
     [JsonPropertyName("outgoing")]

@@ -87,11 +87,11 @@ public class MemoriesResource : BaseResource
         if (request != null)
         {
             if (request.Q != null) queryParams["q"] = request.Q;
-            if (request.Mode != null) queryParams["mode"] = request.Mode.ToString()?.ToLowerInvariant();
+            if (request.Mode != null) queryParams["mode"] = request.Mode.Value.ToWireValue();
             if (request.Limit != null) queryParams["limit"] = request.Limit.ToString();
             if (request.Page != null) queryParams["page"] = request.Page.ToString();
             if (request.Offset != null) queryParams["offset"] = request.Offset.ToString();
-            if (request.Type != null) queryParams["type"] = request.Type.ToString()?.ToLowerInvariant();
+            if (request.Type != null) queryParams["type"] = request.Type.Value.ToWireValue();
             if (request.SpaceId != null) queryParams["spaceId"] = request.SpaceId;
             if (request.SortBy != null) queryParams["sortBy"] = request.SortBy;
             if (request.SortOrder != null) queryParams["sortOrder"] = request.SortOrder;
@@ -365,7 +365,7 @@ public class MemoriesResource : BaseResource
         CancellationToken cancellationToken = default)
     {
         ArgumentException.ThrowIfNullOrEmpty(id);
-        return await PostAsync<Memory>($"{BasePath}/{Uri.EscapeDataString(id)}/protection", new { level = level.ToString().ToLowerInvariant() }, cancellationToken).ConfigureAwait(false);
+        return await PostAsync<Memory>($"{BasePath}/{Uri.EscapeDataString(id)}/protection", new { level = level.ToWireValue() }, cancellationToken).ConfigureAwait(false);
     }
 
     /// <summary>
@@ -788,7 +788,7 @@ public class MemoriesResource : BaseResource
         var queryParams = new Dictionary<string, string?>();
         if (request != null)
         {
-            if (request.Type != null) queryParams["type"] = request.Type.ToString()?.ToLowerInvariant();
+            if (request.Type != null) queryParams["type"] = request.Type.Value.ToWireValue();
             if (request.Limit != null) queryParams["limit"] = request.Limit.ToString();
             if (request.Threshold != null) queryParams["threshold"] = request.Threshold.Value.ToString(System.Globalization.CultureInfo.InvariantCulture);
             if (request.SpaceId != null) queryParams["spaceId"] = request.SpaceId;
@@ -1380,7 +1380,7 @@ public class GetTopicsOptions
 /// <summary>
 /// Enrichment operation types.
 /// </summary>
-[JsonConverter(typeof(JsonStringEnumConverter))]
+[JsonConverter(typeof(JsonStringEnumMemberConverter))]
 public enum EnrichmentOperation
 {
     /// <summary>Extract topics from the memory.</summary>

@@ -103,7 +103,7 @@ public class ClustersResource : BaseResource
             if (request.SpaceId != null) queryParams["spaceId"] = request.SpaceId;
             if (request.SortBy != null) queryParams["sortBy"] = request.SortBy;
             if (request.SortOrder != null) queryParams["sortOrder"] = request.SortOrder;
-            if (request.Scale != null) queryParams["scale"] = request.Scale.ToString()?.ToLowerInvariant();
+            if (request.Scale != null) queryParams["scale"] = request.Scale.Value.ToWireValue();
         }
 
         return await GetAsync<PaginatedResponse<Cluster>>(BasePath, queryParams, cancellationToken).ConfigureAwait(false);

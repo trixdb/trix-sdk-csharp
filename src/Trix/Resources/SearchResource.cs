@@ -70,7 +70,7 @@ public class SearchResource : BaseResource
             ("threshold", request?.Threshold),
             ("includeEmbedding", request?.IncludeEmbedding),
             ("spaceId", request?.SpaceId),
-            ("clusterScale", request?.ClusterScale?.ToString()?.ToLowerInvariant())
+            ("clusterScale", request?.ClusterScale?.ToWireValue())
         );
 
         return await GetAsync<SimilarityResult>($"/v1/search/similar/{Uri.EscapeDataString(memoryId)}", queryParams, cancellationToken)

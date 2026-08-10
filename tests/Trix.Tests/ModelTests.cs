@@ -55,7 +55,7 @@ public class ModelTests
 
         // Assert
         json.Should().Contain("\"content\":\"Test content\"");
-        json.Should().Contain("\"type\":\"Markdown\"");
+        json.Should().Contain("\"type\":\"markdown\"");
     }
 
     [Fact]
@@ -758,5 +758,53 @@ public class ModelTests
         word.End.Should().Be(0.5);
         word.Confidence.Should().Be(0.98);
         word.Speaker.Should().Be("B");
+    }
+
+    // ---- Enum JSON wire contract ----
+    // System.Text.Json's JsonStringEnumConverter ignores [JsonPropertyName] on
+    // enum members, so the SDK used to send the C# name ("Text", "AutoDelete")
+    // and throw when reading a snake_case value. These assert the real API contract.
+
+    [Fact]
+    public void Enum_Serializes_ToApiWireValue()
+    {
+        // Single-word members are lower-cased (previously emitted PascalCase).
+        JsonSerializer.Serialize(MemoryType.Text, JsonOptions).Should().Be("\"text\"");
+        JsonSerializer.Serialize(MemoryType.Markdown, JsonOptions).Should().Be("\"markdown\"");
+        JsonSerializer.Serialize(SessionStatus.Active, JsonOptions).Should().Be("\"active\"");
+        JsonSerializer.Serialize(SearchMode.Semantic, JsonOptions).Should().Be("\"semantic\"");
+
+        // Multi-word members use their snake_case wire value, not the C# name.
+        JsonSerializer.Serialize(QuickFeedbackType.ThumbsUp, JsonOptions).Should().Be("\"thumbs_up\"");
+        JsonSerializer.Serialize(QuickFeedbackType.ThumbsDown, JsonOptions).Should().Be("\"thumbs_down\"");
+
+        // RetentionPolicy is snake_case per the API (auto_delete/on_completion),
+        // corrected from the previous (wrong) camelCase annotations.
+        JsonSerializer.Serialize(RetentionPolicy.AutoDelete, JsonOptions).Should().Be("\"auto_delete\"");
+        JsonSerializer.Serialize(RetentionPolicy.OnCompletion, JsonOptions).Should().Be("\"on_completion\"");
+    }
+
+    [Fact]
+    public void Enum_Deserializes_ApiWireValue_WithoutThrowing()
+    {
+        // Reading a snake_case wire value used to throw; now it round-trips.
+        JsonSerializer.Deserialize<RetentionPolicy>("\"auto_delete\"", JsonOptions).Should().Be(RetentionPolicy.AutoDelete);
+        JsonSerializer.Deserialize<RetentionPolicy>("\"on_completion\"", JsonOptions).Should().Be(RetentionPolicy.OnCompletion);
+        JsonSerializer.Deserialize<QuickFeedbackType>("\"thumbs_up\"", JsonOptions).Should().Be(QuickFeedbackType.ThumbsUp);
+        JsonSerializer.Deserialize<MemoryType>("\"text\"", JsonOptions).Should().Be(MemoryType.Text);
+
+        // An unknown wire value fails loudly rather than defaulting silently.
+        var readUnknown = () => JsonSerializer.Deserialize<MemoryType>("\"not_a_type\"", JsonOptions);
+        readUnknown.Should().Throw<JsonException>();
+    }
+
+    [Fact]
+    public void Enum_ToWireValue_ForQueryParams_UsesWireContract()
+    {
+        // The query-string / path-segment helper shares the JSON wire contract.
+        RetentionPolicy.AutoDelete.ToWireValue().Should().Be("auto_delete");
+        SearchMode.Semantic.ToWireValue().Should().Be("semantic");
+        ClusterScale.Coarse.ToWireValue().Should().Be("coarse");
+        MemoryType.Text.ToWireValue().Should().Be("text");
     }
 }
