@@ -161,7 +161,7 @@ public class UpdateWebhookRequest
 /// <summary>
 /// Webhook delivery status.
 /// </summary>
-[JsonConverter(typeof(JsonStringEnumConverter<DeliveryStatus>))]
+[JsonConverter(typeof(JsonStringEnumMemberConverter))]
 public enum DeliveryStatus
 {
     [JsonPropertyName("pending")]

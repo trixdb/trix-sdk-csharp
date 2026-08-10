@@ -58,7 +58,7 @@ public class JobsResource : BaseResource
     {
         var queryParams = BuildQueryParams(
             ("queue", request?.Queue),
-            ("status", request?.Status?.ToString().ToLowerInvariant()),
+            ("status", request?.Status?.ToWireValue()),
             ("limit", request?.Limit),
             ("offset", request?.Offset)
         );
@@ -166,7 +166,7 @@ public class JobsResource : BaseResource
 
         var request = new
         {
-            status = status?.ToString().ToLowerInvariant(),
+            status = status?.ToWireValue(),
             grace = graceMs,
             limit
         };

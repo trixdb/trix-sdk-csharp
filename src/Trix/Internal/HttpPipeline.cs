@@ -6,6 +6,7 @@ using System.Text.Json;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 using Trix.Exceptions;
+using Trix.Models;
 
 namespace Trix.Internal;
 
@@ -23,7 +24,11 @@ internal sealed class HttpPipeline : IDisposable
     {
         PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
         PropertyNameCaseInsensitive = true,
-        DefaultIgnoreCondition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull
+        DefaultIgnoreCondition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull,
+        // Enum members serialize via their [JsonPropertyName] wire value. Each enum
+        // also carries a [JsonConverter] attribute, but registering the factory here
+        // keeps any enum correct even if it ever ships without that attribute.
+        Converters = { new JsonStringEnumMemberConverter() }
     };
 
     /// <summary>

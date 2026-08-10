@@ -5,7 +5,7 @@ namespace Trix.Models;
 /// <summary>
 /// Represents the type of similarity search.
 /// </summary>
-[JsonConverter(typeof(JsonStringEnumConverter))]
+[JsonConverter(typeof(JsonStringEnumMemberConverter))]
 public enum SimilarityType
 {
     /// <summary>Text/content-based similarity.</summary>

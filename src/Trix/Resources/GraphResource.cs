@@ -114,7 +114,7 @@ public class GraphResource : BaseResource
         ArgumentException.ThrowIfNullOrEmpty(nodeId);
 
         var queryParams = BuildQueryParams(
-            ("direction", direction?.ToString().ToLowerInvariant()),
+            ("direction", direction?.ToWireValue()),
             ("limit", limit),
             ("depth", depth),
             ("types", types != null ? string.Join(",", types) : null)

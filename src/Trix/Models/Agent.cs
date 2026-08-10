@@ -233,7 +233,7 @@ public class CoreMemoryContext
 /// <summary>
 /// Consolidation strategy.
 /// </summary>
-[JsonConverter(typeof(JsonStringEnumConverter<ConsolidationStrategy>))]
+[JsonConverter(typeof(JsonStringEnumMemberConverter))]
 public enum ConsolidationStrategy
 {
     [JsonPropertyName("similarity")]

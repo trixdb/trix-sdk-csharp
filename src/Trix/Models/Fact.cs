@@ -5,7 +5,7 @@ namespace Trix.Models;
 /// <summary>
 /// Type of node in a fact (subject or object).
 /// </summary>
-[JsonConverter(typeof(JsonStringEnumConverter))]
+[JsonConverter(typeof(JsonStringEnumMemberConverter))]
 public enum FactNodeType
 {
     /// <summary>An entity reference.</summary>
