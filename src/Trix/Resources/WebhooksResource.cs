@@ -1,4 +1,6 @@
 using System.Runtime.CompilerServices;
+using System.Text.Json;
+using Trix.Exceptions;
 using Trix.Internal;
 using Trix.Models;
 
@@ -224,5 +226,91 @@ public class WebhooksResource : BaseResource
     {
         return await GetAsync<WebhookStats>("/v1/webhooks/stats", cancellationToken: cancellationToken)
             .ConfigureAwait(false);
+    }
+
+    /// <summary>
+    /// Verifies the HMAC-SHA256 signature of an inbound webhook request.
+    /// </summary>
+    /// <remarks>
+    /// Recomputes the signature over <c>{timestamp}.{payload}</c> using the endpoint
+    /// signing secret and compares it to the <c>X-Webhook-Signature</c> header in constant
+    /// time. Requests whose timestamp differs from now by more than
+    /// <paramref name="toleranceSeconds"/> are rejected to prevent replay. Pass the
+    /// <b>raw</b> request body exactly as received — re-serializing it changes the bytes
+    /// and fails verification. Static so receivers need not construct a client.
+    /// </remarks>
+    /// <param name="payload">The raw webhook request body.</param>
+    /// <param name="signatureHeader">The <c>X-Webhook-Signature</c> header value (<c>t=...,v1=...</c>).</param>
+    /// <param name="secret">The endpoint's signing secret.</param>
+    /// <param name="toleranceSeconds">Maximum accepted age of the signature, in seconds (default 300).</param>
+    /// <returns><c>true</c> if the signature is valid and within tolerance; otherwise <c>false</c>.</returns>
+    /// <exception cref="ArgumentNullException"><paramref name="payload"/> is null.</exception>
+    /// <exception cref="ArgumentException"><paramref name="secret"/> is null or empty.</exception>
+    /// <example>
+    /// <code>
+    /// var raw = await new StreamReader(Request.Body).ReadToEndAsync();
+    /// string header = Request.Headers["X-Webhook-Signature"];
+    /// if (!WebhooksResource.VerifySignature(raw, header, mySigningSecret))
+    ///     return Results.Unauthorized();
+    /// </code>
+    /// </example>
+    public static bool VerifySignature(
+        string payload,
+        string signatureHeader,
+        string secret,
+        int toleranceSeconds = 300)
+    {
+        ArgumentNullException.ThrowIfNull(payload);
+        ArgumentException.ThrowIfNullOrEmpty(secret);
+        return WebhookSignature.Verify(payload, signatureHeader, secret, toleranceSeconds);
+    }
+
+    /// <summary>
+    /// Verifies an inbound webhook signature and deserializes the trusted payload to <typeparamref name="T"/>.
+    /// </summary>
+    /// <remarks>
+    /// Combines <see cref="VerifySignature(string, string, string, int)"/> with JSON
+    /// deserialization: use it when you want the typed event and want any invalid, expired,
+    /// or tampered request to fail loudly rather than return a bool.
+    /// </remarks>
+    /// <typeparam name="T">The event payload type to deserialize into.</typeparam>
+    /// <param name="payload">The raw webhook request body.</param>
+    /// <param name="signatureHeader">The <c>X-Webhook-Signature</c> header value (<c>t=...,v1=...</c>).</param>
+    /// <param name="secret">The endpoint's signing secret.</param>
+    /// <returns>The deserialized, signature-verified payload.</returns>
+    /// <exception cref="ArgumentNullException"><paramref name="payload"/> is null.</exception>
+    /// <exception cref="ArgumentException"><paramref name="secret"/> is null or empty.</exception>
+    /// <exception cref="TrixWebhookVerificationException">
+    /// The signature is missing, malformed, expired, or does not match — or the verified
+    /// body cannot be deserialized to <typeparamref name="T"/>.
+    /// </exception>
+    /// <example>
+    /// <code>
+    /// var evt = WebhooksResource.Unwrap&lt;MemoryCreatedEvent&gt;(raw, header, mySigningSecret);
+    /// Console.WriteLine(evt.Data.Id);
+    /// </code>
+    /// </example>
+    public static T Unwrap<T>(string payload, string signatureHeader, string secret)
+    {
+        if (!VerifySignature(payload, signatureHeader, secret))
+            throw new TrixWebhookVerificationException();
+        return DeserializeVerified<T>(payload);
+    }
+
+    /// <summary>
+    /// Deserializes an already-verified payload, mapping JSON failures to
+    /// <see cref="TrixWebhookVerificationException"/> so callers have a single failure mode.
+    /// </summary>
+    private static T DeserializeVerified<T>(string payload)
+    {
+        try
+        {
+            return JsonSerializer.Deserialize<T>(payload, JsonOptions)
+                ?? throw new TrixWebhookVerificationException("Webhook payload deserialized to null.");
+        }
+        catch (JsonException ex)
+        {
+            throw new TrixWebhookVerificationException("Webhook payload could not be deserialized.", ex);
+        }
     }
 }
