@@ -16,11 +16,19 @@ jobs:
       release_created: ${{ steps.release.outputs.release_created }}
       tag_name: ${{ steps.release.outputs.tag_name }}
     steps:
+      # Release configuration lives in release-please-config.json and
+      # .release-please-manifest.json (v4 manifest mode), which the action reads
+      # by default. Do not pass release-type/package-name inline: package-name is
+      # not a valid v4 input, and an inline release-type shadows the config file
+      # (dropping changelog-sections and the Trix.csproj version bump).
+      #
+      # NOTE: opening the release PR requires the repo/org setting "Allow GitHub
+      # Actions to create and approve pull requests" to be enabled, or a PAT /
+      # GitHub App token supplied here in place of the default GITHUB_TOKEN.
       - id: release
         uses: googleapis/release-please-action@v4
         with:
-          release-type: simple
-          package-name: trix-sdk-csharp
+          token: ${{ secrets.GITHUB_TOKEN }}
 
   # Build and publish to NuGet
   publish-nuget:
