@@ -204,9 +204,8 @@ public class ModelTests
             ],
             "pagination": {
                 "total": 100,
-                "page": 1,
                 "limit": 10,
-                "hasMore": true
+                "has_more": true
             }
         }
         """;
@@ -220,6 +219,25 @@ public class ModelTests
         response.Pagination.Should().NotBeNull();
         response.Pagination!.Total.Should().Be(100);
         response.Pagination.HasMore.Should().BeTrue();
+    }
+
+    [Fact]
+    public void PaginatedResponse_DeserializesRealWireEnvelope()
+    {
+        // The Trix API emits snake_case has_more / next_cursor in every list envelope.
+        var json = """
+        { "data": [], "pagination": { "limit": 20, "has_more": true, "next_cursor": "abc", "total": 40 } }
+        """;
+
+        // Act
+        var response = JsonSerializer.Deserialize<PaginatedResponse<Memory>>(json, JsonOptions);
+
+        // Assert
+        response.Should().NotBeNull();
+        response!.Pagination.Should().NotBeNull();
+        response.Pagination!.HasMore.Should().BeTrue();
+        response.Pagination.NextCursor.Should().Be("abc");
+        response.Pagination.Total.Should().Be(40);
     }
 
     [Fact]

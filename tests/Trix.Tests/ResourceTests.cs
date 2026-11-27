@@ -53,7 +53,7 @@ public class ResourceTests : IDisposable
                 { "id": "mem_1", "content": "Content 1", "createdAt": "2025-01-01T00:00:00Z", "updatedAt": "2025-01-01T00:00:00Z" },
                 { "id": "mem_2", "content": "Content 2", "createdAt": "2025-01-01T00:00:00Z", "updatedAt": "2025-01-01T00:00:00Z" }
             ],
-            "pagination": { "total": 4, "page": 1, "limit": 2, "hasMore": true }
+            "pagination": { "total": 4, "page": 1, "limit": 2, "has_more": true }
         }
         """;
 
@@ -63,7 +63,7 @@ public class ResourceTests : IDisposable
                 { "id": "mem_3", "content": "Content 3", "createdAt": "2025-01-01T00:00:00Z", "updatedAt": "2025-01-01T00:00:00Z" },
                 { "id": "mem_4", "content": "Content 4", "createdAt": "2025-01-01T00:00:00Z", "updatedAt": "2025-01-01T00:00:00Z" }
             ],
-            "pagination": { "total": 4, "page": 2, "limit": 2, "hasMore": false }
+            "pagination": { "total": 4, "page": 2, "limit": 2, "has_more": false }
         }
         """;
 
@@ -103,7 +103,7 @@ public class ResourceTests : IDisposable
         var emptyResponse = """
         {
             "data": [],
-            "pagination": { "total": 0, "page": 1, "limit": 100, "hasMore": false }
+            "pagination": { "total": 0, "page": 1, "limit": 100, "has_more": false }
         }
         """;
 
@@ -138,7 +138,7 @@ public class ResourceTests : IDisposable
                     "data": [
                         { "id": "mem_{{callCount}}", "content": "Content {{callCount}}", "createdAt": "2025-01-01T00:00:00Z", "updatedAt": "2025-01-01T00:00:00Z" }
                     ],
-                    "pagination": { "total": 100, "page": {{callCount}}, "limit": 1, "hasMore": true }
+                    "pagination": { "total": 100, "page": {{callCount}}, "limit": 1, "has_more": true }
                 }
                 """;
                 return new HttpResponseMessage(HttpStatusCode.OK)
