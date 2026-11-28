@@ -52,7 +52,7 @@ public class MemoriesResourceTests : IDisposable
         var json = """
         {
             "data": [{ "id": "mem_1", "content": "a fact", "createdAt": "2025-01-01T00:00:00Z", "updatedAt": "2025-01-01T00:00:00Z" }],
-            "pagination": { "total": 1, "limit": 25, "hasMore": false }
+            "pagination": { "total": 1, "limit": 25, "has_more": false }
         }
         """;
         HttpRequestMessage? captured = null;

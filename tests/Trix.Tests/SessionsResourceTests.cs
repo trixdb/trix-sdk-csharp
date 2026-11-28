@@ -228,7 +228,7 @@ public class SessionsResourceTests : IDisposable
                 "total": 2,
                 "page": 1,
                 "limit": 100,
-                "hasMore": false
+                "has_more": false
             }
         }
         """;
@@ -272,7 +272,7 @@ public class SessionsResourceTests : IDisposable
                 "total": 1,
                 "page": 1,
                 "limit": 100,
-                "hasMore": false
+                "has_more": false
             }
         }
         """;
@@ -324,7 +324,7 @@ public class SessionsResourceTests : IDisposable
                 "total": 1,
                 "page": 1,
                 "limit": 100,
-                "hasMore": false
+                "has_more": false
             }
         }
         """;
@@ -669,7 +669,7 @@ public class SessionsResourceTests : IDisposable
                 "total": 2,
                 "page": 1,
                 "limit": 100,
-                "hasMore": false
+                "has_more": false
             }
         }
         """;
@@ -704,7 +704,7 @@ public class SessionsResourceTests : IDisposable
                 "total": 10,
                 "page": 1,
                 "limit": 1,
-                "hasMore": true
+                "has_more": true
             }
         }
         """;

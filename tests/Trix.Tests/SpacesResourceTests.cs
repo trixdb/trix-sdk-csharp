@@ -428,7 +428,7 @@ public class SpacesResourceTests : IDisposable
                     "updatedAt": "2025-01-01T00:00:00Z"
                 }
             ],
-            "pagination": { "total": 2, "page": 1, "limit": 100, "hasMore": false }
+            "pagination": { "total": 2, "page": 1, "limit": 100, "has_more": false }
         }
         """;
         SetupResponse(HttpStatusCode.OK, responseJson);

@@ -22,9 +22,9 @@ public class PaginatedResponse<T>
 /// </summary>
 public class PaginationMetadata
 {
-    /// <summary>Gets or sets the total number of items.</summary>
+    /// <summary>Gets or sets the total number of items. Omitted by the API when include_total_count is false.</summary>
     [JsonPropertyName("total")]
-    public int Total { get; set; }
+    public int? Total { get; set; }
 
     /// <summary>Gets or sets the current page number.</summary>
     [JsonPropertyName("page")]
@@ -35,6 +35,10 @@ public class PaginationMetadata
     public int Limit { get; set; }
 
     /// <summary>Gets or sets whether there are more pages.</summary>
-    [JsonPropertyName("hasMore")]
+    [JsonPropertyName("has_more")]
     public bool HasMore { get; set; }
+
+    /// <summary>Gets or sets the cursor for the next page in keyset pagination.</summary>
+    [JsonPropertyName("next_cursor")]
+    public string? NextCursor { get; set; }
 }
